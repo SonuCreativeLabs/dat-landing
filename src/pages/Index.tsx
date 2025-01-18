@@ -27,6 +27,12 @@ const products = [
     image: "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
     category: "Laundry",
   },
+  {
+    title: "Water Purifiers",
+    description: "Advanced filtration for pure, healthy water",
+    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    category: "Water",
+  },
 ];
 
 const Index = () => {
@@ -41,7 +47,7 @@ const Index = () => {
   }, [controls]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-b from-white via-[#D3E4FD] to-white">
       <Hero />
       <AboutUs />
       <Services />
@@ -52,7 +58,7 @@ const Index = () => {
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="text-3xl sm:text-4xl font-bold text-primary-foreground mb-4"
+              className="text-3xl sm:text-4xl font-bold text-[#0EA5E9] mb-4"
             >
               Flexible Appliance Rentals
             </motion.h2>
@@ -60,12 +66,12 @@ const Index = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-lg text-secondary-foreground max-w-2xl mx-auto mb-8"
+              className="text-lg text-gray-600 max-w-2xl mx-auto mb-8"
             >
               Monthly, yearly, or custom plans available for ACs, refrigerators, washing machines, and water purifiers.
             </motion.p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {products.map((product, index) => (
               <motion.div
                 key={product.title}
@@ -84,7 +90,7 @@ const Index = () => {
           >
             <a
               href="tel:+919876543210"
-              className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-white bg-[#0EA5E9] rounded-lg hover:bg-[#33C3F0] transition-colors"
             >
               Call Now to Rent: +91 98765 43210
             </a>
