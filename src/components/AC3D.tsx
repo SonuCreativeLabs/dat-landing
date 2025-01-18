@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
 const AC = () => {
-  const acRef = useRef<THREE.Mesh>(null);
+  const acRef = useRef<THREE.Group>(null);
 
   useEffect(() => {
     if (acRef.current) {
@@ -13,10 +13,12 @@ const AC = () => {
   }, []);
 
   return (
-    <mesh ref={acRef} position={[0, 0, 0]} castShadow>
+    <group ref={acRef} position={[0, 0, 0]}>
       {/* AC Body */}
-      <boxGeometry args={[4, 1, 1]} />
-      <meshStandardMaterial color="#ffffff" />
+      <mesh castShadow>
+        <boxGeometry args={[4, 1, 1]} />
+        <meshStandardMaterial color="#ffffff" />
+      </mesh>
       
       {/* AC Vents */}
       <mesh position={[0, -0.3, 0.51]}>
@@ -29,7 +31,7 @@ const AC = () => {
         <boxGeometry args={[0.5, 0.3, 0.01]} />
         <meshStandardMaterial color="#333333" />
       </mesh>
-    </mesh>
+    </group>
   );
 };
 
