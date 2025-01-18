@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowDown } from "lucide-react";
+import AC3D from "./AC3D";
 
 const Hero = () => {
   const scrollToSection = (id: string) => {
@@ -8,8 +9,9 @@ const Hero = () => {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0EA5E9] via-[#33C3F0] to-[#D3E4FD] px-4 sm:px-6 lg:px-8 relative">
-      <div className="max-w-7xl mx-auto text-center">
+    <section className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0EA5E9] via-[#33C3F0] to-[#D3E4FD] px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-cyan-400/20 pointer-events-none" />
+      <div className="max-w-7xl mx-auto text-center relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -45,6 +47,7 @@ const Hero = () => {
           </div>
         </motion.div>
       </div>
+      <AC3D />
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
