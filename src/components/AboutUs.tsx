@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Card, CardContent } from "./ui/card";
-import { ArrowRight, Tool, Package, ShoppingCart } from "lucide-react";
+import { ArrowRight, Wrench, Package, ShoppingCart } from "lucide-react";
 
 const features = [
   {
@@ -11,7 +11,7 @@ const features = [
   {
     title: "Service",
     description: "Expert repairs and maintenance.",
-    icon: Tool,
+    icon: Wrench,
   },
   {
     title: "Rentals",
