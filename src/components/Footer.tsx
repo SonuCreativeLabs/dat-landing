@@ -1,4 +1,5 @@
-import { Facebook, Instagram, Twitter, Youtube } from "lucide-react";
+import { Facebook, Instagram, Twitter, Youtube, Phone } from "lucide-react";
+import { Button } from "./ui/button";
 
 const Footer = () => {
   return (
@@ -54,6 +55,19 @@ const Footer = () => {
             </div>
           </div>
         </div>
+        
+        <div className="mt-8 flex flex-col items-center justify-center space-y-4">
+          <Button 
+            variant="secondary"
+            size="lg"
+            className="animate-fade-up bg-white text-primary hover:bg-accent hover:text-primary-foreground transition-all duration-300 shadow-lg"
+            onClick={() => window.location.href = 'tel:+919876543210'}
+          >
+            <Phone className="mr-2 h-5 w-5" />
+            Call Us Now: +91 98765 43210
+          </Button>
+        </div>
+
         <div className="mt-12 pt-8 border-t border-white/10 text-center">
           <p className="text-sm opacity-80">
             © {new Date().getFullYear()} Dreams Air Tech. All rights reserved.
