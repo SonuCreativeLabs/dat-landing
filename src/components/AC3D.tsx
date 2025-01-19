@@ -15,27 +15,27 @@ const AC = () => {
   return (
     <group ref={acRef}>
       {/* Main AC Body */}
-      <mesh position={[0, 0, 0]} castShadow>
+      <mesh position={[0, 0, 0]}>
         <boxGeometry args={[4, 1, 1]} />
-        <meshPhongMaterial color="#ffffff" />
+        <meshBasicMaterial color="#ffffff" />
       </mesh>
       
       {/* Front Panel */}
-      <mesh position={[0, 0, 0.51]} castShadow>
+      <mesh position={[0, 0, 0.51]}>
         <boxGeometry args={[3.8, 0.9, 0.05]} />
-        <meshPhongMaterial color="#f5f5f5" />
+        <meshBasicMaterial color="#f5f5f5" />
       </mesh>
       
       {/* Vents */}
-      <mesh position={[0, -0.3, 0.52]} castShadow>
+      <mesh position={[0, -0.3, 0.52]}>
         <boxGeometry args={[3.5, 0.1, 0.02]} />
-        <meshPhongMaterial color="#e0e0e0" />
+        <meshBasicMaterial color="#e0e0e0" />
       </mesh>
       
       {/* Display Panel */}
-      <mesh position={[1.5, 0, 0.52]} castShadow>
+      <mesh position={[1.5, 0, 0.52]}>
         <boxGeometry args={[0.5, 0.3, 0.02]} />
-        <meshPhongMaterial color="#333333" />
+        <meshBasicMaterial color="#333333" />
       </mesh>
     </group>
   );
@@ -43,12 +43,12 @@ const AC = () => {
 
 const AC3D = () => {
   return (
-    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[400px] h-[400px]">
+    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[600px] h-[600px]">
       <Canvas
-        camera={{ position: [5, 2, 5], fov: 50 }}
+        camera={{ position: [0, 0, 8], fov: 50 }}
       >
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[5, 5, 5]} intensity={1} />
+        <ambientLight intensity={1} />
+        <pointLight position={[10, 10, 10]} />
         <AC />
         <OrbitControls
           enableZoom={false}
