@@ -15,27 +15,27 @@ const AC = () => {
   return (
     <group ref={acRef}>
       {/* Main AC Body */}
-      <mesh position={[0, 0, 0]}>
+      <mesh position={[0, 0, 0]} castShadow receiveShadow>
         <boxGeometry args={[4, 1, 1]} />
-        <meshBasicMaterial color="#ffffff" />
+        <meshStandardMaterial color="#ffffff" metalness={0.5} roughness={0.5} />
       </mesh>
       
       {/* Front Panel */}
-      <mesh position={[0, 0, 0.51]}>
+      <mesh position={[0, 0, 0.51]} castShadow receiveShadow>
         <boxGeometry args={[3.8, 0.9, 0.05]} />
-        <meshBasicMaterial color="#f5f5f5" />
+        <meshStandardMaterial color="#f5f5f5" metalness={0.2} roughness={0.8} />
       </mesh>
       
       {/* Vents */}
-      <mesh position={[0, -0.3, 0.52]}>
+      <mesh position={[0, -0.3, 0.52]} castShadow receiveShadow>
         <boxGeometry args={[3.5, 0.1, 0.02]} />
-        <meshBasicMaterial color="#e0e0e0" />
+        <meshStandardMaterial color="#e0e0e0" metalness={0.3} roughness={0.7} />
       </mesh>
       
       {/* Display Panel */}
-      <mesh position={[1.5, 0, 0.52]}>
+      <mesh position={[1.5, 0, 0.52]} castShadow receiveShadow>
         <boxGeometry args={[0.5, 0.3, 0.02]} />
-        <meshBasicMaterial color="#333333" />
+        <meshStandardMaterial color="#333333" metalness={0.7} roughness={0.3} />
       </mesh>
     </group>
   );
@@ -43,12 +43,20 @@ const AC = () => {
 
 const AC3D = () => {
   return (
-    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[600px] h-[600px]">
+    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[600px] h-[600px] z-10">
       <Canvas
+        shadows
         camera={{ position: [0, 0, 8], fov: 50 }}
+        gl={{ 
+          antialias: true,
+          alpha: true,
+          preserveDrawingBuffer: true
+        }}
       >
-        <ambientLight intensity={1} />
-        <pointLight position={[10, 10, 10]} />
+        <color attach="background" args={["transparent"]} />
+        <ambientLight intensity={0.5} />
+        <pointLight position={[10, 10, 10]} intensity={1} castShadow />
+        <pointLight position={[-10, -10, -10]} intensity={0.5} />
         <AC />
         <OrbitControls
           enableZoom={false}

@@ -11,7 +11,7 @@ const Hero = () => {
   return (
     <section className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0EA5E9] via-[#33C3F0] to-[#D3E4FD] px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-cyan-400/20 pointer-events-none" />
-      <div className="max-w-7xl mx-auto text-center relative z-10">
+      <div className="max-w-7xl mx-auto text-center relative z-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -47,12 +47,14 @@ const Hero = () => {
           </div>
         </motion.div>
       </div>
-      <AC3D />
+      <div className="relative z-10">
+        <AC3D />
+      </div>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce"
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-20"
       >
         <ArrowDown className="w-6 h-6 text-white" />
       </motion.div>
