@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="200" viewBox="0 0 800 200" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <g>
+        <path d="M100,20 L150,20 Q180,20 180,50 L180,150 Q180,180 150,180 L50,180 Q20,180 20,150 L20,50 Q20,20 50,20 Z" fill="#0066cc"/>
+        <path d="M40,40 L70,40 L70,160 L40,160 Z" fill="#808080"/>
+        <path d="M90,60 L160,60 L160,80 L90,80 Z" fill="#ffffff"/>
+        <path d="M90,100 L160,100 L160,120 L90,120 Z" fill="#ffffff"/>
+        <circle cx="120" cy="140" r="5" fill="#ffffff"/>
+        <circle cx="140" cy="140" r="5" fill="#ffffff"/>
+    </g>
+    <text x="200" y="120" font-family="Arial" font-size="80" fill="#0066cc">DREAMS</text>
+    <text x="200" y="180" font-family="Arial" font-size="40" fill="#808080">AIR TECH</text>
+</svg>

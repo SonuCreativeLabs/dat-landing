@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import Hero from "../components/Hero";
-import Services from "../components/Services";
 import AboutUs from "../components/AboutUs";
 import Testimonials from "../components/Testimonials";
 import Contact from "../components/Contact";
@@ -47,11 +46,11 @@ const Index = () => {
   }, [controls]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-[#D3E4FD] to-white">
+    <div className="min-h-screen">
       <Hero />
       <AboutUs />
-      <Services />
       
+      {/* Rental Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-blue-100 to-white" id="rentals">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -60,7 +59,7 @@ const Index = () => {
               whileInView={{ opacity: 1, y: 0 }}
               className="text-4xl sm:text-5xl font-bold text-blue-600 mb-4"
             >
-              Flexible Appliance Rentals
+              Premium Appliance Rentals
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -68,7 +67,8 @@ const Index = () => {
               transition={{ delay: 0.2 }}
               className="text-lg text-gray-600 max-w-2xl mx-auto mb-8"
             >
-              Monthly, yearly, or custom plans available for ACs, refrigerators, washing machines, and water purifiers.
+              Experience the convenience of high-quality appliances without the commitment of ownership. 
+              Choose from our wide range of ACs, refrigerators, washing machines, and water purifiers with flexible rental plans.
             </motion.p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

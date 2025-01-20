@@ -63,29 +63,31 @@ const AC = () => {
   );
 };
 
-const Scene = () => {
+const AC3D = () => {
   return (
-    <Canvas shadows>
-      <PerspectiveCamera makeDefault position={[5, 2, 5]} />
-      <ambientLight intensity={0.5} />
-      <directionalLight
-        position={[5, 5, 5]}
-        intensity={1}
-        castShadow
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
-      />
-      <Suspense fallback={null}>
-        <AC />
-      </Suspense>
-      <OrbitControls
-        enableZoom={false}
-        enablePan={false}
-        minPolarAngle={Math.PI / 3}
-        maxPolarAngle={Math.PI / 2}
-      />
-    </Canvas>
+    <div style={{ width: '100%', height: '400px' }}>
+      <Canvas shadows>
+        <PerspectiveCamera makeDefault position={[5, 2, 5]} />
+        <ambientLight intensity={0.5} />
+        <directionalLight
+          position={[5, 5, 5]}
+          intensity={1}
+          castShadow
+          shadow-mapSize-width={1024}
+          shadow-mapSize-height={1024}
+        />
+        <Suspense fallback={null}>
+          <AC />
+        </Suspense>
+        <OrbitControls
+          enableZoom={false}
+          enablePan={false}
+          minPolarAngle={Math.PI / 3}
+          maxPolarAngle={Math.PI / 2}
+        />
+      </Canvas>
+    </div>
   );
 };
 
-export default Scene;
+export default AC3D;

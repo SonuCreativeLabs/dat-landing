@@ -1,75 +1,102 @@
 import { motion } from "framer-motion";
-import { Card, CardContent } from "./ui/card";
-import { ArrowRight, Wrench, Package, ShoppingCart } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 
 const features = [
   {
-    title: "Sales",
-    description: "Great deals on top appliances.",
-    icon: ShoppingCart,
+    title: "Expert Technicians",
+    description: "Our certified professionals bring years of experience in appliance service and maintenance"
   },
   {
-    title: "Service",
-    description: "Expert repairs and maintenance.",
-    icon: Wrench,
+    title: "Quality Service",
+    description: "We use genuine parts and follow manufacturer guidelines for all repairs and installations"
   },
   {
-    title: "Rentals",
-    description: "Flexible plans for your needs.",
-    icon: Package,
+    title: "Customer First",
+    description: "24/7 support and flexible scheduling to ensure your comfort and convenience"
   },
+  {
+    title: "Affordable Solutions",
+    description: "Competitive pricing with transparent billing and no hidden charges"
+  }
 ];
 
 const AboutUs = () => {
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-white to-blue-50">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white" id="about">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <motion.span
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="inline-block px-4 py-1 mb-4 text-sm font-medium bg-blue-100 text-blue-600 rounded-full"
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Left Column - Content */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="space-y-8"
           >
-            About Us
-          </motion.span>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-4xl sm:text-5xl font-bold text-blue-900 mb-6"
-          >
-            Why Choose Dreams Air Tech?
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-lg text-gray-600 max-w-2xl mx-auto"
-          >
-            With years of expertise in home appliances, we prioritize quality service and customer satisfaction. Our team of certified professionals ensures your appliances run efficiently, providing peace of mind for your home.
-          </motion.p>
-        </div>
+            <div>
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                className="text-4xl font-bold text-gray-900 mb-4"
+              >
+                Chennai's Most Trusted <br />
+                <span className="text-blue-600">Appliance Service Partner</span>
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-lg text-gray-600"
+              >
+                With over a decade of experience, Dreams Air Tech has been providing top-notch appliance sales, 
+                service, and rental solutions to homes and businesses across Chennai. Our commitment to quality 
+                and customer satisfaction has made us the preferred choice for all appliance needs.
+              </motion.p>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.2 }}
-              whileHover={{ y: -5 }}
-            >
-              <Card className="relative h-full overflow-hidden group hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-blue-50 border-blue-100">
-                <CardContent className="p-8">
-                  <div className="mb-6 transform group-hover:scale-110 transition-transform duration-300">
-                    <feature.icon className="w-12 h-12 text-blue-500" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {features.map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="flex items-start space-x-4"
+                >
+                  <CheckCircle className="w-6 h-6 text-blue-600 mt-1 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-1">{feature.title}</h3>
+                    <p className="text-gray-600 text-sm">{feature.description}</p>
                   </div>
-                  <h3 className="text-2xl font-semibold mb-3 text-blue-900">{feature.title}</h3>
-                  <p className="text-gray-600 mb-4">{feature.description}</p>
-                  <ArrowRight className="absolute bottom-4 right-4 w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1" />
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Right Column - Stats */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="grid grid-cols-2 gap-8"
+          >
+            {[
+              { number: "10+", label: "Years Experience" },
+              { number: "5000+", label: "Happy Customers" },
+              { number: "24/7", label: "Customer Support" },
+              { number: "100%", label: "Satisfaction Rate" }
+            ].map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl shadow-lg text-center"
+              >
+                <div className="text-3xl font-bold text-blue-600 mb-2">{stat.number}</div>
+                <div className="text-gray-600 text-sm">{stat.label}</div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </div>
     </section>
