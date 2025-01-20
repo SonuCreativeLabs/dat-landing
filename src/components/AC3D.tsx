@@ -1,28 +1,27 @@
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, useGLTF } from "@react-three/drei";
-import { Suspense } from "react";
-import * as THREE from "three";
+import { OrbitControls } from "@react-three/drei";
+import { Suspense, useRef } from "react";
+import { Mesh } from "three";
 
 const AC = () => {
-  const meshRef = THREE.useRef();
+  const meshRef = useRef<Mesh>(null);
 
   return (
     <group>
       {/* Modern AC Unit Shape */}
       <mesh position={[0, 0, 0]} castShadow receiveShadow>
         <boxGeometry args={[3, 0.8, 0.6]} />
-        <meshPhongMaterial 
+        <meshStandardMaterial 
           color="#ffffff" 
           metalness={0.8} 
-          roughness={0.2} 
-          envMapIntensity={1}
+          roughness={0.2}
         />
       </mesh>
       
       {/* Front Panel with Vents */}
       <mesh position={[0, 0, 0.31]} castShadow>
         <boxGeometry args={[2.9, 0.7, 0.02]} />
-        <meshPhongMaterial 
+        <meshStandardMaterial 
           color="#f8f9fa" 
           metalness={0.5} 
           roughness={0.5}
@@ -33,7 +32,7 @@ const AC = () => {
       {[-1, 0, 1].map((x, i) => (
         <mesh key={i} position={[x, 0, 0.32]} castShadow>
           <boxGeometry args={[0.5, 0.6, 0.01]} />
-          <meshPhongMaterial 
+          <meshStandardMaterial 
             color="#e9ecef" 
             metalness={0.3} 
             roughness={0.7}
@@ -44,10 +43,12 @@ const AC = () => {
       {/* Display Panel */}
       <mesh position={[1.2, 0.2, 0.32]} castShadow>
         <boxGeometry args={[0.4, 0.2, 0.01]} />
-        <meshPhongMaterial 
+        <meshStandardMaterial 
           color="#212529" 
           emissive="#0ea5e9"
           emissiveIntensity={0.5}
+          metalness={0.8}
+          roughness={0.2}
         />
       </mesh>
     </group>
