@@ -9,55 +9,111 @@ const Hero = () => {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0EA5E9] via-[#33C3F0] to-[#D3E4FD] px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-cyan-400/20 pointer-events-none" />
-      <div className="max-w-7xl mx-auto text-center relative z-20">
+    <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
+      {/* Dynamic Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-400 to-cyan-300">
+        <div className="absolute inset-0 opacity-30">
+          {[...Array(50)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full bg-white"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                width: `${Math.random() * 4}px`,
+                height: `${Math.random() * 4}px`,
+                animation: `twinkle ${Math.random() * 5 + 3}s infinite`,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="space-y-6"
+          className="text-center space-y-8"
         >
-          <span className="inline-block px-4 py-1 mb-4 text-sm font-medium bg-white/10 text-white rounded-full backdrop-blur-sm">
+          <motion.span
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+            className="inline-block px-6 py-2 text-sm font-medium bg-white/10 text-white rounded-full backdrop-blur-md border border-white/20 shadow-lg"
+          >
             Welcome to Dreams Air Tech
-          </span>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-            Sales, Service, and Rentals for All Your Appliance Needs!
-          </h1>
-          <p className="text-lg sm:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+          </motion.span>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white"
+          >
+            <span className="block mb-2">Sales, Service, and</span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-200">
+              Rentals for All Your
+            </span>
+            <span className="block mt-2">Appliance Needs!</span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="text-xl sm:text-2xl text-white/90 max-w-3xl mx-auto font-light"
+          >
             Serving homes across Chennai with quality and trust.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="flex flex-col sm:flex-row gap-6 justify-center items-center"
+          >
             <motion.button
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.95)" }}
               whileTap={{ scale: 0.95 }}
               onClick={() => scrollToSection("contact")}
-              className="px-8 py-3 bg-white text-[#0EA5E9] rounded-lg font-medium shadow-lg hover:shadow-xl transition-shadow"
+              className="px-8 py-4 bg-white text-blue-600 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 min-w-[200px]"
             >
               Book a Service
             </motion.button>
             <motion.button
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.15)" }}
               whileTap={{ scale: 0.95 }}
               onClick={() => scrollToSection("rentals")}
-              className="px-8 py-3 bg-white/10 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-shadow backdrop-blur-sm"
+              className="px-8 py-4 bg-white/10 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-md border border-white/20 min-w-[200px]"
             >
               Explore Rentals
             </motion.button>
-          </div>
+          </motion.div>
         </motion.div>
       </div>
+
+      {/* 3D Model */}
       <div className="relative z-10">
         <AC3D />
       </div>
+
+      {/* Scroll Indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
+        transition={{ delay: 1.2 }}
         className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-20"
       >
-        <ArrowDown className="w-6 h-6 text-white" />
+        <ArrowDown className="w-8 h-8 text-white" />
       </motion.div>
+
+      {/* Add some decorative elements */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-white/10 rounded-full filter blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-400/20 rounded-full filter blur-3xl" />
+      </div>
     </section>
   );
 };
