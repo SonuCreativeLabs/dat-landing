@@ -21,15 +21,30 @@ const services = [
 
 const Services = () => {
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-accent">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <span className="inline-block px-4 py-1 mb-4 text-sm font-medium bg-primary/10 text-primary-foreground rounded-full">
+          <motion.span
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="inline-block px-4 py-1 mb-4 text-sm font-medium bg-white/20 text-white rounded-full backdrop-blur-sm"
+          >
             Our Services
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-primary-foreground">
+          </motion.span>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-4xl sm:text-5xl font-bold text-white mb-4"
+          >
             Comprehensive Solutions for Your Home
-          </h2>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-lg text-white/90 max-w-2xl mx-auto"
+          >
+            Experience excellence in every service we provide
+          </motion.p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {services.map((service, index) => (
@@ -38,20 +53,23 @@ const Services = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.2 }}
-              className="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow"
+              whileHover={{ y: -5 }}
+              className="group"
             >
-              <h3 className="text-2xl font-semibold mb-4 text-primary-foreground">
-                {service.title}
-              </h3>
-              <p className="text-secondary-foreground mb-6">{service.description}</p>
-              <ul className="space-y-3">
-                {service.features.map((feature) => (
-                  <li key={feature} className="flex items-center text-secondary-foreground">
-                    <Check className="w-5 h-5 text-primary mr-2" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
+              <div className="bg-white/90 backdrop-blur-sm p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 h-full">
+                <h3 className="text-2xl font-semibold mb-4 text-blue-900 group-hover:text-blue-600 transition-colors">
+                  {service.title}
+                </h3>
+                <p className="text-gray-600 mb-6">{service.description}</p>
+                <ul className="space-y-3">
+                  {service.features.map((feature) => (
+                    <li key={feature} className="flex items-center text-gray-600">
+                      <Check className="w-5 h-5 text-blue-500 mr-2 flex-shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </motion.div>
           ))}
         </div>

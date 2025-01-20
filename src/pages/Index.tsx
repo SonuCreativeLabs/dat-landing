@@ -52,13 +52,13 @@ const Index = () => {
       <AboutUs />
       <Services />
       
-      <section className="py-20 px-4 sm:px-6 lg:px-8" id="rentals">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-blue-100 to-white" id="rentals">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="text-3xl sm:text-4xl font-bold text-[#0EA5E9] mb-4"
+              className="text-4xl sm:text-5xl font-bold text-blue-600 mb-4"
             >
               Flexible Appliance Rentals
             </motion.h2>
@@ -78,6 +78,8 @@ const Index = () => {
                 custom={index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={controls}
+                whileHover={{ y: -5 }}
+                transition={{ duration: 0.2 }}
               >
                 <ProductCard {...product} />
               </motion.div>
@@ -90,7 +92,7 @@ const Index = () => {
           >
             <a
               href="tel:+919876543210"
-              className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-white bg-[#0EA5E9] rounded-lg hover:bg-[#33C3F0] transition-colors"
+              className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
             >
               Call Now to Rent: +91 98765 43210
             </a>
