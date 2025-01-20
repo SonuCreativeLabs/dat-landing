@@ -6,9 +6,12 @@ import { Phone, Mail, MessageSquare } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "./ui/use-toast";
+import type { Database } from "@/integrations/supabase/types";
+
+type ContactSubmission = Database['public']['Tables']['contact_submissions']['Insert'];
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ContactSubmission>({
     name: "",
     phone: "",
     message: "",
@@ -22,7 +25,7 @@ const Contact = () => {
 
     try {
       const { error } = await supabase
-        .from("contact_submissions")
+        .from('contact_submissions')
         .insert([formData]);
 
       if (error) throw error;
@@ -55,13 +58,13 @@ const Contact = () => {
   };
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#D3E4FD] to-white" id="contact">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-500 via-blue-400 to-blue-300" id="contact">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-3xl sm:text-4xl font-bold text-[#0EA5E9] mb-6"
+            className="text-4xl sm:text-5xl font-bold text-white mb-6"
           >
             Get in Touch with Us
           </motion.h2>
@@ -71,24 +74,24 @@ const Contact = () => {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            className="space-y-8 bg-white p-8 rounded-lg shadow-lg"
+            className="space-y-8 bg-white/90 backdrop-blur-sm p-8 rounded-lg shadow-xl"
           >
             <div className="flex items-center space-x-4">
-              <Phone className="w-6 h-6 text-[#0EA5E9]" />
+              <Phone className="w-6 h-6 text-blue-500" />
               <div>
                 <h3 className="font-semibold">Call Us</h3>
                 <p className="text-gray-600">+91 98765 43210</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <Mail className="w-6 h-6 text-[#0EA5E9]" />
+              <Mail className="w-6 h-6 text-blue-500" />
               <div>
                 <h3 className="font-semibold">Email Us</h3>
                 <p className="text-gray-600">info@dreamsairtech.com</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <MessageSquare className="w-6 h-6 text-[#0EA5E9]" />
+              <MessageSquare className="w-6 h-6 text-blue-500" />
               <div>
                 <h3 className="font-semibold">WhatsApp</h3>
                 <p className="text-gray-600">+91 98765 43210</p>
@@ -99,7 +102,7 @@ const Contact = () => {
           <motion.form
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            className="space-y-6 bg-white p-8 rounded-lg shadow-lg"
+            className="space-y-6 bg-white/90 backdrop-blur-sm p-8 rounded-lg shadow-xl"
             onSubmit={handleSubmit}
           >
             <Input
@@ -108,6 +111,7 @@ const Contact = () => {
               value={formData.name}
               onChange={handleChange}
               required
+              className="bg-white/80"
             />
             <Input
               placeholder="Phone Number"
@@ -116,10 +120,11 @@ const Contact = () => {
               value={formData.phone}
               onChange={handleChange}
               required
+              className="bg-white/80"
             />
             <Textarea
               placeholder="Your Message"
-              className="min-h-[120px]"
+              className="min-h-[120px] bg-white/80"
               name="message"
               value={formData.message}
               onChange={handleChange}
@@ -127,7 +132,7 @@ const Contact = () => {
             />
             <Button
               type="submit"
-              className="w-full bg-[#0EA5E9] hover:bg-[#0284C7] text-white transition-colors"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white transition-colors"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Sending..." : "Submit Inquiry"}
