@@ -4,8 +4,20 @@ import TestimonialForm from "./TestimonialForm";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+type Testimonial = {
+  id: string;
+  name: string;
+  location: string;
+  image: string;
+  rating: number;
+  review: string;
+  service: string;
+  status: string;
+  created_at: string;
+};
+
 const Testimonials = () => {
-  const { data: testimonials = [] } = useQuery({
+  const { data: testimonials = [] } = useQuery<Testimonial[]>({
     queryKey: ["testimonials"],
     queryFn: async () => {
       const { data, error } = await supabase

@@ -33,6 +33,42 @@ export type Database = {
         }
         Relationships: []
       }
+      testimonials: {
+        Row: {
+          created_at: string
+          id: string
+          image: string
+          location: string
+          name: string
+          rating: number
+          review: string
+          service: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image: string
+          location: string
+          name: string
+          rating: number
+          review: string
+          service: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image?: string
+          location?: string
+          name?: string
+          rating?: number
+          review?: string
+          service?: string
+          status?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

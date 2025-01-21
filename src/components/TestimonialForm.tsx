@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { useToast } from "./ui/use-toast";
-import { Star, Loader2 } from "lucide-react";
+import { Star, Loader2, MessageCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Dialog,
@@ -39,13 +39,16 @@ const TestimonialForm = () => {
   const onSubmit = async (data: TestimonialFormData) => {
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from("testimonials").insert([
-        {
-          ...data,
-          rating,
-          image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.name}`,
-        },
-      ]);
+      const testimonialData = {
+        ...data,
+        rating,
+        image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.name}`,
+        status: 'pending'
+      };
+
+      const { error } = await supabase
+        .from('testimonials')
+        .insert([testimonialData]);
 
       if (error) throw error;
 
@@ -75,7 +78,7 @@ const TestimonialForm = () => {
           className="bg-white hover:bg-blue-50 border-blue-200 text-blue-600 hover:text-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 group"
         >
           Share Your Experience
-          <MessageSquare className="w-4 h-4 ml-2 group-hover:rotate-12 transition-transform" />
+          <MessageCircle className="w-4 h-4 ml-2 group-hover:rotate-12 transition-transform" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
