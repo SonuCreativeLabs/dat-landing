@@ -1,42 +1,25 @@
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
-
-const testimonials = [
-  {
-    name: "Priya Rajesh",
-    location: "T. Nagar, Chennai",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop",
-    rating: 5,
-    review: "Dreams Air Tech's service is exceptional! They installed my new AC and have been maintaining it perfectly. Their technicians are professional and always on time.",
-    service: "AC Installation & Maintenance"
-  },
-  {
-    name: "Karthik Sundar",
-    location: "Adyar, Chennai",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
-    rating: 5,
-    review: "Best appliance rental service in Chennai! Rented a refrigerator during my 6-month stay, and their service was seamless from delivery to pickup.",
-    service: "Refrigerator Rental"
-  },
-  {
-    name: "Lakshmi Venkatesh",
-    location: "Anna Nagar, Chennai",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop",
-    rating: 5,
-    review: "Very reliable service for water purifier maintenance. They respond quickly to service requests and their annual maintenance plans are worth it.",
-    service: "Water Purifier Service"
-  },
-  {
-    name: "Mohammed Imran",
-    location: "Velachery, Chennai",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
-    rating: 5,
-    review: "Professional washing machine repair service. The technician diagnosed and fixed the issue quickly. Very reasonable pricing too!",
-    service: "Washing Machine Repair"
-  }
-];
+import TestimonialForm from "./TestimonialForm";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Testimonials = () => {
+  const { data: testimonials = [] } = useQuery({
+    queryKey: ["testimonials"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("testimonials")
+        .select("*")
+        .eq("status", "approved")
+        .order("created_at", { ascending: false })
+        .limit(4);
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-white to-blue-50">
       <div className="max-w-7xl mx-auto">
@@ -52,16 +35,23 @@ const Testimonials = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-lg text-gray-600 max-w-2xl mx-auto"
+            className="text-lg text-gray-600 max-w-2xl mx-auto mb-8"
           >
             Read what customers across Chennai have to say about our services
           </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <TestimonialForm />
+          </motion.div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {testimonials.map((testimonial, index) => (
             <motion.div
-              key={testimonial.name}
+              key={testimonial.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
