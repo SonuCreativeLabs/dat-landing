@@ -47,7 +47,7 @@ const TestimonialReview = () => {
       status,
     }: {
       id: string;
-      status: "approved" | "rejected";
+      status: "approved" | "archived";
     }) => {
       const { error } = await supabase
         .from("testimonials")
@@ -56,11 +56,11 @@ const TestimonialReview = () => {
 
       if (error) throw error;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["pending-testimonials"] });
+    onSuccess: (_, { status }) => {
+      queryClient.invalidateQueries(["pending-testimonials"]);
       toast({
-        title: "Success",
-        description: "Testimonial status updated successfully",
+        title: `Testimonial ${status === 'approved' ? 'approved' : 'archived'}`,
+        description: `The testimonial has been ${status === 'approved' ? 'approved' : 'archived'} successfully.`,
       });
     },
     onError: (error) => {
@@ -124,11 +124,11 @@ const TestimonialReview = () => {
             <Button
               variant="outline"
               onClick={() =>
-                updateStatus.mutate({ id: testimonial.id, status: "rejected" })
+                updateStatus.mutate({ id: testimonial.id, status: "archived" })
               }
               disabled={updateStatus.isPending}
             >
-              Reject
+              Archive
             </Button>
             <Button
               onClick={() =>

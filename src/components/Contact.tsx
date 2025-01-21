@@ -1,120 +1,179 @@
 import { motion } from "framer-motion";
 import { Phone, Mail, MapPin, Send, MessageCircle } from "lucide-react";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Contact = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    serviceType: "",
+    message: ""
+  });
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await supabase
+        .from('contact_submissions')
+        .insert([
+          {
+            name: formData.name,
+            phone: formData.phone,
+            message: formData.message
+          },
+        ]);
+
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+
+      toast.success("Enquiry sent successfully! We'll get back to you soon.");
+      
+      setFormData({
+        name: "",
+        phone: "",
+        email: "",
+        serviceType: "",
+        message: ""
+      });
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error("Failed to send enquiry. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white" id="contact">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Left Column - Contact Info */}
+          {/* Contact Information */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             className="space-y-8"
           >
             <div>
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                className="text-4xl font-bold text-gray-900 mb-4"
-              >
-                Get in Touch
-              </motion.h2>
-              <motion.p
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="text-lg text-gray-600"
-              >
-                Have questions? We're here to help. Send us a message and we'll respond as soon as possible.
-              </motion.p>
+              <h2 className="text-4xl font-bold mb-4">Get in Touch</h2>
+              <p className="text-gray-600 text-lg">
+                Have a question or need a service? We're here to help!
+              </p>
             </div>
 
+            {/* Contact Details */}
             <div className="space-y-6">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                className="flex items-center space-x-4"
-              >
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <div className="flex items-start space-x-4">
+                <div className="p-3 bg-blue-50 rounded-lg">
                   <Phone className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">Phone</h3>
+                  <h3 className="font-semibold text-lg">Phone</h3>
                   <p className="text-gray-600">+91 98765 43210</p>
+                  <p className="text-gray-600">+91 98765 43211</p>
                 </div>
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                className="flex items-center space-x-4"
-              >
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <div className="flex items-start space-x-4">
+                <div className="p-3 bg-blue-50 rounded-lg">
                   <Mail className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">Email</h3>
-                  <p className="text-gray-600">info@dreamsairtech.com</p>
+                  <h3 className="font-semibold text-lg">Email</h3>
+                  <p className="text-gray-600">info@example.com</p>
+                  <p className="text-gray-600">support@example.com</p>
                 </div>
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                className="flex items-center space-x-4"
-              >
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <div className="flex items-start space-x-4">
+                <div className="p-3 bg-blue-50 rounded-lg">
                   <MapPin className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">Location</h3>
-                  <p className="text-gray-600">Anna Nagar, Chennai, Tamil Nadu 600040</p>
+                  <h3 className="font-semibold text-lg">Location</h3>
+                  <p className="text-gray-600">
+                    123 Business Street, Tech Park,<br />
+                    City Name, State - 123456
+                  </p>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </motion.div>
 
-          {/* Right Column - Contact Form */}
+          {/* Contact Form */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             className="bg-white rounded-2xl shadow-xl p-8"
           >
-            <form className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Name
+                    Your Name
                   </label>
                   <input
                     type="text"
+                    name="name"
                     placeholder="John Doe"
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors duration-200"
+                    required
+                    value={formData.name}
+                    onChange={handleChange}
+                    disabled={isSubmitting}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Phone
+                    Phone Number
                   </label>
                   <input
                     type="tel"
+                    name="phone"
                     placeholder="+91 98765 43210"
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors duration-200"
+                    required
+                    value={formData.phone}
+                    onChange={handleChange}
+                    disabled={isSubmitting}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email
+                  Email Address
                 </label>
                 <input
                   type="email"
+                  name="email"
                   placeholder="john@example.com"
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors duration-200"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  disabled={isSubmitting}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -122,13 +181,19 @@ const Contact = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Service Type
                 </label>
-                <select className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors duration-200">
+                <select
+                  name="serviceType"
+                  required
+                  value={formData.serviceType}
+                  onChange={handleChange}
+                  disabled={isSubmitting}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   <option value="">Select a service</option>
                   <option value="ac">AC Service/Repair</option>
                   <option value="refrigerator">Refrigerator Service/Repair</option>
                   <option value="washing-machine">Washing Machine Service/Repair</option>
-                  <option value="water-purifier">Water Purifier Service/Repair</option>
-                  <option value="rental">Appliance Rental</option>
+                  <option value="other">Other Appliance</option>
                 </select>
               </div>
 
@@ -137,37 +202,43 @@ const Contact = () => {
                   Message
                 </label>
                 <textarea
+                  name="message"
                   rows={4}
                   placeholder="Example: Need urgent AC service. My 1.5 ton split AC is not cooling properly and making noise. Preferred time: Tomorrow morning between 10 AM - 12 PM."
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors duration-200"
+                  required
+                  value={formData.message}
+                  onChange={handleChange}
+                  disabled={isSubmitting}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 ></textarea>
               </div>
 
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2"
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Send className="w-5 h-5" />
-                <span>Send Message</span>
+                {isSubmitting ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Sending Enquiry...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-5 h-5" />
+                    <span>Send Enquiry</span>
+                  </>
+                )}
               </motion.button>
             </form>
           </motion.div>
         </div>
       </div>
-
-      {/* WhatsApp Floating Button */}
-      <motion.a
-        href="https://wa.me/919876543210"
-        target="_blank"
-        rel="noopener noreferrer"
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        whileHover={{ scale: 1.1 }}
-        className="fixed bottom-8 right-8 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 z-50"
-      >
-        <MessageCircle className="w-8 h-8 text-white" />
-      </motion.a>
     </section>
   );
 };
