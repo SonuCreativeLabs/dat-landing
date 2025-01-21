@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Twitter, Youtube, Phone } from "lucide-react";
+import { Facebook, Instagram, Twitter, Youtube, Phone, ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
 
 const Footer = () => {
@@ -60,11 +60,12 @@ const Footer = () => {
           <Button 
             variant="secondary"
             size="lg"
-            className="animate-fade-up bg-white text-[#0EA5E9] hover:bg-white/90 hover:text-[#0284C7] transition-all duration-300 shadow-lg"
+            className="animate-fade-up bg-gradient-to-r from-white to-blue-50 text-[#0EA5E9] hover:from-blue-50 hover:to-white hover:text-[#0284C7] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 group rounded-full px-8"
             onClick={() => window.location.href = 'tel:+919876543210'}
           >
             <Phone className="mr-2 h-5 w-5" />
             Call Us Now: +91 98765 43210
+            <ArrowRight className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
           </Button>
         </div>
 

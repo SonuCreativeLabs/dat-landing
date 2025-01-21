@@ -6,6 +6,7 @@ import Contact from "../components/Contact";
 import Footer from "../components/Footer";
 import { motion, useAnimation } from "framer-motion";
 import ProductCard from "../components/ProductCard";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 
 const products = [
   {
@@ -34,6 +35,29 @@ const products = [
   },
 ];
 
+const services = [
+  {
+    title: "Installation",
+    description: "Professional setup of all appliances with proper safety measures",
+    icon: "🔧",
+  },
+  {
+    title: "Maintenance",
+    description: "Regular servicing to ensure optimal performance",
+    icon: "⚡",
+  },
+  {
+    title: "Repair",
+    description: "Quick and reliable repair services for all brands",
+    icon: "🛠️",
+  },
+  {
+    title: "Consultation",
+    description: "Expert advice on choosing the right appliance",
+    icon: "💡",
+  },
+];
+
 const Index = () => {
   const controls = useAnimation();
 
@@ -50,6 +74,49 @@ const Index = () => {
       <Hero />
       <AboutUs />
       
+      {/* Our Services Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-600 to-blue-400" id="services">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="text-4xl sm:text-5xl font-bold text-white mb-4"
+            >
+              Our Services
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-lg text-white/90 max-w-2xl mx-auto"
+            >
+              Comprehensive solutions for all your appliance needs
+            </motion.p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {services.map((service, index) => (
+              <motion.div
+                key={service.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-white/10 backdrop-blur-lg rounded-xl p-6 text-white border border-white/20 hover:bg-white/20 transition-all duration-300"
+              >
+                <div className="text-4xl mb-4">{service.icon}</div>
+                <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
+                <p className="text-white/80">{service.description}</p>
+                <div className="mt-4 flex items-center text-white/60">
+                  <CheckCircle2 className="w-5 h-5 mr-2" />
+                  <span className="text-sm">24/7 Available</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Rental Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-blue-100 to-white" id="rentals">
         <div className="max-w-7xl mx-auto">
@@ -92,9 +159,10 @@ const Index = () => {
           >
             <a
               href="tel:+919876543210"
-              className="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+              className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 rounded-full hover:from-blue-500 hover:to-blue-400 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl group"
             >
               Call Now to Rent: +91 98765 43210
+              <ArrowRight className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" />
             </a>
           </motion.div>
         </div>

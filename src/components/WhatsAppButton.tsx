@@ -4,7 +4,7 @@ const WhatsAppLogo = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
-    fill="currentColor"
+    fill="#25D366"
     className="w-7 h-7"
   >
     <path
