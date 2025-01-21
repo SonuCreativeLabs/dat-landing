@@ -52,6 +52,9 @@ const TestimonialForm = () => {
 
       if (error) throw error;
 
+      // Notify admins about new testimonial
+      await supabase.functions.invoke('notify-new-testimonial');
+
       toast({
         title: "Thank you for your feedback!",
         description: "Your testimonial will be reviewed and published soon.",
