@@ -57,7 +57,7 @@ const TestimonialReview = () => {
       if (error) throw error;
     },
     onSuccess: (_, { status }) => {
-      queryClient.invalidateQueries(["pending-testimonials"]);
+      queryClient.invalidateQueries({ queryKey: ["pending-testimonials"] });
       toast({
         title: `Testimonial ${status === 'approved' ? 'approved' : 'archived'}`,
         description: `The testimonial has been ${status === 'approved' ? 'approved' : 'archived'} successfully.`,

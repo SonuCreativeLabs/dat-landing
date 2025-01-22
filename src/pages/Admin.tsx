@@ -116,14 +116,14 @@ const Admin = () => {
   const { data: stats, isLoading: isLoadingStats } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: async () => {
-      const [messagesCount, testimonialsCount, usersCount] = await Promise.all([
-        supabase.from('messages').select('id', { count: 'exact' }),
+      const [enquiriesCount, testimonialsCount, usersCount] = await Promise.all([
+        supabase.from('enquiries').select('id', { count: 'exact' }),
         supabase.from('testimonials').select('id', { count: 'exact' }),
         supabase.from('profiles').select('id', { count: 'exact' })
       ]);
 
       return {
-        messages: messagesCount.count || 0,
+        enquiries: enquiriesCount.count || 0,
         testimonials: testimonialsCount.count || 0,
         users: usersCount.count || 0
       };
@@ -136,7 +136,7 @@ const Admin = () => {
     queryKey: ["recent-activity"],
     queryFn: async () => {
       const { data: messages } = await supabase
-        .from('messages')
+        .from('enquiries')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(5);
@@ -149,8 +149,8 @@ const Admin = () => {
 
       const activities = [
         ...(messages || []).map(msg => ({
-          type: 'message',
-          title: 'New Contact Message',
+          type: 'enquiry',
+          title: 'New Enquiry',
           description: `From: ${msg.email}`,
           timestamp: msg.created_at
         })),
@@ -177,11 +177,11 @@ const Admin = () => {
         return format(date, 'yyyy-MM-dd');
       }).reverse();
 
-      const [messagesData, testimonialsData] = await Promise.all([
+      const [enquiriesData, testimonialsData] = await Promise.all([
         Promise.all(
           last7Days.map(async date => {
             const { count } = await supabase
-              .from('messages')
+              .from('enquiries')
               .select('id', { count: 'exact' })
               .gte('created_at', `${date}T00:00:00`)
               .lt('created_at', `${date}T23:59:59`);
@@ -201,7 +201,7 @@ const Admin = () => {
       ]);
 
       return {
-        messagesTrend: messagesData,
+        enquiriesTrend: enquiriesData,
         testimonialsTrend: testimonialsData
       };
     },
@@ -220,7 +220,7 @@ const Admin = () => {
   const fetchEnquiries = async () => {
     try {
       const { data, error } = await supabase
-        .from('contact_submissions')
+        .from('enquiries')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -414,12 +414,12 @@ const Admin = () => {
                       <MessageSquare className="w-6 h-6 text-blue-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Total Messages</p>
+                      <p className="text-sm font-medium text-gray-600">Total Enquiries</p>
                       <h3 className="text-2xl font-bold text-gray-900">
                         {isLoadingStats ? (
                           <Loader2 className="w-6 h-6 animate-spin" />
                         ) : (
-                          stats?.messages || 0
+                          stats?.enquiries || 0
                         )}
                       </h3>
                     </div>
@@ -474,7 +474,7 @@ const Admin = () => {
                   <CardContent>
                     <div className="h-[300px]">
                       <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={analyticsData?.messagesTrend}>
+                        <LineChart data={analyticsData?.enquiriesTrend}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis 
                             dataKey="date" 
@@ -488,7 +488,7 @@ const Admin = () => {
                           <Line 
                             type="monotone" 
                             dataKey="count" 
-                            name="Messages"
+                            name="Enquiries"
                             stroke="#2563eb" 
                             strokeWidth={2}
                           />
@@ -511,11 +511,11 @@ const Admin = () => {
                       {recentActivity?.map((activity, index) => (
                         <div key={index} className="flex items-start gap-4">
                           <div className={`p-2 rounded-full ${
-                            activity.type === 'message' ? 'bg-blue-100' : 'bg-yellow-100'
+                            activity.type === 'enquiry' ? 'bg-blue-100' : 'bg-yellow-100'
                           }`}>
-                            {activity.type === 'message' ? (
+                            {activity.type === 'enquiry' ? (
                               <MessageSquare className={`w-4 h-4 ${
-                                activity.type === 'message' ? 'text-blue-600' : 'text-yellow-600'
+                                activity.type === 'enquiry' ? 'text-blue-600' : 'text-yellow-600'
                               }`} />
                             ) : (
                               <Star className="w-4 h-4 text-yellow-600" />
