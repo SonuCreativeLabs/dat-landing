@@ -6,81 +6,99 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       enquiries: {
         Row: {
-          id: string
-          name: string
-          email: string
-          phone: string
-          service_type: string
-          message: string
-          location: string
-          status: 'pending' | 'completed' | 'rejected'
           created_at: string
-          updated_at: string
+          email: string | null
+          id: string
+          location: string | null
+          message: string
+          name: string
+          phone: string
+          service_type: string | null
+          status: string | null
         }
         Insert: {
-          id?: string
-          name: string
-          email: string
-          phone: string
-          service_type: string
-          message: string
-          location: string
-          status?: 'pending' | 'completed' | 'rejected'
           created_at?: string
-          updated_at?: string
+          email?: string | null
+          id?: string
+          location?: string | null
+          message: string
+          name: string
+          phone: string
+          service_type?: string | null
+          status?: string | null
         }
         Update: {
-          id?: string
-          name?: string
-          email?: string
-          phone?: string
-          service_type?: string
-          message?: string
-          location?: string
-          status?: 'pending' | 'completed' | 'rejected'
           created_at?: string
-          updated_at?: string
+          email?: string | null
+          id?: string
+          location?: string | null
+          message?: string
+          name?: string
+          phone?: string
+          service_type?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          is_admin: boolean | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id: string
+          is_admin?: boolean | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          is_admin?: boolean | null
         }
         Relationships: []
       }
       testimonials: {
         Row: {
-          id: string
-          name: string
-          service_type: string
-          message: string
-          location: string
-          rating: number
-          status: 'active' | 'archived'
           created_at: string
-          updated_at: string
+          id: string
+          image: string
+          location: string
+          message: string
+          name: string
+          rating: number
+          service_type: string
+          status: string
         }
         Insert: {
+          created_at: string
           id?: string
-          name: string
-          service_type: string
-          message: string
+          image: string
           location: string
+          message: string
+          name: string
           rating: number
-          status?: 'active' | 'archived'
-          created_at?: string
-          updated_at?: string
+          service_type: string
+          status?: string
         }
         Update: {
-          id?: string
-          name?: string
-          service_type?: string
-          message?: string
-          location?: string
-          rating?: number
-          status?: 'active' | 'archived'
           created_at?: string
-          updated_at?: string
+          id?: string
+          image?: string
+          location?: string
+          message?: string
+          name?: string
+          rating?: number
+          service_type?: string
+          status?: string
         }
         Relationships: []
       }
