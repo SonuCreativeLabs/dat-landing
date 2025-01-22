@@ -6,87 +6,81 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export type Database = {
+export interface Database {
   public: {
     Tables: {
-      contact_submissions: {
+      enquiries: {
         Row: {
-          created_at: string
           id: string
-          message: string
           name: string
+          email: string
           phone: string
+          service_type: string
+          message: string
+          location: string
+          status: 'pending' | 'completed' | 'rejected'
+          created_at: string
+          updated_at: string
         }
         Insert: {
-          created_at?: string
           id?: string
-          message: string
           name: string
+          email: string
           phone: string
+          service_type: string
+          message: string
+          location: string
+          status?: 'pending' | 'completed' | 'rejected'
+          created_at?: string
+          updated_at?: string
         }
         Update: {
-          created_at?: string
           id?: string
-          message?: string
           name?: string
-          phone?: string
-        }
-        Relationships: []
-      }
-      profiles: {
-        Row: {
-          created_at: string
-          email: string
-          id: string
-          is_admin: boolean | null
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          id: string
-          is_admin?: boolean | null
-        }
-        Update: {
-          created_at?: string
           email?: string
-          id?: string
-          is_admin?: boolean | null
+          phone?: string
+          service_type?: string
+          message?: string
+          location?: string
+          status?: 'pending' | 'completed' | 'rejected'
+          created_at?: string
+          updated_at?: string
         }
         Relationships: []
       }
       testimonials: {
         Row: {
-          created_at: string
           id: string
-          image: string
-          location: string
           name: string
+          service_type: string
+          message: string
+          location: string
           rating: number
-          review: string
-          service: string
-          status: string
+          status: 'active' | 'archived'
+          created_at: string
+          updated_at: string
         }
         Insert: {
-          created_at?: string
           id?: string
-          image: string
-          location: string
           name: string
+          service_type: string
+          message: string
+          location: string
           rating: number
-          review: string
-          service: string
-          status?: string
+          status?: 'active' | 'archived'
+          created_at?: string
+          updated_at?: string
         }
         Update: {
-          created_at?: string
           id?: string
-          image?: string
-          location?: string
           name?: string
+          service_type?: string
+          message?: string
+          location?: string
           rating?: number
-          review?: string
-          service?: string
-          status?: string
+          status?: 'active' | 'archived'
+          created_at?: string
+          updated_at?: string
         }
         Relationships: []
       }

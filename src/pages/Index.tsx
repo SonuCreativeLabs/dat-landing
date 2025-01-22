@@ -8,6 +8,7 @@ import Footer from "../components/Footer";
 import { motion, useAnimation } from "framer-motion";
 import ProductCard from "../components/ProductCard";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
+import SupabaseTest from "../components/SupabaseTest";
 
 const products = [
   {
@@ -107,6 +108,7 @@ const Index = () => {
       <Testimonials />
       <Contact />
       <Footer />
+      <SupabaseTest />
     </div>
   );
 };

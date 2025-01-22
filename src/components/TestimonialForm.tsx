@@ -1,177 +1,237 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
-import { useToast } from "./ui/use-toast";
-import { Star, Loader2, MessageCircle } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 
-type TestimonialFormData = {
-  name: string;
-  location: string;
-  rating: number;
-  review: string;
-  service: string;
-};
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Star, Send, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import type { Database } from "@/integrations/supabase/types";
+
+type Tables = Database['public']['Tables'];
+type Testimonial = Tables['testimonials']['Row'];
+type TestimonialInsert = Tables['testimonials']['Insert'];
+
+const SERVICE_TYPES = [
+  "AC Service/Repair",
+  "AC Installation",
+  "AC Rental",
+  "Refrigerator Service/Repair",
+  "Refrigerator Rental",
+  "Washing Machine Service/Repair",
+  "Washing Machine Rental",
+  "Water Purifier Service/Repair",
+  "Water Purifier Rental",
+  "Annual Maintenance Contract",
+  "Other"
+] as const;
 
 const TestimonialForm = () => {
-  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [rating, setRating] = useState(5);
-  const [open, setOpen] = useState(false);
-  
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<TestimonialFormData>();
+  const [rating, setRating] = useState(0);
+  const [hoveredRating, setHoveredRating] = useState(0);
+  const [formData, setFormData] = useState<Omit<TestimonialInsert, 'id' | 'created_at' | 'updated_at' | 'status'>>({
+    name: "",
+    service_type: "",
+    message: "",
+    rating: 0,
+    location: ""
+  });
 
-  const onSubmit = async (data: TestimonialFormData) => {
+  const isFormValid = formData.name && formData.service_type && formData.message && formData.location && rating > 0;
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setIsSubmitting(true);
+
     try {
-      const testimonialData = {
-        ...data,
-        rating,
-        image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.name}`,
-        status: 'pending'
-      };
+      if (!isFormValid) {
+        throw new Error('Please fill in all fields and provide a rating');
+      }
 
-      const { error } = await supabase
+      console.log('Submitting testimonial:', { ...formData, rating });
+
+      const { data, error } = await supabase
         .from('testimonials')
-        .insert([testimonialData]);
+        .insert({
+          ...formData,
+          rating,
+          status: 'active'
+        })
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw new Error('Failed to submit review. Please try again.');
+      }
 
-      // Notify admins about new testimonial
-      await supabase.functions.invoke('notify-new-testimonial');
+      console.log('Testimonial submitted successfully:', data);
 
-      toast({
-        title: "Thank you for your feedback!",
-        description: "Your testimonial will be reviewed and published soon.",
+      toast.success('Thank you for your review! It will be published after moderation.', {
+        duration: 5000
       });
+
+      // Reset form
+      setFormData({
+        name: "",
+        service_type: "",
+        message: "",
+        rating: 0,
+        location: ""
+      });
+      setRating(0);
       
-      reset();
-      setOpen(false);
+      // Reset form fields
+      (e.target as HTMLFormElement).reset();
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-      });
+      console.error('Error submitting testimonial:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to submit review. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="bg-white hover:bg-blue-50 border-blue-200 text-blue-600 hover:text-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 group"
-        >
-          Share Your Experience
-          <MessageCircle className="w-4 h-4 ml-2 group-hover:rotate-12 transition-transform" />
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Share Your Experience</DialogTitle>
-          <DialogDescription>
-            Tell us about your experience with our services. Your feedback helps us improve!
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <Input
-              placeholder="Your Name"
-              {...register("name", { required: "Name is required" })}
-            />
-            {errors.name && (
-              <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>
-            )}
-          </div>
-          
-          <div>
-            <Input
-              placeholder="Your Location (e.g., T. Nagar, Chennai)"
-              {...register("location", { required: "Location is required" })}
-            />
-            {errors.location && (
-              <p className="text-sm text-red-500 mt-1">{errors.location.message}</p>
-            )}
-          </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      className="bg-white rounded-2xl shadow-lg p-8"
+    >
+      <div className="text-center mb-8">
+        <h3 className="text-2xl font-bold text-gray-900">Share Your Experience</h3>
+        <p className="text-gray-600 mt-2">
+          Your review helps others choose reliable appliance services
+        </p>
+      </div>
 
-          <div>
-            <Input
-              placeholder="Service Used (e.g., AC Installation)"
-              {...register("service", { required: "Service is required" })}
-            />
-            {errors.service && (
-              <p className="text-sm text-red-500 mt-1">{errors.service.message}</p>
-            )}
-          </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+            Your Name *
+          </label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            placeholder="John Doe"
+          />
+        </div>
 
-          <div>
-            <label className="block text-sm text-gray-600 mb-2">Rating</label>
-            <div className="flex space-x-1">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  type="button"
-                  onClick={() => setRating(star)}
-                  className="focus:outline-none"
-                >
-                  <Star
-                    className={`w-6 h-6 ${
-                      star <= rating
-                        ? "text-yellow-400 fill-current"
-                        : "text-gray-300"
-                    }`}
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
+        <div>
+          <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+            Your Location *
+          </label>
+          <input
+            type="text"
+            name="location"
+            id="location"
+            value={formData.location}
+            onChange={handleChange}
+            required
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            placeholder="T. Nagar, Chennai"
+          />
+        </div>
 
-          <div>
-            <Textarea
-              placeholder="Share your experience..."
-              {...register("review", { required: "Review is required" })}
-              className="min-h-[100px]"
-            />
-            {errors.review && (
-              <p className="text-sm text-red-500 mt-1">{errors.review.message}</p>
-            )}
-          </div>
+        <div>
+          <label htmlFor="service_type" className="block text-sm font-medium text-gray-700">
+            Service Used *
+          </label>
+          <select
+            name="service_type"
+            id="service_type"
+            value={formData.service_type}
+            onChange={handleChange}
+            required
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          >
+            <option value="">Select a service</option>
+            {SERVICE_TYPES.map((service) => (
+              <option key={service} value={service}>
+                {service}
+              </option>
+            ))}
+          </select>
+        </div>
 
-          <Button
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Rate Our Service *
+          </label>
+          <div className="flex items-center space-x-1">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                type="button"
+                onClick={() => setRating(star)}
+                onMouseEnter={() => setHoveredRating(star)}
+                onMouseLeave={() => setHoveredRating(0)}
+                className="focus:outline-none"
+              >
+                <Star
+                  className={`w-8 h-8 ${
+                    star <= (hoveredRating || rating)
+                      ? "text-yellow-400 fill-current"
+                      : "text-gray-300"
+                  }`}
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="message" className="block text-sm font-medium text-gray-700">
+            Your Review *
+          </label>
+          <textarea
+            name="message"
+            id="message"
+            rows={4}
+            value={formData.message}
+            onChange={handleChange}
+            required
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            placeholder="Tell us about your experience with our service (e.g., technician's professionalism, service quality, timeliness)"
+          />
+        </div>
+
+        <div>
+          <button
             type="submit"
-            className="w-full"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !isFormValid}
+            className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
+              ${isFormValid ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400'} 
+              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
+              disabled:opacity-50 disabled:cursor-not-allowed
+              transition-colors duration-200`}
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                 Submitting...
               </>
             ) : (
-              "Submit Testimonial"
+              <>
+                <Send className="w-5 h-5 mr-2" />
+                Submit Review
+              </>
             )}
-          </Button>
-        </form>
-      </DialogContent>
-    </Dialog>
+          </button>
+        </div>
+      </form>
+    </motion.div>
   );
 };
 

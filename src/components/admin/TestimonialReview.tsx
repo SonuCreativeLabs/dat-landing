@@ -8,27 +8,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, Loader2 } from "lucide-react";
+import { Star, Loader2, Archive, Check, X } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import type { Database } from "@/integrations/supabase/types";
 
-type Testimonial = {
-  id: string;
-  name: string;
-  location: string;
-  image: string;
-  rating: number;
-  review: string;
-  service: string;
-  status: string;
-  created_at: string;
-};
+type Testimonial = Database['public']['Tables']['testimonials']['Row'];
 
 const TestimonialReview = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: testimonials = [], isLoading } = useQuery<Testimonial[]>({
-    queryKey: ["pending-testimonials"],
+  // Fetch pending testimonials
+  const { data: pendingTestimonials = [], isLoading: isPendingLoading } = useQuery<Testimonial[]>({
+    queryKey: ["testimonials", "pending"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("testimonials")
@@ -41,13 +33,29 @@ const TestimonialReview = () => {
     },
   });
 
+  // Fetch archived testimonials
+  const { data: archivedTestimonials = [], isLoading: isArchivedLoading } = useQuery<Testimonial[]>({
+    queryKey: ["testimonials", "archived"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("testimonials")
+        .select("*")
+        .eq("status", "archived")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Update testimonial status mutation
   const updateStatus = useMutation({
     mutationFn: async ({
       id,
       status,
     }: {
       id: string;
-      status: "approved" | "archived";
+      status: "active" | "archived";
     }) => {
       const { error } = await supabase
         .from("testimonials")
@@ -56,24 +64,37 @@ const TestimonialReview = () => {
 
       if (error) throw error;
     },
-    onSuccess: (_, { status }) => {
-      queryClient.invalidateQueries({ queryKey: ["pending-testimonials"] });
+    onSuccess: (_, variables) => {
+      // Invalidate relevant queries
+      queryClient.invalidateQueries({ queryKey: ["testimonials"] });
+      
+      // Show success message
       toast({
-        title: `Testimonial ${status === 'approved' ? 'approved' : 'archived'}`,
-        description: `The testimonial has been ${status === 'approved' ? 'approved' : 'archived'} successfully.`,
+        title: "Success",
+        description: variables.status === "active" 
+          ? "Testimonial approved and published" 
+          : "Testimonial archived",
       });
     },
     onError: (error) => {
+      console.error("Error updating testimonial:", error);
       toast({
-        variant: "destructive",
         title: "Error",
         description: "Failed to update testimonial status",
+        variant: "destructive",
       });
-      console.error("Error updating testimonial:", error);
     },
   });
 
-  if (isLoading) {
+  const handleApprove = (id: string) => {
+    updateStatus.mutate({ id, status: "active" });
+  };
+
+  const handleArchive = (id: string) => {
+    updateStatus.mutate({ id, status: "archived" });
+  };
+
+  if (isPendingLoading || isArchivedLoading) {
     return (
       <div className="flex items-center justify-center p-8">
         <Loader2 className="w-8 h-8 animate-spin" />
@@ -81,66 +102,106 @@ const TestimonialReview = () => {
     );
   }
 
-  if (testimonials.length === 0) {
-    return (
-      <div className="text-center py-8 text-gray-500">
-        No pending testimonials to review
-      </div>
-    );
-  }
-
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {testimonials.map((testimonial) => (
-        <Card key={testimonial.id}>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-4">
-              <img
-                src={testimonial.image}
-                alt={testimonial.name}
-                className="w-12 h-12 rounded-full"
-              />
-              <div>
-                <p className="text-lg">{testimonial.name}</p>
-                <p className="text-sm text-gray-500">{testimonial.location}</p>
-              </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex mb-2">
-              {[...Array(testimonial.rating)].map((_, i) => (
-                <Star
-                  key={i}
-                  className="w-4 h-4 text-yellow-400 fill-current"
-                />
-              ))}
-            </div>
-            <p className="text-gray-600 mb-2">{testimonial.review}</p>
-            <p className="text-sm font-medium text-blue-600">
-              {testimonial.service}
-            </p>
-          </CardContent>
-          <CardFooter className="flex justify-end gap-2">
-            <Button
-              variant="outline"
-              onClick={() =>
-                updateStatus.mutate({ id: testimonial.id, status: "archived" })
-              }
-              disabled={updateStatus.isPending}
-            >
-              Archive
-            </Button>
-            <Button
-              onClick={() =>
-                updateStatus.mutate({ id: testimonial.id, status: "approved" })
-              }
-              disabled={updateStatus.isPending}
-            >
-              Approve
-            </Button>
-          </CardFooter>
-        </Card>
-      ))}
+    <div className="space-y-8">
+      {/* Pending Testimonials */}
+      <div>
+        <h2 className="text-2xl font-bold mb-4">Pending Reviews</h2>
+        {pendingTestimonials.length === 0 ? (
+          <p className="text-gray-500">No pending testimonials to review</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {pendingTestimonials.map((testimonial) => (
+              <Card key={testimonial.id}>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span>{testimonial.name}</span>
+                    <div className="flex items-center">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className="w-4 h-4 text-yellow-400 fill-current"
+                        />
+                      ))}
+                    </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600 mb-2">
+                    Service: {testimonial.service_type}
+                  </p>
+                  <p className="text-gray-700">{testimonial.message}</p>
+                </CardContent>
+                <CardFooter className="flex justify-end space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleArchive(testimonial.id)}
+                    disabled={updateStatus.isLoading}
+                  >
+                    <X className="w-4 h-4 mr-2" />
+                    Reject
+                  </Button>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={() => handleApprove(testimonial.id)}
+                    disabled={updateStatus.isLoading}
+                  >
+                    <Check className="w-4 h-4 mr-2" />
+                    Approve
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Archived Testimonials */}
+      <div>
+        <h2 className="text-2xl font-bold mb-4">Archived Reviews</h2>
+        {archivedTestimonials.length === 0 ? (
+          <p className="text-gray-500">No archived testimonials</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {archivedTestimonials.map((testimonial) => (
+              <Card key={testimonial.id}>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span>{testimonial.name}</span>
+                    <div className="flex items-center">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className="w-4 h-4 text-yellow-400 fill-current"
+                        />
+                      ))}
+                    </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600 mb-2">
+                    Service: {testimonial.service_type}
+                  </p>
+                  <p className="text-gray-700">{testimonial.message}</p>
+                </CardContent>
+                <CardFooter className="flex justify-end">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleApprove(testimonial.id)}
+                    disabled={updateStatus.isLoading}
+                  >
+                    <Archive className="w-4 h-4 mr-2" />
+                    Restore
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

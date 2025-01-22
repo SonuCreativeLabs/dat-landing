@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS public.enquiries (
     phone TEXT NOT NULL,
     service_type TEXT NOT NULL,
     message TEXT NOT NULL,
+    location TEXT NOT NULL,
     status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'rejected')),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -17,6 +18,7 @@ CREATE TABLE IF NOT EXISTS public.testimonials (
     name TEXT NOT NULL,
     service_type TEXT NOT NULL,
     message TEXT NOT NULL,
+    location TEXT NOT NULL,
     rating INTEGER CHECK (rating >= 1 AND rating <= 5),
     status TEXT DEFAULT 'active' CHECK (status IN ('active', 'archived')),
     created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -62,6 +64,21 @@ CREATE POLICY "Allow anyone to read active testimonials"
     FOR SELECT
     TO anon
     USING (status = 'active');
+
+-- Allow anyone to insert testimonials
+CREATE POLICY "Allow anyone to insert testimonials"
+    ON public.testimonials
+    FOR INSERT
+    TO anon
+    WITH CHECK (true);
+
+-- Allow authenticated users to update testimonials
+CREATE POLICY "Allow authenticated users to update testimonials"
+    ON public.testimonials
+    FOR UPDATE
+    TO authenticated
+    USING (true)
+    WITH CHECK (true);
 
 -- Allow authenticated users to manage testimonials
 CREATE POLICY "Allow authenticated users to manage testimonials"
