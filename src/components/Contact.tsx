@@ -48,13 +48,16 @@ const Contact = () => {
       
       const { error } = await supabase
         .from("enquiries")
-        .insert([
-          {
-            ...data,
-            status: "pending",
-            created_at: new Date().toISOString(),
-          },
-        ]);
+        .insert({
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          service_type: data.service_type,
+          location: data.location,
+          message: data.message,
+          status: "pending",
+          created_at: new Date().toISOString(),
+        });
 
       if (error) throw error;
 

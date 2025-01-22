@@ -46,13 +46,15 @@ const TestimonialForm = () => {
       
       const { error } = await supabase
         .from("testimonials")
-        .insert([
-          {
-            ...data,
-            status: "pending",
-            created_at: new Date().toISOString(),
-          },
-        ]);
+        .insert({
+          name: data.name,
+          service_type: data.service_type,
+          location: data.location,
+          rating: data.rating,
+          message: data.message,
+          status: "pending",
+          created_at: new Date().toISOString(),
+        });
 
       if (error) throw error;
 
