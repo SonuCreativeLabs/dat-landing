@@ -137,7 +137,7 @@ const TestimonialReview = () => {
                     variant="outline"
                     size="sm"
                     onClick={() => handleArchive(testimonial.id)}
-                    disabled={updateStatus.isLoading}
+                    disabled={updateStatus.isPending}
                   >
                     <X className="w-4 h-4 mr-2" />
                     Reject
@@ -146,7 +146,7 @@ const TestimonialReview = () => {
                     variant="default"
                     size="sm"
                     onClick={() => handleApprove(testimonial.id)}
-                    disabled={updateStatus.isLoading}
+                    disabled={updateStatus.isPending}
                   >
                     <Check className="w-4 h-4 mr-2" />
                     Approve
@@ -191,7 +191,7 @@ const TestimonialReview = () => {
                     variant="outline"
                     size="sm"
                     onClick={() => handleApprove(testimonial.id)}
-                    disabled={updateStatus.isLoading}
+                    disabled={updateStatus.isPending}
                   >
                     <Archive className="w-4 h-4 mr-2" />
                     Restore
