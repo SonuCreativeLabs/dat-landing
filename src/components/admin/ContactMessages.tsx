@@ -7,21 +7,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Loader2, Phone, Mail } from "lucide-react";
+import type { Database } from "@/integrations/supabase/types";
 
-type ContactSubmission = {
-  id: string;
-  name: string;
-  phone: string;
-  message: string;
-  created_at: string;
-};
+type Tables = Database["public"]["Tables"];
+type Enquiry = Tables["enquiries"]["Row"];
 
 const ContactMessages = () => {
-  const { data: messages = [], isLoading } = useQuery<ContactSubmission[]>({
-    queryKey: ["contact-submissions"],
+  const { data: messages = [], isLoading } = useQuery<Enquiry[]>({
+    queryKey: ["enquiries"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("contact_submissions")
+        .from("enquiries")
         .select("*")
         .order("created_at", { ascending: false });
 
@@ -64,6 +60,12 @@ const ContactMessages = () => {
                 <Phone className="w-4 h-4" />
                 <span>{message.phone}</span>
               </div>
+              {message.email && (
+                <div className="flex items-center gap-2 text-gray-600">
+                  <Mail className="w-4 h-4" />
+                  <span>{message.email}</span>
+                </div>
+              )}
               <p className="text-gray-700 whitespace-pre-wrap">
                 {message.message}
               </p>

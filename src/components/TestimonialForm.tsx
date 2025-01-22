@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Star, Send, Loader2 } from "lucide-react";
@@ -6,9 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
 
-type Tables = Database['public']['Tables'];
-type Testimonial = Tables['testimonials']['Row'];
-type TestimonialInsert = Tables['testimonials']['Insert'];
+type Tables = Database["public"]["Tables"];
+type TestimonialInsert = Tables["testimonials"]["Insert"];
 
 const SERVICE_TYPES = [
   "AC Service/Repair",
@@ -28,12 +26,13 @@ const TestimonialForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
-  const [formData, setFormData] = useState<Omit<TestimonialInsert, 'id' | 'created_at' | 'updated_at' | 'status'>>({
+  const [formData, setFormData] = useState<Omit<TestimonialInsert, "id" | "status" | "created_at" | "updated_at">>({
     name: "",
     service_type: "",
     message: "",
     rating: 0,
-    location: ""
+    location: "",
+    image: null
   });
 
   const isFormValid = formData.name && formData.service_type && formData.message && formData.location && rating > 0;
@@ -44,29 +43,30 @@ const TestimonialForm = () => {
 
     try {
       if (!isFormValid) {
-        throw new Error('Please fill in all fields and provide a rating');
+        throw new Error("Please fill in all fields and provide a rating");
       }
 
-      console.log('Submitting testimonial:', { ...formData, rating });
+      console.log("Submitting testimonial:", { ...formData, rating });
 
       const { data, error } = await supabase
-        .from('testimonials')
+        .from("testimonials")
         .insert({
           ...formData,
           rating,
-          status: 'active'
+          status: "pending",
+          created_at: new Date().toISOString()
         })
         .select()
         .single();
 
       if (error) {
-        console.error('Supabase error:', error);
-        throw new Error('Failed to submit review. Please try again.');
+        console.error("Supabase error:", error);
+        throw new Error("Failed to submit review. Please try again.");
       }
 
-      console.log('Testimonial submitted successfully:', data);
+      console.log("Testimonial submitted successfully:", data);
 
-      toast.success('Thank you for your review! It will be published after moderation.', {
+      toast.success("Thank you for your review! It will be published after moderation.", {
         duration: 5000
       });
 
@@ -76,15 +76,16 @@ const TestimonialForm = () => {
         service_type: "",
         message: "",
         rating: 0,
-        location: ""
+        location: "",
+        image: null
       });
       setRating(0);
       
       // Reset form fields
       (e.target as HTMLFormElement).reset();
     } catch (error) {
-      console.error('Error submitting testimonial:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to submit review. Please try again.');
+      console.error("Error submitting testimonial:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to submit review. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

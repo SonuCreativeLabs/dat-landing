@@ -5,9 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
 
-type Tables = Database['public']['Tables'];
-type Enquiry = Tables['enquiries']['Row'];
-type EnquiryInsert = Tables['enquiries']['Insert'];
+type Tables = Database["public"]["Tables"];
+type EnquiryInsert = Tables["enquiries"]["Insert"];
 
 const SERVICE_TYPES = [
   "AC Service/Repair",
@@ -25,7 +24,7 @@ const SERVICE_TYPES = [
 
 const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState<Omit<EnquiryInsert, 'id' | 'created_at' | 'updated_at' | 'status'>>({
+  const [formData, setFormData] = useState<Omit<EnquiryInsert, "id" | "created_at" | "updated_at" | "status">>({
     name: "",
     phone: "",
     email: "",
@@ -41,42 +40,42 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      // Validate form data
       if (!isFormValid) {
-        throw new Error('Please fill in all required fields');
+        throw new Error("Please fill in all required fields");
       }
 
       // Email validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.email)) {
-        throw new Error('Please enter a valid email address');
+      if (!emailRegex.test(formData.email || "")) {
+        throw new Error("Please enter a valid email address");
       }
 
       // Phone validation (Indian format)
       const phoneRegex = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
       if (!phoneRegex.test(formData.phone)) {
-        throw new Error('Please enter a valid Indian phone number');
+        throw new Error("Please enter a valid Indian phone number");
       }
 
-      console.log('Submitting enquiry:', formData);
+      console.log("Submitting enquiry:", formData);
 
       const { data, error } = await supabase
-        .from('enquiries')
+        .from("enquiries")
         .insert({
           ...formData,
-          status: 'pending' as const
+          status: "pending",
+          created_at: new Date().toISOString()
         })
         .select()
         .single();
 
       if (error) {
-        console.error('Supabase error:', error);
-        throw new Error('Failed to send enquiry. Please try again.');
+        console.error("Supabase error:", error);
+        throw new Error("Failed to send enquiry. Please try again.");
       }
 
-      console.log('Enquiry submitted successfully:', data);
+      console.log("Enquiry submitted successfully:", data);
 
-      toast.success('Thank you for your enquiry! Our team will contact you within 2 hours.', {
+      toast.success("Thank you for your enquiry! Our team will contact you within 2 hours.", {
         duration: 5000
       });
 
@@ -93,8 +92,8 @@ const Contact = () => {
       // Reset form fields
       (e.target as HTMLFormElement).reset();
     } catch (error) {
-      console.error('Error submitting form:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to send enquiry. Please try again.');
+      console.error("Error submitting form:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to send enquiry. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
