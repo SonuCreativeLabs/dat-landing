@@ -46,6 +46,7 @@ import {
 import { format, subDays } from 'date-fns';
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const SIDEBAR_ITEMS = [
   {
@@ -89,6 +90,9 @@ const SIDEBAR_ITEMS = [
     href: "#archive"
   }
 ];
+
+type TestimonialStatus = "pending" | "approved" | "rejected";
+type EnquiryStatus = "new" | "in-progress" | "completed" | "cancelled";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -232,16 +236,16 @@ const Admin = () => {
     }
   };
 
-  const handleEnquiryStatus = async (id: string, newStatus: 'pending' | 'completed' | 'rejected') => {
+  const handleEnquiryStatusUpdate = async (id: string, status: EnquiryStatus) => {
     try {
       const { error } = await supabase
         .from('enquiries')
-        .update({ status: newStatus })
+        .update({ status })
         .eq('id', id);
 
       if (error) throw error;
 
-      toast.success(`Enquiry marked as ${newStatus}`);
+      toast.success('Enquiry status updated successfully');
       fetchEnquiries();
     } catch (error) {
       console.error('Error updating enquiry status:', error);
@@ -249,37 +253,9 @@ const Admin = () => {
     }
   };
 
-  const fetchTestimonials = async () => {
-    try {
-      // Fetch active testimonials
-      const { data: activeData, error: activeError } = await supabase
-        .from('testimonials')
-        .select('*')
-        .not('status', 'eq', 'archived')
-        .order('created_at', { ascending: false });
-
-      if (activeError) throw activeError;
-
-      // Fetch archived testimonials
-      const { data: archivedData, error: archivedError } = await supabase
-        .from('testimonials')
-        .select('*')
-        .eq('status', 'archived')
-        .order('created_at', { ascending: false });
-
-      if (archivedError) throw archivedError;
-
-      setTestimonials(activeData || []);
-      setArchivedTestimonials(archivedData || []);
-    } catch (error) {
-      console.error('Error fetching testimonials:', error);
-      toast.error('Failed to fetch testimonials');
-    }
-  };
-
   const handleTestimonialAction = async (id: string, action: 'approve' | 'archive' | 'restore') => {
     try {
-      let newStatus = action === 'approve' ? 'active' : action === 'archive' ? 'archived' : 'active';
+      const newStatus: TestimonialStatus = action === 'approve' ? 'approved' : action === 'archive' ? 'rejected' : 'pending';
       
       const { error } = await supabase
         .from('testimonials')
@@ -296,14 +272,44 @@ const Admin = () => {
     }
   };
 
-  const renderEnquiryStatus = (status: string) => {
+  const fetchTestimonials = async () => {
+    try {
+      // Fetch active testimonials
+      const { data: activeData, error: activeError } = await supabase
+        .from('testimonials')
+        .select('*')
+        .not('status', 'eq', 'rejected')
+        .order('created_at', { ascending: false });
+
+      if (activeError) throw activeError;
+
+      // Fetch archived testimonials
+      const { data: archivedData, error: archivedError } = await supabase
+        .from('testimonials')
+        .select('*')
+        .eq('status', 'rejected')
+        .order('created_at', { ascending: false });
+
+      if (archivedError) throw archivedError;
+
+      setTestimonials(activeData || []);
+      setArchivedTestimonials(archivedData || []);
+    } catch (error) {
+      console.error('Error fetching testimonials:', error);
+      toast.error('Failed to fetch testimonials');
+    }
+  };
+
+  const renderEnquiryStatus = (status: EnquiryStatus) => {
     switch (status) {
-      case 'pending':
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>;
+      case 'new':
+        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">New</span>;
+      case 'in-progress':
+        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">In Progress</span>;
       case 'completed':
         return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Completed</span>;
-      case 'rejected':
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Rejected</span>;
+      case 'cancelled':
+        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Cancelled</span>;
       default:
         return null;
     }
@@ -548,6 +554,9 @@ const Admin = () => {
                         <h3 className="font-semibold text-lg">{enquiry.name}</h3>
                         <p className="text-sm text-gray-500">{enquiry.phone}</p>
                       </div>
+                      <div className="flex items-center gap-2">
+                        {renderEnquiryStatus(enquiry.status as EnquiryStatus)}
+                      </div>
                     </div>
                     <div className="mt-2">
                       <p className="text-sm font-medium text-gray-500">Message</p>
@@ -563,45 +572,177 @@ const Admin = () => {
           )}
 
           {activePage === 'testimonials' && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-800">Active Testimonials</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {testimonials.map((testimonial) => (
-                  <div key={testimonial.id} className="bg-white p-6 rounded-xl shadow-sm">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-semibold">{testimonial.name}</h3>
-                        <p className="text-sm text-gray-500">{testimonial.service_type}</p>
-                      </div>
-                      <button
-                        onClick={() => handleTestimonialAction(testimonial.id, 'archive')}
-                        className="text-gray-400 hover:text-gray-600"
-                      >
-                        <Archive className="w-5 h-5" />
-                      </button>
-                    </div>
-                    <p className="mt-4 text-gray-600">{testimonial.message}</p>
-                    <div className="mt-4 flex items-center">
-                      <div className="flex-1">
-                        <div className="flex items-center">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-4 h-4 ${
-                                i < testimonial.rating
-                                  ? "text-yellow-400 fill-current"
-                                  : "text-gray-300"
-                              }`}
-                            />
-                          ))}
+            <div className="space-y-8">
+              {/* New Testimonials Section */}
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">New Testimonials</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {testimonials
+                    .filter(t => t.status === 'pending')
+                    .map((testimonial) => (
+                      <div key={testimonial.id} className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-yellow-400">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="font-semibold">{testimonial.name}</h3>
+                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                              <span>{testimonial.service_type}</span>
+                              {testimonial.location && (
+                                <>
+                                  <span>•</span>
+                                  <span>{testimonial.location}</span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Select
+                              defaultValue={testimonial.status}
+                              onValueChange={(value: TestimonialStatus) => {
+                                const action = value === 'approved' ? 'approve' : 
+                                             value === 'rejected' ? 'archive' : 'restore';
+                                handleTestimonialAction(testimonial.id, action);
+                              }}
+                            >
+                              <SelectTrigger className="w-[130px] bg-white shadow-lg border-gray-200 hover:bg-gray-50 transition-all duration-200">
+                                <SelectValue placeholder="Status" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-white shadow-xl border border-gray-100">
+                                <SelectItem value="pending" className="hover:bg-yellow-50">
+                                  <span className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-yellow-400" />
+                                    Pending
+                                  </span>
+                                </SelectItem>
+                                <SelectItem value="approved" className="hover:bg-green-50">
+                                  <span className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-green-400" />
+                                    Approved
+                                  </span>
+                                </SelectItem>
+                                <SelectItem value="rejected" className="hover:bg-red-50">
+                                  <span className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-red-400" />
+                                    Rejected
+                                  </span>
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <p className="mt-4 text-gray-600">{testimonial.message}</p>
+                        <div className="mt-4 flex items-center">
+                          <div className="flex-1">
+                            <div className="flex items-center">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`w-4 h-4 ${
+                                    i < testimonial.rating
+                                      ? "text-yellow-400 fill-current"
+                                      : "text-gray-300"
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                          <span className="text-sm text-gray-500">
+                            {new Date(testimonial.created_at).toLocaleDateString()}
+                          </span>
                         </div>
                       </div>
-                      <span className="text-sm text-gray-500">
-                        {new Date(testimonial.created_at).toLocaleDateString()}
-                      </span>
-                    </div>
+                    ))}
+                </div>
+                {testimonials.filter(t => t.status === 'pending').length === 0 && (
+                  <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
+                    No new testimonials to review
                   </div>
-                ))}
+                )}
+              </div>
+
+              {/* Approved Testimonials Section */}
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">Approved Testimonials</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {testimonials
+                    .filter(t => t.status === 'approved')
+                    .map((testimonial) => (
+                      <div key={testimonial.id} className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-400">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="font-semibold">{testimonial.name}</h3>
+                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                              <span>{testimonial.service_type}</span>
+                              {testimonial.location && (
+                                <>
+                                  <span>•</span>
+                                  <span>{testimonial.location}</span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Select
+                              defaultValue={testimonial.status}
+                              onValueChange={(value: TestimonialStatus) => {
+                                const action = value === 'approved' ? 'approve' : 
+                                             value === 'rejected' ? 'archive' : 'restore';
+                                handleTestimonialAction(testimonial.id, action);
+                              }}
+                            >
+                              <SelectTrigger className="w-[130px] bg-white shadow-lg border-gray-200 hover:bg-gray-50 transition-all duration-200">
+                                <SelectValue placeholder="Status" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-white shadow-xl border border-gray-100">
+                                <SelectItem value="pending" className="hover:bg-yellow-50">
+                                  <span className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-yellow-400" />
+                                    Pending
+                                  </span>
+                                </SelectItem>
+                                <SelectItem value="approved" className="hover:bg-green-50">
+                                  <span className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-green-400" />
+                                    Approved
+                                  </span>
+                                </SelectItem>
+                                <SelectItem value="rejected" className="hover:bg-red-50">
+                                  <span className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-red-400" />
+                                    Rejected
+                                  </span>
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <p className="mt-4 text-gray-600">{testimonial.message}</p>
+                        <div className="mt-4 flex items-center">
+                          <div className="flex-1">
+                            <div className="flex items-center">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`w-4 h-4 ${
+                                    i < testimonial.rating
+                                      ? "text-yellow-400 fill-current"
+                                      : "text-gray-300"
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                          <span className="text-sm text-gray-500">
+                            {new Date(testimonial.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+                {testimonials.filter(t => t.status === 'approved').length === 0 && (
+                  <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
+                    No approved testimonials yet
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -615,7 +756,15 @@ const Admin = () => {
                     <div className="flex justify-between items-start">
                       <div>
                         <h3 className="font-semibold">{testimonial.name}</h3>
-                        <p className="text-sm text-gray-500">{testimonial.service_type}</p>
+                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                          <span>{testimonial.service_type}</span>
+                          {testimonial.location && (
+                            <>
+                              <span>•</span>
+                              <span>{testimonial.location}</span>
+                            </>
+                          )}
+                        </div>
                       </div>
                       <button
                         onClick={() => handleTestimonialAction(testimonial.id, 'restore')}

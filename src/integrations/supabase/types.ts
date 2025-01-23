@@ -78,7 +78,7 @@ export interface Database {
           location: string
           rating: number
           message: string
-          status: "new" | "approved" | "rejected"
+          status: "pending" | "approved" | "rejected"
           admin_comment: string | null
           image: string | null
         }
@@ -90,7 +90,7 @@ export interface Database {
           location: string
           rating: number
           message: string
-          status?: "new" | "approved" | "rejected"
+          status?: "pending" | "approved" | "rejected"
           admin_comment?: string | null
           image?: string | null
         }
@@ -102,7 +102,7 @@ export interface Database {
           location?: string
           rating?: number
           message?: string
-          status?: "new" | "approved" | "rejected"
+          status?: "pending" | "approved" | "rejected"
           admin_comment?: string | null
           image?: string | null
         }

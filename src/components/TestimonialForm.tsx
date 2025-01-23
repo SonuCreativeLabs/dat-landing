@@ -88,8 +88,9 @@ export default function TestimonialForm() {
         service_type: values.service_type,
         message: values.message.trim(),
         rating: parseInt(values.rating),
-        status: 'pending', // Status starts as pending and will be reviewed by admin
-        image: null // Optional field in the table
+        status: 'pending' as const,
+        image: null,
+        created_at: new Date().toISOString()
       };
 
       console.log('Attempting to submit testimonial:', testimonialData);
@@ -97,7 +98,7 @@ export default function TestimonialForm() {
       // Insert the testimonial
       const { error } = await supabase
         .from('testimonials')
-        .insert([testimonialData]);
+        .insert(testimonialData);
 
       if (error) {
         console.error('Database error:', error);
@@ -122,7 +123,7 @@ export default function TestimonialForm() {
         rating: "",
       });
       
-      toast.success('Thank you for your review! It will be visible after admin approval.');
+      toast.success('Thank you for your review!');
     } catch (error) {
       console.error('Submission error:', error);
       if (error instanceof Error) {
