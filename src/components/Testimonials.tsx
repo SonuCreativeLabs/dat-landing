@@ -4,10 +4,14 @@ import TestimonialForm from "./TestimonialForm";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { Button } from "./ui/button";
+import { useState } from "react";
 
 type Testimonial = Database['public']['Tables']['testimonials']['Row'];
 
 const Testimonials = () => {
+  const [showForm, setShowForm] = useState(false);
+
   const { data: testimonials = [] } = useQuery<Testimonial[]>({
     queryKey: ["testimonials", "active"],
     queryFn: async () => {
@@ -51,12 +55,13 @@ const Testimonials = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {testimonials.map((testimonial) => (
+          {testimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100"
+              transition={{ delay: index * 0.1 }}
+              className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 transform transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
             >
               <div className="flex items-center mb-4">
                 <div className="flex-1">
@@ -73,13 +78,34 @@ const Testimonials = () => {
                 <Quote className="w-8 h-8 text-blue-200 absolute -top-4 -left-4 opacity-50" />
                 <p className="text-gray-600 relative z-10">{testimonial.message}</p>
               </div>
+              <p className="mt-4 text-sm text-gray-500">{testimonial.location}</p>
             </motion.div>
           ))}
         </div>
 
-        <div className="mt-16">
-          <TestimonialForm />
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          className="text-center mt-12"
+        >
+          <Button
+            onClick={() => setShowForm(!showForm)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+          >
+            Write Your Testimonial
+          </Button>
+        </motion.div>
+
+        {showForm && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="mt-12"
+          >
+            <TestimonialForm />
+          </motion.div>
+        )}
       </div>
     </section>
   );
