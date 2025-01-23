@@ -15,17 +15,21 @@ import type { Database } from "@/integrations/supabase/types";
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   location: z.string().min(2, "Location must be at least 2 characters"),
-  service_type: z.string().min(1, "Please select a service type"),
-  review: z.string().min(10, "Review must be at least 10 characters"),
+  service_type: z.enum(["appliance_sales", "appliance_service", "appliance_rentals", "others"], {
+    required_error: "Please select a service type",
+  }),
+  message: z.string().min(10, "Message must be at least 10 characters"),
   rating: z.string().min(1, "Please select a rating"),
 });
+
+type FormValues = z.infer<typeof formSchema>;
 
 const serviceTypes = [
   { value: "appliance_sales", label: "Appliance Sales" },
   { value: "appliance_service", label: "Appliance Service" },
   { value: "appliance_rentals", label: "Appliance Rentals" },
   { value: "others", label: "Others" },
-];
+] as const;
 
 const ratings = [
   { value: "5", label: "⭐⭐⭐⭐⭐ Excellent" },
@@ -33,67 +37,98 @@ const ratings = [
   { value: "3", label: "⭐⭐⭐ Good" },
   { value: "2", label: "⭐⭐ Fair" },
   { value: "1", label: "⭐ Poor" },
-];
+] as const;
 
 export default function TestimonialForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [supabaseInitialized, setSupabaseInitialized] = useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       location: "",
-      service_type: "",
-      review: "",
+      service_type: undefined,
+      message: "",
       rating: "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  // Test Supabase connection on mount
+  useEffect(() => {
+    async function initSupabase() {
+      try {
+        const { data, error } = await supabase.from('testimonials').select('count');
+        if (error) throw error;
+        setSupabaseInitialized(true);
+        console.log('Supabase connection successful');
+      } catch (error) {
+        console.error('Failed to initialize Supabase:', error);
+        toast.error('Failed to connect to the database');
+      }
+    }
+
+    initSupabase();
+  }, []);
+
+  async function onSubmit(values: FormValues) {
+    if (!supabaseInitialized) {
+      toast.error('Database connection not ready. Please try again.');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
+      console.log('Form values:', values);
 
-      // Format the data according to the database schema
-      const testimonialData: Database['public']['Tables']['testimonials']['Insert'] = {
-        name: values.name,
-        location: values.location,
+      // Prepare the testimonial data according to the actual table structure
+      const testimonialData = {
+        name: values.name.trim(),
+        location: values.location.trim(),
         service_type: values.service_type,
-        message: values.review,
+        message: values.message.trim(),
         rating: parseInt(values.rating),
-        status: 'new',
-        created_at: new Date().toISOString(),
-        admin_comment: null,
-        image: null
+        status: 'pending', // Status starts as pending and will be reviewed by admin
+        image: null // Optional field in the table
       };
 
-      console.log('Submitting testimonial data:', testimonialData);
+      console.log('Attempting to submit testimonial:', testimonialData);
 
-      const { data, error } = await supabase
+      // Insert the testimonial
+      const { error } = await supabase
         .from('testimonials')
-        .insert([testimonialData])
-        .select();
+        .insert([testimonialData]);
 
       if (error) {
-        console.error('Supabase error:', error);
+        console.error('Database error:', error);
         if (error.code === '23505') {
           toast.error('You have already submitted a testimonial');
         } else if (error.code === '23503') {
           toast.error('Invalid service type selected');
+        } else if (error.code === '23502') {
+          toast.error('Please fill in all required fields');
         } else {
-          toast.error(`Error: ${error.message}`);
+          toast.error(`Submission failed: ${error.message}`);
         }
-        throw error;
+        return;
       }
 
-      console.log('Testimonial saved successfully:', data);
-      toast.success('Thank you for your review! It will be visible after moderation.');
-      form.reset();
+      // Clear form and show success message
+      form.reset({
+        name: "",
+        location: "",
+        service_type: undefined,
+        message: "",
+        rating: "",
+      });
+      
+      toast.success('Thank you for your review! It will be visible after admin approval.');
     } catch (error) {
-      console.error('Error submitting testimonial:', error);
+      console.error('Submission error:', error);
       if (error instanceof Error) {
         toast.error(`Error: ${error.message}`);
       } else {
-        toast.error('Something went wrong. Please try again.');
+        toast.error('Failed to submit testimonial. Please try again.');
       }
     } finally {
       setIsSubmitting(false);
@@ -206,10 +241,10 @@ export default function TestimonialForm() {
 
           <FormField
             control={form.control}
-            name="review"
+            name="message"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-700">Your Review</FormLabel>
+                <FormLabel className="text-gray-700">Your Message</FormLabel>
                 <FormControl>
                   <Textarea
                     placeholder="Share your experience with our service..."
@@ -225,7 +260,7 @@ export default function TestimonialForm() {
           <Button
             type="submit"
             className="w-full md:w-auto px-8 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !supabaseInitialized}
           >
             {isSubmitting ? (
               <div className="flex items-center justify-center">
