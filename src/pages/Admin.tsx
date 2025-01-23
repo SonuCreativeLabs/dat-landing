@@ -580,21 +580,30 @@ const Admin = () => {
                   {testimonials
                     .filter(t => t.status === 'pending')
                     .map((testimonial) => (
-                      <div key={testimonial.id} className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-yellow-400">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="font-semibold">{testimonial.name}</h3>
-                            <div className="flex items-center gap-2 text-sm text-gray-500">
-                              <span>{testimonial.service_type}</span>
-                              {testimonial.location && (
-                                <>
-                                  <span>•</span>
-                                  <span>{testimonial.location}</span>
-                                </>
-                              )}
+                      <div key={testimonial.id} className="bg-white p-8 rounded-xl shadow-md border-l-4 border-yellow-400 hover:shadow-lg transition-shadow h-full flex flex-col">
+                        <div className="flex justify-between items-start gap-8">
+                          <div className="flex items-start gap-4 flex-1 min-w-0">
+                            <div className="w-12 h-12 rounded-full bg-yellow-50 flex items-center justify-center flex-shrink-0">
+                              <span className="text-xl font-semibold text-yellow-600">
+                                {testimonial.name.charAt(0)}
+                              </span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-lg text-gray-900 mb-2">{testimonial.name}</h3>
+                              <div className="flex items-center gap-2 text-sm text-gray-500">
+                                <span>{testimonial.service_type.split('_').map(word => 
+                                  word.charAt(0).toUpperCase() + word.slice(1)
+                                ).join(' ')}</span>
+                                {testimonial.location && (
+                                  <>
+                                    <span>•</span>
+                                    <span>{testimonial.location}</span>
+                                  </>
+                                )}
+                              </div>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex-shrink-0 pt-1">
                             <Select
                               defaultValue={testimonial.status}
                               onValueChange={(value: TestimonialStatus) => {
@@ -629,25 +638,29 @@ const Admin = () => {
                             </Select>
                           </div>
                         </div>
-                        <p className="mt-4 text-gray-600">{testimonial.message}</p>
-                        <div className="mt-4 flex items-center">
-                          <div className="flex-1">
-                            <div className="flex items-center">
+                        <div className="mt-6 flex-1 flex flex-col">
+                          <p className="text-gray-600 text-base leading-relaxed flex-1">{testimonial.message}</p>
+                          <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-4">
+                            <div className="flex items-center gap-1">
                               {[...Array(5)].map((_, i) => (
                                 <Star
                                   key={i}
-                                  className={`w-4 h-4 ${
+                                  className={`w-5 h-5 ${
                                     i < testimonial.rating
                                       ? "text-yellow-400 fill-current"
-                                      : "text-gray-300"
+                                      : "text-gray-200"
                                   }`}
                                 />
                               ))}
                             </div>
+                            <span className="text-sm text-gray-500">
+                              {new Date(testimonial.created_at).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric'
+                              })}
+                            </span>
                           </div>
-                          <span className="text-sm text-gray-500">
-                            {new Date(testimonial.created_at).toLocaleDateString()}
-                          </span>
                         </div>
                       </div>
                     ))}
@@ -666,21 +679,30 @@ const Admin = () => {
                   {testimonials
                     .filter(t => t.status === 'approved')
                     .map((testimonial) => (
-                      <div key={testimonial.id} className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-400">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="font-semibold">{testimonial.name}</h3>
-                            <div className="flex items-center gap-2 text-sm text-gray-500">
-                              <span>{testimonial.service_type}</span>
-                              {testimonial.location && (
-                                <>
-                                  <span>•</span>
-                                  <span>{testimonial.location}</span>
-                                </>
-                              )}
+                      <div key={testimonial.id} className="bg-white p-8 rounded-xl shadow-md border-l-4 border-green-400 hover:shadow-lg transition-shadow h-full flex flex-col">
+                        <div className="flex justify-between items-start gap-8">
+                          <div className="flex items-start gap-4 flex-1 min-w-0">
+                            <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0">
+                              <span className="text-xl font-semibold text-green-600">
+                                {testimonial.name.charAt(0)}
+                              </span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-lg text-gray-900 mb-2">{testimonial.name}</h3>
+                              <div className="flex items-center gap-2 text-sm text-gray-500">
+                                <span>{testimonial.service_type.split('_').map(word => 
+                                  word.charAt(0).toUpperCase() + word.slice(1)
+                                ).join(' ')}</span>
+                                {testimonial.location && (
+                                  <>
+                                    <span>•</span>
+                                    <span>{testimonial.location}</span>
+                                  </>
+                                )}
+                              </div>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex-shrink-0 pt-1">
                             <Select
                               defaultValue={testimonial.status}
                               onValueChange={(value: TestimonialStatus) => {
@@ -715,25 +737,29 @@ const Admin = () => {
                             </Select>
                           </div>
                         </div>
-                        <p className="mt-4 text-gray-600">{testimonial.message}</p>
-                        <div className="mt-4 flex items-center">
-                          <div className="flex-1">
-                            <div className="flex items-center">
+                        <div className="mt-6 flex-1 flex flex-col">
+                          <p className="text-gray-600 text-base leading-relaxed flex-1">{testimonial.message}</p>
+                          <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-4">
+                            <div className="flex items-center gap-1">
                               {[...Array(5)].map((_, i) => (
                                 <Star
                                   key={i}
-                                  className={`w-4 h-4 ${
+                                  className={`w-5 h-5 ${
                                     i < testimonial.rating
                                       ? "text-yellow-400 fill-current"
-                                      : "text-gray-300"
+                                      : "text-gray-200"
                                   }`}
                                 />
                               ))}
                             </div>
+                            <span className="text-sm text-gray-500">
+                              {new Date(testimonial.created_at).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric'
+                              })}
+                            </span>
                           </div>
-                          <span className="text-sm text-gray-500">
-                            {new Date(testimonial.created_at).toLocaleDateString()}
-                          </span>
                         </div>
                       </div>
                     ))}

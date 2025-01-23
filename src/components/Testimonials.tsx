@@ -94,38 +94,49 @@ const Testimonials = () => {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="flex-none w-[350px] snap-center"
               >
-                <div className="bg-white rounded-xl shadow-lg p-8 h-full transform transition-transform hover:scale-105">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                      <span className="text-xl font-semibold text-blue-600">
+                <div className="bg-white rounded-xl shadow-lg p-8 h-full transform transition-all duration-300 hover:shadow-xl hover:scale-[1.02] flex flex-col relative">
+                  {testimonial.location && (
+                    <div className="absolute top-6 right-6">
+                      <span className="text-sm font-medium bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
+                        {testimonial.location}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                      <span className="text-2xl font-semibold text-blue-600">
                         {testimonial.name.charAt(0)}
                       </span>
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{testimonial.name}</h3>
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <span>{testimonial.service_type}</span>
-                        {testimonial.location && (
-                          <>
-                            <span>•</span>
-                            <span>{testimonial.location}</span>
-                          </>
-                        )}
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-lg text-gray-900 mb-1">{testimonial.name}</h3>
+                      <div className="text-sm text-gray-500">
+                        {testimonial.service_type.split('_').map(word => 
+                          word.charAt(0).toUpperCase() + word.slice(1)
+                        ).join(' ')}
                       </div>
                     </div>
                   </div>
-                  <p className="text-gray-600 mb-6">{testimonial.message}</p>
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <FaStar
-                        key={i}
-                        className={`w-5 h-5 ${
-                          i < testimonial.rating
-                            ? "text-yellow-400"
-                            : "text-gray-200"
-                        } transition-colors duration-200`}
-                      />
-                    ))}
+                  <div className="flex-1 flex flex-col">
+                    <p className="text-gray-600 text-base leading-relaxed mb-8 flex-1">{testimonial.message}</p>
+                    <div className="flex items-center gap-1 pt-4 border-t border-gray-100">
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar
+                          key={i}
+                          className={`w-5 h-5 ${
+                            i < testimonial.rating
+                              ? "text-yellow-400"
+                              : "text-gray-200"
+                          } transition-colors duration-200`}
+                        />
+                      ))}
+                      <span className="ml-auto text-sm text-gray-500">
+                        {new Date(testimonial.created_at).toLocaleDateString('en-US', {
+                          month: 'short',
+                          year: 'numeric'
+                        })}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </motion.div>

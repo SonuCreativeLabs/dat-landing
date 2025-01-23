@@ -185,6 +185,34 @@ const ContactMessages = () => {
                   <SelectItem value="cancelled">Cancelled</SelectItem>
                 </SelectContent>
               </Select>
+              <Select
+                defaultValue={message.status || 'pending'}
+                onValueChange={(value: 'pending' | 'contacted' | 'resolved') => updateEnquiry.mutate({ id: message.id, status: value })}
+              >
+                <SelectTrigger className="w-[130px] bg-white shadow-lg border-gray-200 hover:bg-gray-50 transition-all duration-200">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent className="bg-white shadow-xl border border-gray-100">
+                  <SelectItem value="pending" className="hover:bg-yellow-50">
+                    <span className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-yellow-400" />
+                      Pending
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="contacted" className="hover:bg-blue-50">
+                    <span className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-blue-400" />
+                      Contacted
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="resolved" className="hover:bg-green-50">
+                    <span className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-green-400" />
+                      Resolved
+                    </span>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </CardFooter>
         </Card>

@@ -220,3 +220,29 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
+export type TestimonialStatus = 'pending' | 'approved' | 'rejected';
+
+export type EnquiryStatus = 'pending' | 'contacted' | 'resolved';
+
+export interface Testimonial {
+  id: string;
+  name: string;
+  service_type: string;
+  message: string;
+  rating: number;
+  status: TestimonialStatus;
+  location?: string;
+  created_at: string;
+}
+
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  service_type: string;
+  message: string;
+  status: EnquiryStatus;
+  created_at: string;
+}
