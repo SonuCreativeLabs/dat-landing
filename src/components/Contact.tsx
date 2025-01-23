@@ -5,7 +5,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Mail, Phone, MapPin, MessageSquare } from "lucide-react";
 import {
@@ -17,13 +17,21 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { motion } from "framer-motion";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().min(10, "Phone number must be at least 10 characters"),
-  service_type: z.string().min(2, "Service type must be at least 2 characters"),
-  location: z.string().min(2, "Location must be at least 2 characters"),
+  phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  service_type: z.string().min(1, "Please select a service type"),
   message: z.string().min(10, "Message must be at least 10 characters"),
 });
 
@@ -39,213 +47,210 @@ const Contact = () => {
       email: "",
       phone: "",
       service_type: "",
-      location: "",
       message: "",
     },
   });
 
-  const onSubmit = async (data: ContactFormValues) => {
+  const serviceTypes = [
+    { value: "appliance_sales", label: "Appliance Sales" },
+    { value: "appliance_service", label: "Appliance Service" },
+    { value: "appliance_rentals", label: "Appliance Rentals" },
+    { value: "others", label: "Others" },
+  ];
+
+  // Initialize Supabase client
+  useEffect(() => {
+    const initializeSupabase = async () => {
+      try {
+        const { data, error } = await supabase.from('enquiries').select('count');
+        if (error) {
+          console.error('Error initializing Supabase:', error);
+        }
+      } catch (error) {
+        console.error('Failed to initialize Supabase:', error);
+      }
+    };
+
+    initializeSupabase();
+  }, []);
+
+  async function onSubmit(values: z.infer<typeof contactSchema>) {
     try {
+      // Add a small delay to ensure Supabase client is ready
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       setIsSubmitting(true);
-      
-      const { error } = await supabase
-        .from("enquiries")
-        .insert({
-          name: data.name,
-          email: data.email,
-          phone: data.phone,
-          service_type: data.service_type,
-          location: data.location,
-          message: data.message,
-          status: "pending",
-          created_at: new Date().toISOString(),
-        });
 
-      if (error) throw error;
+      const { data, error } = await supabase
+        .from('enquiries')
+        .insert([
+          {
+            name: values.name,
+            email: values.email,
+            phone: values.phone,
+            service_type: values.service_type,
+            message: values.message,
+            location: "Website Form",
+            status: 'new' as const,
+            created_at: new Date().toISOString() // Add timestamp
+          }
+        ]);
 
-      toast.success("Thank you for your message! We'll get back to you soon.");
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+
+      // Verify the data was inserted
+      const { data: verifyData, error: verifyError } = await supabase
+        .from('enquiries')
+        .select()
+        .eq('email', values.email)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (verifyError || !verifyData?.length) {
+        console.error('Verification error:', verifyError);
+        throw new Error('Failed to verify data insertion');
+      }
+
+      toast.success('Thank you for your enquiry! We will get back to you soon.');
       form.reset();
     } catch (error) {
-      console.error("Error submitting enquiry:", error);
-      toast.error("Failed to submit message. Please try again.");
+      console.error('Error submitting form:', error);
+      toast.error('Something went wrong. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 bg-gradient-to-br from-white to-gray-50">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="text-center mb-12"
-      >
-        <h2 className="text-4xl font-bold text-gray-900 mb-4">Get in Touch</h2>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Have questions about our services? We're here to help.
-        </p>
-      </motion.div>
+    <div className="w-full">
+      <Toaster richColors />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700">Name</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Your name" 
+                      className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-        <motion.div 
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="space-y-8 p-8 bg-white rounded-2xl shadow-sm border border-gray-100"
-        >
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700">Email</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="email" 
+                      placeholder="Your email" 
+                      className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700">Phone</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Your phone number" 
+                      className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="service_type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700">Service Type</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <Input placeholder="Your name" className="bg-gray-50" {...field} />
+                      <SelectTrigger className="bg-gray-50/50 border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                        <SelectValue placeholder="Select service type" />
+                      </SelectTrigger>
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                    <SelectContent className="bg-white shadow-md border-gray-200">
+                      {serviceTypes.map((type) => (
+                        <SelectItem 
+                          key={type.value} 
+                          value={type.value}
+                          className="hover:bg-gray-50 cursor-pointer"
+                        >
+                          {type.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input type="email" placeholder="Your email" className="bg-gray-50" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+          <FormField
+            control={form.control}
+            name="message"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-gray-700">Message</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="How can we help you?"
+                    className="min-h-[120px] resize-none bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Phone</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Your phone number" className="bg-gray-50" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+          <Button
+            type="submit"
+            className="w-full md:w-auto px-8 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <div className="flex items-center justify-center">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <span>Sending...</span>
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="service_type"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Service Type</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Type of service needed" className="bg-gray-50" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="location"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Location</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Your location" className="bg-gray-50" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <FormField
-                control={form.control}
-                name="message"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Message</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="How can we help you?"
-                        className="h-32 bg-gray-50"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button
-                type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Sending..." : "Send Message"}
-              </Button>
-            </form>
-          </Form>
-        </motion.div>
-
-        <motion.div 
-          initial={{ opacity: 0, x: 20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="space-y-8 lg:pl-12"
-        >
-          <div className="flex items-start space-x-4">
-            <div className="flex-shrink-0">
-              <Mail className="w-6 h-6 text-blue-600" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">Email Us</h3>
-              <p className="mt-1 text-gray-600">Our friendly team is here to help.</p>
-              <a href="mailto:hello@example.com" className="mt-2 text-blue-600 hover:text-blue-700">
-                hello@example.com
-              </a>
-            </div>
-          </div>
-
-          <div className="flex items-start space-x-4">
-            <div className="flex-shrink-0">
-              <Phone className="w-6 h-6 text-blue-600" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">Call Us</h3>
-              <p className="mt-1 text-gray-600">Mon-Fri from 8am to 5pm.</p>
-              <a href="tel:+1234567890" className="mt-2 text-blue-600 hover:text-blue-700">
-                +1 (234) 567-890
-              </a>
-            </div>
-          </div>
-
-          <div className="flex items-start space-x-4">
-            <div className="flex-shrink-0">
-              <MapPin className="w-6 h-6 text-blue-600" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">Visit Us</h3>
-              <p className="mt-1 text-gray-600">Come say hello at our office.</p>
-              <p className="mt-2 text-gray-600">
-                123 Example Street<br />
-                City, State 12345
-              </p>
-            </div>
-          </div>
-        </motion.div>
-      </div>
+            ) : (
+              "Submit Enquiry"
+            )}
+          </Button>
+        </form>
+      </Form>
     </div>
   );
 };

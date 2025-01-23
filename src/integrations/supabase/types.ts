@@ -6,42 +6,45 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export type Database = {
+export interface Database {
   public: {
     Tables: {
       enquiries: {
         Row: {
-          created_at: string
-          email: string | null
           id: string
-          location: string | null
-          message: string
+          created_at: string
           name: string
+          email: string
           phone: string
-          service_type: string | null
-          status: string | null
+          service_type: string
+          location: string
+          message: string
+          status: "new" | "in-progress" | "completed" | "cancelled"
+          admin_comment: string | null
         }
         Insert: {
-          created_at?: string
-          email?: string | null
           id?: string
-          location?: string | null
-          message: string
+          created_at?: string
           name: string
+          email: string
           phone: string
-          service_type?: string | null
-          status?: string | null
+          service_type: string
+          location: string
+          message: string
+          status?: "new" | "in-progress" | "completed" | "cancelled"
+          admin_comment?: string | null
         }
         Update: {
-          created_at?: string
-          email?: string | null
           id?: string
-          location?: string | null
-          message?: string
+          created_at?: string
           name?: string
+          email?: string
           phone?: string
-          service_type?: string | null
-          status?: string | null
+          service_type?: string
+          location?: string
+          message?: string
+          status?: "new" | "in-progress" | "completed" | "cancelled"
+          admin_comment?: string | null
         }
         Relationships: []
       }
@@ -68,37 +71,40 @@ export type Database = {
       }
       testimonials: {
         Row: {
-          created_at: string
           id: string
-          image: string | null
-          location: string
-          message: string
+          created_at: string
           name: string
-          rating: number
           service_type: string
-          status: string
+          location: string
+          rating: number
+          message: string
+          status: "new" | "approved" | "rejected"
+          admin_comment: string | null
+          image: string | null
         }
         Insert: {
-          created_at: string
           id?: string
-          image?: string | null
-          location: string
-          message: string
+          created_at?: string
           name: string
-          rating: number
           service_type: string
-          status?: string
+          location: string
+          rating: number
+          message: string
+          status?: "new" | "approved" | "rejected"
+          admin_comment?: string | null
+          image?: string | null
         }
         Update: {
-          created_at?: string
           id?: string
-          image?: string | null
-          location?: string
-          message?: string
+          created_at?: string
           name?: string
-          rating?: number
           service_type?: string
-          status?: string
+          location?: string
+          rating?: number
+          message?: string
+          status?: "new" | "approved" | "rejected"
+          admin_comment?: string | null
+          image?: string | null
         }
         Relationships: []
       }

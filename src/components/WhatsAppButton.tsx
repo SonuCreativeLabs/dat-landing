@@ -1,46 +1,37 @@
 import { motion } from "framer-motion";
-import { MessageSquare } from "lucide-react";
 
-const WhatsAppLogo = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 175.216 175.552"
-    fill="#ffffff"
-    className="w-7 h-7"
-  >
-    <defs>
-      <linearGradient id="a" x1="0.5" y1="0" x2="0.5" y2="1">
-        <stop offset="0" stopColor="#20b038"/>
-        <stop offset="1" stopColor="#60d66a"/>
-      </linearGradient>
-    </defs>
-    <path d="M87.608 0C39.249 0 0 39.249 0 87.608c0 19.197 6.222 36.987 16.774 51.383l-11.01 32.787 33.605-10.806c13.91 9.536 30.762 15.11 48.84 15.11 48.359 0 87.608-39.249 87.608-87.608S135.967 0 87.608 0zm0 160.169c-16.774 0-32.377-5.413-45.069-14.538l-3.234-1.919-33.469 10.806 11.01-32.377-2.109-3.37C6.628 105.996 0 97.279 0 87.608 0 48.359 39.249 9.11 87.608 9.11s87.608 39.249 87.608 87.608-39.249 87.608-87.608 87.608z" fill="#fff"/>
-    <path d="M87.608 14.301c-40.521 0-73.307 32.786-73.307 73.307 0 16.774 5.413 32.377 14.538 45.069l-9.491 28.189 29.008-9.346c12.147 8.017 26.685 12.729 42.413 12.729 40.521 0 73.307-32.786 73.307-73.307s-32.786-73.307-73.307-73.307z" fill="url(#a)"/>
-    <path d="M126.857 107.915c-1.919 5.413-9.491 10.006-15.519 11.34-4.149 0.91-9.562 1.629-27.813-5.968-23.374-9.927-38.403-34.251-39.576-35.834-1.173-1.583-9.036-12.002-9.036-22.89s5.577-16.192 7.496-18.402c1.919-2.21 4.149-2.756 5.532-2.756s2.756 0 3.97 0.036c1.274 0.036 2.983-0.182 4.513 3.424 1.583 3.715 5.413 12.875 5.877 13.821 0.473 0.946 0.783 2.065 0.036 3.37-0.746 1.305-1.119 2.119-2.21 3.243s-2.283 2.501-3.261 3.37c-1.083 0.946-2.21 1.974-0.946 3.897 1.265 1.919 5.604 8.199 12.002 13.276 8.272 6.568 15.228 8.599 17.402 9.562 2.174 0.964 3.424 0.801 4.695-0.546s5.486-6.386 6.932-8.563c1.446-2.174 2.901-1.81 4.877-1.083 1.974 0.728 12.584 5.932 14.756 7.005 2.174 1.083 3.606 1.61 4.113 2.501 0.51 0.891 0.51 5.195-1.41 10.608z" fill="#fff"/>
-  </svg>
-);
+interface WhatsAppButtonProps {
+  phoneNumber: string;
+}
 
-const WhatsAppButton = () => {
+const WhatsAppButton = ({ phoneNumber }: WhatsAppButtonProps) => {
+  const handleWhatsAppClick = () => {
+    window.open(`https://wa.me/${phoneNumber}`, '_blank');
+  };
+
   return (
-    <motion.a
-      href="https://wa.me/919876543210?text=Hi,%20I%20need%20assistance%20with%20appliance%20service"
-      target="_blank"
-      rel="noopener noreferrer"
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-      whileHover={{ 
-        scale: 1.1,
-        boxShadow: "0 20px 60px rgba(37, 211, 102, 0.3)"
-      }}
-      className="fixed bottom-8 right-8 w-16 h-16 bg-[#25D366] rounded-full flex items-center justify-center shadow-lg hover:shadow-2xl transition-all duration-300 z-50 group"
+    <motion.button
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      onClick={handleWhatsAppClick}
+      className="fixed bottom-6 right-6 z-50 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition-colors duration-200 flex items-center justify-center group"
     >
-      <div className="text-white transform group-hover:rotate-12 transition-transform duration-300">
-        <WhatsAppLogo />
-      </div>
-      <span className="absolute -left-32 bg-white px-4 py-2 rounded-lg shadow-lg text-gray-800 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-        Chat with us
+      <svg
+        className="w-8 h-8"
+        fill="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"
+        />
+      </svg>
+      <span className="absolute right-full mr-3 bg-white text-gray-900 px-3 py-1 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-md whitespace-nowrap">
+        Chat on WhatsApp
       </span>
-    </motion.a>
+    </motion.button>
   );
 };
 

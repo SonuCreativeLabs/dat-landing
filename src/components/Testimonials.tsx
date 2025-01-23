@@ -1,36 +1,39 @@
-import { motion } from "framer-motion";
-import { Star, Quote } from "lucide-react";
-import TestimonialForm from "./TestimonialForm";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { Database } from "@/integrations/supabase/types";
+import { Star } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState } from "react";
+import TestimonialForm from "./TestimonialForm";
+import { motion } from "framer-motion";
+import type { Database } from "@/integrations/supabase/types";
 
 type Testimonial = Database['public']['Tables']['testimonials']['Row'];
 
 const Testimonials = () => {
   const [showForm, setShowForm] = useState(false);
 
-  const { data: testimonials = [] } = useQuery<Testimonial[]>({
-    queryKey: ["testimonials", "active"],
+  const { data: testimonials = [], isLoading } = useQuery<Testimonial[]>({
+    queryKey: ["approved-testimonials"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("testimonials")
         .select("*")
-        .eq("status", "active")
-        .order("created_at", { ascending: false })
-        .limit(6);
-      
+        .eq("status", "approved")
+        .order("created_at", { ascending: false });
+
       if (error) throw error;
       return data;
     },
   });
 
+  if (isLoading || testimonials.length === 0) {
+    return null;
+  }
+
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-white to-blue-50">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+    <section className="py-16 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
           <motion.span
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -41,44 +44,45 @@ const Testimonials = () => {
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4"
+            className="text-3xl font-bold text-gray-900"
           >
-            What Our Clients Say
+            What Our Customers Say
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-lg text-gray-600 max-w-2xl mx-auto"
+            className="mt-4 text-lg text-gray-600"
           >
-            Read what our satisfied clients have to say about their experience working with us
+            Read testimonials from our satisfied customers
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial.id}
               initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 transform transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+              className="bg-white rounded-2xl shadow-lg p-6 flex flex-col"
             >
-              <div className="flex items-center mb-4">
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900">{testimonial.name}</h3>
-                  <p className="text-sm text-gray-600">{testimonial.service_type}</p>
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-900">{testimonial.name}</h4>
+                  <p className="text-sm text-gray-500">{testimonial.location}</p>
                 </div>
-                <div className="flex items-center">
+                <div className="flex text-yellow-400">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                    <Star key={i} className="h-5 w-5" />
                   ))}
                 </div>
               </div>
-              <div className="relative">
-                <Quote className="w-8 h-8 text-blue-200 absolute -top-4 -left-4 opacity-50" />
-                <p className="text-gray-600 relative z-10">{testimonial.message}</p>
+              <p className="text-gray-600 flex-grow">{testimonial.message}</p>
+              <div className="mt-4 pt-4 border-t border-gray-100">
+                <span className="text-sm text-gray-500 capitalize">
+                  {testimonial.service_type.replace(/_/g, ' ')}
+                </span>
               </div>
-              <p className="mt-4 text-sm text-gray-500">{testimonial.location}</p>
             </motion.div>
           ))}
         </div>
@@ -86,13 +90,13 @@ const Testimonials = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          className="text-center mt-12"
+          className="text-center"
         >
           <Button
             onClick={() => setShowForm(!showForm)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
           >
-            Write Your Testimonial
+            Share Your Experience
           </Button>
         </motion.div>
 

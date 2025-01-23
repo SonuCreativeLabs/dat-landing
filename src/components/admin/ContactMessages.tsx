@@ -1,18 +1,42 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
-import { Loader2, Phone, Mail } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Loader2, Phone, Mail, MapPin, MessageSquare, Calendar } from "lucide-react";
+import { toast } from "sonner";
+import { useState } from "react";
 import type { Database } from "@/integrations/supabase/types";
 
 type Tables = Database["public"]["Tables"];
 type Enquiry = Tables["enquiries"]["Row"];
 
+const statusColors = {
+  new: "bg-blue-100 text-blue-800",
+  "in-progress": "bg-yellow-100 text-yellow-800",
+  completed: "bg-green-100 text-green-800",
+  cancelled: "bg-red-100 text-red-800"
+} as const;
+
+type Status = keyof typeof statusColors;
+
 const ContactMessages = () => {
+  const queryClient = useQueryClient();
+  const [expandedMessage, setExpandedMessage] = useState<string | null>(null);
+
   const { data: messages = [], isLoading } = useQuery<Enquiry[]>({
     queryKey: ["enquiries"],
     queryFn: async () => {
@@ -24,6 +48,28 @@ const ContactMessages = () => {
       if (error) throw error;
       return data;
     },
+  });
+
+  const updateEnquiry = useMutation({
+    mutationFn: async ({ id, status, comment }: { id: string, status?: Status, comment?: string }) => {
+      const updates: Partial<Enquiry> = {};
+      if (status) updates.status = status;
+      if (comment !== undefined) updates.admin_comment = comment;
+
+      const { error } = await supabase
+        .from("enquiries")
+        .update(updates)
+        .eq("id", id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["enquiries"] });
+      toast.success("Enquiry updated successfully");
+    },
+    onError: (error) => {
+      toast.error("Failed to update enquiry: " + error.message);
+    }
   });
 
   if (isLoading) {
@@ -42,35 +88,105 @@ const ContactMessages = () => {
     );
   }
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
   return (
     <div className="grid gap-6">
       {messages.map((message) => (
-        <Card key={message.id}>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span>{message.name}</span>
-              <span className="text-sm text-gray-500">
-                {new Date(message.created_at).toLocaleDateString()}
+        <Card key={message.id} className="overflow-hidden">
+          <CardHeader className="bg-gray-50">
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <span className="font-semibold">{message.name}</span>
+                <span className={`px-2 py-1 rounded-full text-xs ${statusColors[message.status as Status]}`}>
+                  {message.status}
+                </span>
+              </CardTitle>
+              <span className="text-sm text-gray-500 flex items-center gap-1">
+                <Calendar className="w-4 h-4" />
+                {formatDate(message.created_at)}
               </span>
-            </CardTitle>
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-gray-600">
-                <Phone className="w-4 h-4" />
-                <span>{message.phone}</span>
+          
+          <CardContent className="p-6 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center gap-2">
+                <Mail className="w-4 h-4 text-gray-500" />
+                <a href={`mailto:${message.email}`} className="text-blue-600 hover:underline">
+                  {message.email}
+                </a>
               </div>
-              {message.email && (
-                <div className="flex items-center gap-2 text-gray-600">
-                  <Mail className="w-4 h-4" />
-                  <span>{message.email}</span>
-                </div>
-              )}
-              <p className="text-gray-700 whitespace-pre-wrap">
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-gray-500" />
+                <a href={`tel:${message.phone}`} className="text-blue-600 hover:underline">
+                  {message.phone}
+                </a>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-gray-500" />
+              <span>{message.location}</span>
+            </div>
+
+            <div className="space-y-2">
+              <div className="font-medium">Service Required</div>
+              <div className="bg-gray-50 p-3 rounded-md">{message.service_type}</div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="font-medium">Message</div>
+              <div className="bg-gray-50 p-3 rounded-md whitespace-pre-wrap">
                 {message.message}
-              </p>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="font-medium">Admin Comment</div>
+              <Textarea
+                placeholder="Add your comment here..."
+                defaultValue={message.admin_comment || ""}
+                className="min-h-[100px]"
+                onChange={(e) => {
+                  const newComment = e.target.value;
+                  updateEnquiry.mutate({ id: message.id, comment: newComment });
+                }}
+              />
             </div>
           </CardContent>
+
+          <CardFooter className="bg-gray-50 p-4">
+            <div className="flex items-center justify-between w-full">
+              <Select
+                defaultValue={message.status}
+                onValueChange={(value) => {
+                  updateEnquiry.mutate({ 
+                    id: message.id, 
+                    status: value as Status 
+                  });
+                }}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Update status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="new">New</SelectItem>
+                  <SelectItem value="in-progress">In Progress</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardFooter>
         </Card>
       ))}
     </div>

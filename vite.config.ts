@@ -9,11 +9,15 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    cors: true,
+    strictPort: true,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    }
   },
   plugins: [
     react(),
-    mode === 'development' &&
-    componentTagger(),
+    mode === 'development' && componentTagger(),
   ].filter(Boolean),
   resolve: {
     alias: {
@@ -21,5 +25,8 @@ export default defineConfig(({ mode }) => ({
     },
   },
   envDir: ".",
-  envPrefix: ["VITE_"]
+  envPrefix: ["VITE_"],
+  define: {
+    'process.env': {}
+  }
 }));
