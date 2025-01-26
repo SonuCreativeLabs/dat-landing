@@ -14,6 +14,7 @@ import { Mail, Phone, MapPin, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
+import { Clock, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -145,131 +146,222 @@ const Contact = () => {
             Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
           </motion.p>
         </div>
-        <Toaster richColors />
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700">Name</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Your name" 
-                        className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700">Email</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="email" 
-                        placeholder="Your email" 
-                        className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700">Phone</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Your phone number" 
-                        className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="service_type"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700">Service Type</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="bg-gray-50/50 border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                          <SelectValue placeholder="Select service type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="bg-white shadow-md border-gray-200">
-                        {serviceTypes.map((type) => (
-                          <SelectItem 
-                            key={type} 
-                            value={type}
-                            className="hover:bg-gray-50 cursor-pointer"
-                          >
-                            {type.split("_").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={form.control}
-              name="message"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700">Message</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="How can we help you?"
-                      className="min-h-[120px] resize-none bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Button
-              type="submit"
-              className="w-full md:w-auto px-8 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
-              disabled={isSubmitting}
+        <div className="grid md:grid-cols-5 gap-8 items-start">
+          {/* Contact Info */}
+          <div className="md:col-span-2 space-y-8">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-xl rounded-2xl p-8 border border-blue-100/20 shadow-lg"
             >
-              {isSubmitting ? (
-                <div className="flex items-center justify-center">
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  <span>Sending...</span>
+              <h3 className="text-xl font-semibold text-gray-900 mb-6">Contact Information</h3>
+              
+              <div className="space-y-6">
+                <div className="flex items-start space-x-4">
+                  <div className="bg-blue-100 rounded-full p-3">
+                    <Phone className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">Phone</p>
+                    <a href="tel:+916379496755" className="text-blue-600 hover:text-blue-700">
+                      +91 6379496755
+                    </a>
+                  </div>
                 </div>
-              ) : (
-                "Submit Enquiry"
-              )}
-            </Button>
-          </form>
-        </Form>
+
+                <div className="flex items-start space-x-4">
+                  <div className="bg-blue-100 rounded-full p-3">
+                    <Mail className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">Email</p>
+                    <a href="mailto:dreamsairtech21@gmail.com" className="text-blue-600 hover:text-blue-700">
+                      dreamsairtech21@gmail.com
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-4">
+                  <div className="bg-blue-100 rounded-full p-3">
+                    <MapPin className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">Address</p>
+                    <p className="text-gray-600">
+                      15, 1st Main Rd, Udayam Nagar,<br />
+                      Velachery, Chennai,<br />
+                      Tamil Nadu 600042
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-4">
+                  <div className="bg-blue-100 rounded-full p-3">
+                    <Clock className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">Working Hours</p>
+                    <p className="text-gray-600">24/7 Service Available</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-gray-100">
+                <h4 className="font-medium text-gray-900 mb-4">Follow Us</h4>
+                <div className="flex space-x-4">
+                  <a href="#" className="bg-blue-100 p-2 rounded-full text-blue-600 hover:bg-blue-200 transition-colors">
+                    <Facebook className="w-5 h-5" />
+                  </a>
+                  <a href="#" className="bg-blue-100 p-2 rounded-full text-blue-600 hover:bg-blue-200 transition-colors">
+                    <Twitter className="w-5 h-5" />
+                  </a>
+                  <a href="#" className="bg-blue-100 p-2 rounded-full text-blue-600 hover:bg-blue-200 transition-colors">
+                    <Instagram className="w-5 h-5" />
+                  </a>
+                  <a href="#" className="bg-blue-100 p-2 rounded-full text-blue-600 hover:bg-blue-200 transition-colors">
+                    <Linkedin className="w-5 h-5" />
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Contact Form */}
+          <div className="md:col-span-3">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-xl rounded-2xl p-8 border border-blue-100/20 shadow-lg"
+            >
+              <Toaster richColors />
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-gray-700">Name</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="Your name" 
+                              className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
+                              {...field} 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-gray-700">Email</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="email" 
+                              placeholder="Your email" 
+                              className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
+                              {...field} 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-gray-700">Phone</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="Your phone number" 
+                              className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
+                              {...field} 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="service_type"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-gray-700">Service Type</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger className="bg-gray-50/50 border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                                <SelectValue placeholder="Select service type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent className="bg-white shadow-md border-gray-200">
+                              {serviceTypes.map((type) => (
+                                <SelectItem 
+                                  key={type} 
+                                  value={type}
+                                  className="hover:bg-gray-50 cursor-pointer"
+                                >
+                                  {type.split("_").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="message"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-700">Message</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="How can we help you?"
+                            className="min-h-[120px] resize-none bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <Button
+                    type="submit"
+                    className="w-full md:w-auto px-8 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <div className="flex items-center justify-center">
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <span>Sending...</span>
+                      </div>
+                    ) : (
+                      "Submit Enquiry"
+                    )}
+                  </Button>
+                </form>
+              </Form>
+            </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );

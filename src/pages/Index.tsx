@@ -14,12 +14,12 @@ import { Mail, MapPin, Clock, Facebook, Twitter, Instagram, Linkedin } from "luc
 import WhatsAppButton from "@/components/WhatsAppButton";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 import Header from "@/components/Header";
+import { PRODUCT_IMAGES } from "@/config/assets";
 
 const Index = () => {
   return (
     <div className="min-h-screen w-full pt-20">
       <Header />
-      <SupabaseTest />
       <Hero />
       <AboutUs />
       <AnnouncementBanner />
@@ -62,6 +62,7 @@ const Index = () => {
                 "Energy-efficient 3-star & 5-star",
                 "Professional installation",
               ]}
+              imageUrl={PRODUCT_IMAGES.AC}
             />
             <ProductCard
               title="Refrigerators"
@@ -72,6 +73,7 @@ const Index = () => {
                 "Energy star rated models",
                 "Advanced cooling technology",
               ]}
+              imageUrl={PRODUCT_IMAGES.REFRIGERATOR}
             />
             <ProductCard
               title="Washing Machines"
@@ -82,6 +84,7 @@ const Index = () => {
                 "6kg to 9kg capacity",
                 "Water & energy efficient",
               ]}
+              imageUrl={PRODUCT_IMAGES.WASHING_MACHINE}
             />
             <ProductCard
               title="Water Purifiers"
@@ -92,6 +95,7 @@ const Index = () => {
                 "7-stage filtration",
                 "TDS controller",
               ]}
+              imageUrl={PRODUCT_IMAGES.WATER_PURIFIER}
             />
           </div>
 
@@ -116,6 +120,7 @@ const Index = () => {
         <Contact />
       </div>
       <Footer />
+      <SupabaseTest />
     </div>
   );
 };

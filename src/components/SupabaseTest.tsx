@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { motion } from 'framer-motion';
+import { CheckCircle2, XCircle } from 'lucide-react';
 
 const SupabaseTest = () => {
   const [connectionStatus, setConnectionStatus] = useState<'checking' | 'connected' | 'error'>('checking');
@@ -8,19 +10,8 @@ const SupabaseTest = () => {
   useEffect(() => {
     async function testConnection() {
       try {
-        console.log('Testing Supabase connection...', {
-          url: import.meta.env.VITE_SUPABASE_URL,
-          keyPrefix: import.meta.env.VITE_SUPABASE_ANON_KEY?.substring(0, 10)
-        });
-        
-        // Test basic connection
         const { data, error: healthError } = await supabase.from('testimonials').select('count');
-        if (healthError) {
-          console.error('Health check error:', healthError);
-          throw healthError;
-        }
-        
-        console.log('Basic connection successful:', data);
+        if (healthError) throw healthError;
         setConnectionStatus('connected');
         setError(null);
       } catch (err) {
@@ -33,29 +24,27 @@ const SupabaseTest = () => {
     testConnection();
   }, []);
 
+  if (connectionStatus === 'checking') return null;
+
   return (
-    <div className="p-4 m-4 border rounded-lg bg-white shadow-sm">
-      <h2 className="text-lg font-semibold mb-2">Supabase Connection Status</h2>
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <span>Status:</span>
-          {connectionStatus === 'checking' && (
-            <span className="text-yellow-500">Checking connection...</span>
-          )}
-          {connectionStatus === 'connected' && (
-            <span className="text-green-500">Connected successfully</span>
-          )}
-          {connectionStatus === 'error' && (
-            <span className="text-red-500">Connection error</span>
-          )}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="fixed bottom-4 right-4 z-50"
+    >
+      {connectionStatus === 'connected' && (
+        <div className="flex items-center gap-2 px-3 py-2 bg-green-50 text-green-700 rounded-lg shadow-sm border border-green-100">
+          <CheckCircle2 className="w-4 h-4" />
+          <span className="text-sm font-medium">Database Connected</span>
         </div>
-        {error && (
-          <div className="text-red-500 text-sm mt-2">
-            Error: {error}
-          </div>
-        )}
-      </div>
-    </div>
+      )}
+      {connectionStatus === 'error' && (
+        <div className="flex items-center gap-2 px-3 py-2 bg-red-50 text-red-700 rounded-lg shadow-sm border border-red-100">
+          <XCircle className="w-4 h-4" />
+          <span className="text-sm font-medium">Connection Error</span>
+        </div>
+      )}
+    </motion.div>
   );
 };
 
