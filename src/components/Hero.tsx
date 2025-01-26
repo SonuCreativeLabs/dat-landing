@@ -1,70 +1,44 @@
-import { motion } from "framer-motion";
-import { Wind, Snowflake, Waves, Power, ArrowRight, Sparkles } from "lucide-react";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { ArrowRight } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 const Hero = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [15, -15]), {
+    stiffness: 150,
+    damping: 20
+  });
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-15, 15]), {
+    stiffness: 150,
+    damping: 20
+  });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      
+      // Calculate normalized mouse position (-0.5 to 0.5)
+      const normalizedX = (e.clientX - centerX) / rect.width;
+      const normalizedY = (e.clientY - centerY) / rect.height;
+      
+      mouseX.set(normalizedX);
+      mouseY.set(normalizedY);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [mouseX, mouseY]);
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     element?.scrollIntoView({ behavior: "smooth" });
   };
-
-  const services = [
-    {
-      icon: Wind,
-      title: "Air Conditioners",
-      description: "Complete AC solutions for your home and office. We offer:",
-      features: [
-        "Split & Window AC Sales",
-        "Professional Installation",
-        "Regular Maintenance",
-        "Monthly/Yearly Rentals",
-        "24/7 Repair Service"
-      ],
-      delay: 0.4,
-      color: "from-blue-400/50 to-blue-600/50"
-    },
-    {
-      icon: Snowflake,
-      title: "Refrigerators",
-      description: "Premium refrigerator services including:",
-      features: [
-        "Single & Double-door Sales",
-        "Gas Refilling & Repair",
-        "Door Seal Replacement",
-        "Cooling Issues Fixed",
-        "Short-term Rentals"
-      ],
-      delay: 0.5,
-      color: "from-cyan-400/50 to-cyan-600/50"
-    },
-    {
-      icon: Waves,
-      title: "Washing Machines",
-      description: "Expert washing machine solutions with:",
-      features: [
-        "Top & Front Load Sales",
-        "Installation & Setup",
-        "Spare Parts Available",
-        "Motor Repair Service",
-        "Rental Options"
-      ],
-      delay: 0.6,
-      color: "from-sky-400/50 to-sky-600/50"
-    },
-    {
-      icon: Power,
-      title: "Water Purifiers",
-      description: "Complete water purifier services:",
-      features: [
-        "RO & UV Purifier Sales",
-        "Filter Replacement",
-        "Water Quality Test",
-        "Annual Maintenance",
-        "Same-day Service"
-      ],
-      delay: 0.7,
-      color: "from-indigo-400/50 to-indigo-600/50"
-    }
-  ];
 
   return (
     <section className="relative min-h-[calc(100vh-5rem)] w-full overflow-hidden bg-gradient-to-b from-[#0EA5E9] to-[#0284C7]">
@@ -105,7 +79,7 @@ const Hero = () => {
             }}
             className="absolute w-8 h-8 text-white/20"
           >
-            <Sparkles className="w-full h-full" />
+            <div className="w-full h-full rounded-full bg-current" />
           </motion.div>
         ))}
       </div>
@@ -183,66 +157,58 @@ const Hero = () => {
             </motion.div>
           </motion.div>
 
-          {/* Right Column - Service Grid */}
+          {/* Right Column - 3D AC */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
+            ref={containerRef}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
-            className="grid grid-cols-2 gap-6"
+            className="relative lg:-mt-20 perspective-2000"
           >
-            {services.map((service, index) => (
+            <motion.div
+              style={{
+                rotateX,
+                rotateY,
+                transformStyle: "preserve-3d",
+              }}
+              className="w-full h-full relative"
+            >
+              {/* Glow Effects */}
+              <div className="absolute inset-0 scale-90 bg-gradient-to-br from-sky-400/30 via-blue-400/20 to-sky-400/30 blur-3xl rounded-full" />
+              <div className="absolute inset-0 scale-95 bg-gradient-to-tr from-sky-400/20 via-blue-400/10 to-sky-400/20 blur-2xl rounded-full" />
+              
+              {/* 3D AC Image */}
               <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: service.delay }}
-                className="group p-8 rounded-2xl bg-gradient-to-br border border-white/20 hover:scale-105 transition-all duration-300 relative overflow-hidden"
+                className="relative transform-gpu"
                 style={{
-                  background: `linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))`,
-                  backdropFilter: 'blur(10px)'
+                  transformStyle: "preserve-3d",
+                  transform: "translateZ(50px)",
                 }}
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-                
-                <div className="relative z-10">
-                  <motion.div
-                    animate={{ 
-                      rotate: [0, 5, 0],
-                      scale: [1, 1.1, 1]
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                    className="mb-6"
-                  >
-                    <service.icon className="w-12 h-12 text-white group-hover:scale-110 transition-transform" />
-                  </motion.div>
-                  
-                  <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-white/90">
-                    {service.title}
-                  </h3>
-                  <p className="text-white/80 text-sm leading-relaxed mb-4 group-hover:text-white">
-                    {service.description}
-                  </p>
-                  <ul className="space-y-2">
-                    {service.features.map((feature, idx) => (
-                      <motion.li
-                        key={idx}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: service.delay + (idx * 0.1) }}
-                        className="flex items-center text-white/70 text-sm group-hover:text-white"
-                      >
-                        <div className="w-1.5 h-1.5 rounded-full bg-white/50 mr-2 group-hover:bg-white" />
-                        {feature}
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
+                <img 
+                  src="/ac-3d-realistic.svg" 
+                  alt="3D Air Conditioner" 
+                  className="relative w-full h-auto max-w-3xl mx-auto filter drop-shadow-[0_35px_60px_rgba(14,165,233,0.3)]"
+                />
               </motion.div>
-            ))}
+              
+              {/* Cool Air Effect */}
+              <motion.div
+                className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-full h-40 pointer-events-none"
+                initial={{ opacity: 0 }}
+                animate={{ 
+                  opacity: [0.4, 0.8, 0.4],
+                  y: [0, 10, 0]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                <div className="w-full h-full bg-gradient-to-b from-blue-400/30 via-blue-400/10 to-transparent blur-xl" />
+              </motion.div>
+            </motion.div>
           </motion.div>
         </div>
       </div>

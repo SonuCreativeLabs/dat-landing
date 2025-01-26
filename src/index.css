@@ -98,4 +98,15 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* 3D Transform Styles */
+  .perspective-2000 {
+    perspective: 2000px;
+  }
+
+  .transform-gpu {
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
 }

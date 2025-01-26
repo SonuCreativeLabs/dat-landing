@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Main Body Shadow -->
+  <path d="M150 200 L650 200 L680 240 L120 240 Z" fill="rgba(0,0,0,0.15)" />
+  
+  <!-- Main Unit Body -->
+  <g>
+    <!-- Front Panel with Metallic Effect -->
+    <path d="M150 140 H650 V320 H150 Z" fill="url(#metallic-gradient)" stroke="#E2E8F0" stroke-width="2"/>
+    <path d="M150 140 H650 V320 H150 Z" fill="url(#highlight)" fill-opacity="0.5"/>
+    
+    <!-- Side Panel with Depth -->
+    <path d="M650 140 L680 170 L680 350 L650 320 Z" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="2"/>
+    <path d="M650 140 L680 170 L680 350 L650 320 Z" fill="url(#side-gradient)"/>
+    
+    <!-- Top Panel with Reflection -->
+    <path d="M150 140 L650 140 L680 170 L180 170 Z" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="2"/>
+    <path d="M150 140 L650 140 L680 170 L180 170 Z" fill="url(#top-gradient)"/>
+    
+    <!-- Main Vent Area -->
+    <g>
+      <!-- Vent Frame -->
+      <rect x="180" y="190" width="440" height="100" rx="4" fill="#F1F5F9"/>
+      
+      <!-- Horizontal Vents -->
+      <g id="vents">
+        <rect x="190" y="200" width="420" height="6" rx="2" fill="#94A3B8" fill-opacity="0.3"/>
+        <rect x="190" y="215" width="420" height="6" rx="2" fill="#94A3B8" fill-opacity="0.3"/>
+        <rect x="190" y="230" width="420" height="6" rx="2" fill="#94A3B8" fill-opacity="0.3"/>
+        <rect x="190" y="245" width="420" height="6" rx="2" fill="#94A3B8" fill-opacity="0.3"/>
+        <rect x="190" y="260" width="420" height="6" rx="2" fill="#94A3B8" fill-opacity="0.3"/>
+        <rect x="190" y="275" width="420" height="6" rx="2" fill="#94A3B8" fill-opacity="0.3"/>
+      </g>
+    </g>
+    
+    <!-- Digital Display -->
+    <g>
+      <rect x="550" y="150" width="80" height="30" rx="4" fill="#0EA5E9"/>
+      <rect x="555" y="155" width="70" height="20" rx="2" fill="#000000" fill-opacity="0.8"/>
+      <!-- Temperature Display -->
+      <text x="565" y="170" fill="#00FF00" font-family="monospace" font-size="14">16°C</text>
+    </g>
+    
+    <!-- Control Panel -->
+    <g>
+      <!-- Power Button -->
+      <circle cx="180" cy="165" r="15" fill="#0EA5E9"/>
+      <path d="M180 157 V173 M174 162 A7 7 0 0 1 186 162" stroke="white" stroke-width="2.5"/>
+      
+      <!-- Mode Buttons -->
+      <rect x="210" y="155" width="120" height="20" rx="10" fill="#E2E8F0"/>
+      <circle cx="220" cy="165" r="8" fill="#0EA5E9" fill-opacity="0.6"/>
+      <circle cx="240" cy="165" r="8" fill="#0EA5E9" fill-opacity="0.6"/>
+      <circle cx="260" cy="165" r="8" fill="#0EA5E9" fill-opacity="0.6"/>
+    </g>
+    
+    <!-- Brand Logo -->
+    <text x="350" y="165" fill="#0EA5E9" font-family="Arial" font-size="16" font-weight="bold">DAT</text>
+  </g>
+  
+  <!-- Cool Air Effect -->
+  <g>
+    <!-- Multiple Wave Lines -->
+    <g>
+      <path d="M190 330 Q270 350 190 370 M290 330 Q370 350 290 370 M390 330 Q470 350 390 370 M490 330 Q570 350 490 370" 
+            stroke="#93C5FD" stroke-width="3" stroke-linecap="round" stroke-dasharray="0 15" opacity="0.6">
+        <animate attributeName="stroke-dashoffset" from="0" to="30" dur="2s" repeatCount="indefinite"/>
+      </path>
+      <path d="M240 340 Q320 360 240 380 M340 340 Q420 360 340 380 M440 340 Q520 360 440 380" 
+            stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-dasharray="0 12" opacity="0.4">
+        <animate attributeName="stroke-dashoffset" from="0" to="24" dur="1.5s" repeatCount="indefinite"/>
+      </path>
+    </g>
+  </g>
+  
+  <!-- Shine and Reflection Effects -->
+  <g>
+    <!-- Top Edge Highlight -->
+    <path d="M150 140 L650 140" stroke="white" stroke-width="3" opacity="0.8"/>
+    <path d="M180 170 L680 170" stroke="white" stroke-width="2" opacity="0.6"/>
+    
+    <!-- Front Panel Reflections -->
+    <path d="M200 150 L600 150" stroke="white" stroke-width="30" opacity="0.1"/>
+    <path d="M180 280 L620 280" stroke="white" stroke-width="40" opacity="0.05"/>
+  </g>
+  
+  <!-- Definitions -->
+  <defs>
+    <!-- Metallic Gradient -->
+    <linearGradient id="metallic-gradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="25%" stop-color="#F8FAFC"/>
+      <stop offset="50%" stop-color="#F1F5F9"/>
+      <stop offset="75%" stop-color="#F8FAFC"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+    </linearGradient>
+    
+    <!-- Highlight Gradient -->
+    <linearGradient id="highlight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="white" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+    
+    <!-- Side Panel Gradient -->
+    <linearGradient id="side-gradient" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#E2E8F0"/>
+      <stop offset="50%" stop-color="#F8FAFC"/>
+      <stop offset="100%" stop-color="#E2E8F0"/>
+    </linearGradient>
+    
+    <!-- Top Panel Gradient -->
+    <linearGradient id="top-gradient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F1F5F9"/>
+    </linearGradient>
+  </defs>
+</svg>
