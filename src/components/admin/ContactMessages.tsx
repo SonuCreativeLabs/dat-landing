@@ -1,17 +1,17 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { useState } from "react";
-import { EnquiryStatus, ContactMessage } from "@/integrations/supabase/types";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "../ui/button";
+import { Textarea } from "../ui/textarea";
+import { ContactMessage, EnquiryStatus } from "@/integrations/supabase/types";
 
 export default function ContactMessages() {
   const queryClient = useQueryClient();
   const [editingComment, setEditingComment] = useState<{ id: string; comment: string } | null>(null);
 
-  const { data: messages = [], isLoading } = useQuery({
+  const { data: messages = [], isLoading } = useQuery<ContactMessage[]>({
     queryKey: ["contact-messages"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -86,7 +86,7 @@ export default function ContactMessages() {
               </div>
               <div className="flex-shrink-0 pt-1">
                 <Select
-                  defaultValue={message.status || 'pending'}
+                  defaultValue={message.status}
                   onValueChange={(value: EnquiryStatus) => updateEnquiry.mutate({ id: message.id, status: value })}
                 >
                   <SelectTrigger className="w-[130px] bg-white shadow-lg border-gray-200 hover:bg-gray-50 transition-all duration-200">

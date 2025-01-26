@@ -2,46 +2,53 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { EnquiryStatus } from "@/integrations/supabase/types";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast, Toaster } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { Mail, Phone, MapPin, MessageSquare } from "lucide-react";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { motion } from "framer-motion";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 
-const contactSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
-  service_type: z.string().min(1, "Please select a service type"),
-  message: z.string().min(10, "Message must be at least 10 characters"),
+const formSchema = z.object({
+  name: z.string().min(2, {
+    message: "Name must be at least 2 characters.",
+  }),
+  email: z.string().email({
+    message: "Please enter a valid email address.",
+  }),
+  phone: z.string().min(10, {
+    message: "Please enter a valid phone number.",
+  }),
+  service_type: z.string({
+    required_error: "Please select a service type.",
+  }),
+  message: z.string().min(10, {
+    message: "Message must be at least 10 characters.",
+  }),
 });
 
-type ContactFormValues = z.infer<typeof contactSchema>;
+const serviceTypes = [
+  "ac_service",
+  "ac_repair",
+  "ac_installation",
+  "refrigerator_repair",
+  "washing_machine_repair",
+  "water_purifier",
+  "microwave_repair",
+  "other",
+];
 
 const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<ContactFormValues>({
-    resolver: zodResolver(contactSchema),
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -51,78 +58,66 @@ const Contact = () => {
     },
   });
 
-  const serviceTypes = [
-    { value: "appliance_sales", label: "Appliance Sales" },
-    { value: "appliance_service", label: "Appliance Service" },
-    { value: "appliance_rentals", label: "Appliance Rentals" },
-    { value: "others", label: "Others" },
-  ];
-
-  // Initialize Supabase client
-  useEffect(() => {
-    const initializeSupabase = async () => {
-      try {
-        const { data, error } = await supabase.from('enquiries').select('count');
-        if (error) {
-          console.error('Error initializing Supabase:', error);
-        }
-      } catch (error) {
-        console.error('Failed to initialize Supabase:', error);
-      }
-    };
-
-    initializeSupabase();
-  }, []);
-
-  async function onSubmit(values: z.infer<typeof contactSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      // Add a small delay to ensure Supabase client is ready
-      await new Promise(resolve => setTimeout(resolve, 100));
-
       setIsSubmitting(true);
 
-      const { data, error } = await supabase
-        .from('enquiries')
-        .insert([
-          {
-            name: values.name,
-            email: values.email,
-            phone: values.phone,
-            service_type: values.service_type,
-            message: values.message,
-            location: "Website Form",
-            status: 'new' as const,
-            created_at: new Date().toISOString() // Add timestamp
-          }
-        ]);
-
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
-      }
-
-      // Verify the data was inserted
-      const { data: verifyData, error: verifyError } = await supabase
-        .from('enquiries')
-        .select()
-        .eq('email', values.email)
-        .order('created_at', { ascending: false })
+      // Check for duplicate submissions
+      const { data: existingEnquiries } = await supabase
+        .from("contact_messages")
+        .select("*")
+        .eq("email", values.email)
+        .eq("phone", values.phone)
+        .order("created_at", { ascending: false })
         .limit(1);
 
-      if (verifyError || !verifyData?.length) {
-        console.error('Verification error:', verifyError);
-        throw new Error('Failed to verify data insertion');
+      if (existingEnquiries && existingEnquiries.length > 0) {
+        const lastEnquiry = existingEnquiries[0];
+        const timeSinceLastEnquiry = Date.now() - new Date(lastEnquiry.created_at).getTime();
+        const oneHourInMs = 60 * 60 * 1000;
+
+        if (timeSinceLastEnquiry < oneHourInMs) {
+          toast.error("Please wait for some time before submitting another enquiry.");
+          return;
+        }
       }
 
-      toast.success('Thank you for your enquiry! We will get back to you soon.');
+      // Create new enquiry
+      const { error } = await supabase
+        .from("contact_messages")
+        .insert({
+          name: values.name,
+          email: values.email,
+          phone: values.phone,
+          service_type: values.service_type,
+          message: values.message,
+          status: "pending" as EnquiryStatus,
+          created_at: new Date().toISOString(),
+        });
+
+      if (error) throw error;
+
+      // Check submission count
+      const { data: recentSubmissions } = await supabase
+        .from("contact_messages")
+        .select("*")
+        .eq("email", values.email)
+        .gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+
+      if (recentSubmissions && recentSubmissions.length > 3) {
+        toast.error("You have reached the maximum number of enquiries for today.");
+        return;
+      }
+
+      toast.success("Your enquiry has been submitted successfully!");
       form.reset();
     } catch (error) {
-      console.error('Error submitting form:', error);
-      toast.error('Something went wrong. Please try again.');
+      console.error("Error submitting enquiry:", error);
+      toast.error("Failed to submit enquiry. Please try again later.");
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }
 
   return (
     <div className="w-full">
@@ -202,11 +197,11 @@ const Contact = () => {
                     <SelectContent className="bg-white shadow-md border-gray-200">
                       {serviceTypes.map((type) => (
                         <SelectItem 
-                          key={type.value} 
-                          value={type.value}
+                          key={type} 
+                          value={type}
                           className="hover:bg-gray-50 cursor-pointer"
                         >
-                          {type.label}
+                          {type.split("_").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
                         </SelectItem>
                       ))}
                     </SelectContent>
