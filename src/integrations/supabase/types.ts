@@ -1,7 +1,7 @@
 export interface Database {
   public: {
     Tables: {
-      contact_messages: {
+      enquiries: {
         Row: {
           id: string;
           created_at: string;
@@ -89,5 +89,5 @@ export interface Database {
 export type TestimonialStatus = 'pending' | 'approved' | 'rejected';
 export type EnquiryStatus = 'pending' | 'contacted' | 'resolved';
 
-export type ContactMessage = Database['public']['Tables']['contact_messages']['Row'];
+export type Enquiry = Database['public']['Tables']['enquiries']['Row'];
 export type Testimonial = Database['public']['Tables']['testimonials']['Row'];

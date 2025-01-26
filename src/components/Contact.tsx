@@ -1,161 +1,133 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { supabase } from "@/integrations/supabase/client";
-import { EnquiryStatus } from "@/integrations/supabase/types";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast, Toaster } from "sonner";
-import { Mail, Phone, MapPin, MessageSquare } from "lucide-react";
-import { motion } from "framer-motion";
-import { Loader2 } from "lucide-react";
-import { useEffect } from "react";
-import { Clock, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { 
+  Phone, 
+  Mail, 
+  MapPin, 
+  Send, 
+  Clock, 
+  MessageSquare,
+  CheckCircle2
+} from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
 
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  phone: z.string().min(10, {
-    message: "Please enter a valid phone number.",
-  }),
-  service_type: z.string({
-    required_error: "Please select a service type.",
-  }),
-  message: z.string().min(10, {
-    message: "Message must be at least 10 characters.",
-  }),
-});
+type ContactFormData = {
+  name: string;
+  email: string;
+  phone: string;
+  location: string;
+  service_type: string;
+  message: string;
+};
 
-const serviceTypes = [
-  "ac_service",
-  "ac_repair",
-  "ac_installation",
-  "refrigerator_repair",
-  "washing_machine_repair",
-  "water_purifier",
-  "microwave_repair",
-  "other",
-];
+type EnquiryInsert = Database['public']['Tables']['enquiries']['Insert'];
 
 const Contact = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      service_type: "",
-      message: "",
-    },
+  const [formData, setFormData] = useState<ContactFormData>({
+    name: '',
+    email: '',
+    phone: '',
+    location: '',
+    service_type: 'appliance_sales',
+    message: ''
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setIsSuccess(false);
+
     try {
-      setIsSubmitting(true);
+      console.log('Submitting contact form:', formData);
 
-      // Check for duplicate submissions
-      const { data: existingEnquiries } = await supabase
-        .from("contact_messages")
-        .select("*")
-        .eq("email", values.email)
-        .eq("phone", values.phone)
-        .order("created_at", { ascending: false })
-        .limit(1);
+      const location = formData.location.trim() || 'Chennai';
+      const fullMessage = `Location: ${location}\n\n${formData.message.trim()}`;
 
-      if (existingEnquiries && existingEnquiries.length > 0) {
-        const lastEnquiry = existingEnquiries[0];
-        const timeSinceLastEnquiry = Date.now() - new Date(lastEnquiry.created_at).getTime();
-        const oneHourInMs = 60 * 60 * 1000;
+      const enquiryData: EnquiryInsert = {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        service_type: formData.service_type.trim(),
+        message: fullMessage,
+        status: 'pending',
+        created_at: new Date().toISOString()
+      };
 
-        if (timeSinceLastEnquiry < oneHourInMs) {
-          toast.error("Please wait for some time before submitting another enquiry.");
-          return;
-        }
-      }
+      console.log('Formatted enquiry data:', enquiryData);
 
-      // Create new enquiry
-      const { error } = await supabase
-        .from("contact_messages")
-        .insert({
-          name: values.name,
-          email: values.email,
-          phone: values.phone,
-          service_type: values.service_type,
-          message: values.message,
-          status: "pending" as EnquiryStatus,
-          created_at: new Date().toISOString(),
+      const { data, error } = await supabase
+        .from('enquiries')
+        .insert(enquiryData)
+        .select();
+
+      if (error) {
+        console.error('Supabase error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
         });
-
-      if (error) throw error;
-
-      // Check submission count
-      const { data: recentSubmissions } = await supabase
-        .from("contact_messages")
-        .select("*")
-        .eq("email", values.email)
-        .gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
-
-      if (recentSubmissions && recentSubmissions.length > 3) {
-        toast.error("You have reached the maximum number of enquiries for today.");
-        return;
+        throw error;
       }
 
-      toast.success("Your enquiry has been submitted successfully!");
-      form.reset();
-    } catch (error) {
-      console.error("Error submitting enquiry:", error);
-      toast.error("Failed to submit enquiry. Please try again later.");
+      console.log('Successfully submitted contact form:', data);
+
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        location: '',
+        service_type: 'appliance_sales',
+        message: ''
+      });
+
+      setIsSuccess(true);
+    } catch (error: any) {
+      console.error('Error submitting enquiry:', error);
+      alert(error?.message || 'There was an error submitting your message. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
-  }
+  };
 
   return (
-    <section className="w-full py-20 bg-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
-        <div className="text-center mb-12">
-          <motion.span
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="inline-block px-4 py-1 mb-4 text-sm font-medium bg-blue-100 text-blue-800 rounded-full"
-          >
+    <section id="contact" className="py-20 bg-gradient-to-b from-white to-blue-50">
+      <div className="container mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-3xl mx-auto mb-16"
+        >
+          <span className="inline-block px-4 py-1 mb-4 text-sm font-medium bg-blue-100 text-blue-800 rounded-full">
             Contact Us
-          </motion.span>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4"
-          >
-            Get in Touch
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-lg text-gray-600 max-w-2xl mx-auto"
-          >
-            Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
-          </motion.p>
-        </div>
+          </span>
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            Get in Touch with Our Team
+          </h2>
+          <p className="text-lg text-gray-600">
+            Have questions about our services? We're here to help 24/7.
+          </p>
+        </motion.div>
 
-        <div className="grid md:grid-cols-5 gap-8 items-start">
-          {/* Contact Info */}
-          <div className="md:col-span-2 space-y-8">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-xl rounded-2xl p-8 border border-blue-100/20 shadow-lg"
-            >
-              <h3 className="text-xl font-semibold text-gray-900 mb-6">Contact Information</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
+          {/* Contact Information */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-1"
+          >
+            <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+              <h3 className="text-xl font-semibold text-gray-900 mb-6">
+                Contact Information
+              </h3>
               
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
@@ -164,9 +136,12 @@ const Contact = () => {
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">Phone</p>
-                    <a href="tel:+916379496755" className="text-blue-600 hover:text-blue-700">
-                      +91 6379496755
+                    <a href="tel:+919876543210" className="text-blue-600 hover:text-blue-700">
+                      +91 98765 43210
                     </a>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Mon-Sun: 24/7 Available
+                    </p>
                   </div>
                 </div>
 
@@ -176,9 +151,12 @@ const Contact = () => {
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">Email</p>
-                    <a href="mailto:dreamsairtech21@gmail.com" className="text-blue-600 hover:text-blue-700">
-                      dreamsairtech21@gmail.com
+                    <a href="mailto:info@datappliances.com" className="text-blue-600 hover:text-blue-700">
+                      info@datappliances.com
                     </a>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Always ready to help
+                    </p>
                   </div>
                 </div>
 
@@ -187,12 +165,19 @@ const Contact = () => {
                     <MapPin className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Address</p>
+                    <p className="font-medium text-gray-900">Office</p>
                     <p className="text-gray-600">
-                      15, 1st Main Rd, Udayam Nagar,<br />
-                      Velachery, Chennai,<br />
-                      Tamil Nadu 600042
+                      123 Main Street, T. Nagar,<br />
+                      Chennai, Tamil Nadu 600017
                     </p>
+                    <a 
+                      href="https://maps.google.com" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-sm text-blue-600 hover:text-blue-700 mt-1 inline-block"
+                    >
+                      Get Directions →
+                    </a>
                   </div>
                 </div>
 
@@ -201,166 +186,167 @@ const Contact = () => {
                     <Clock className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Working Hours</p>
-                    <p className="text-gray-600">24/7 Service Available</p>
+                    <p className="font-medium text-gray-900">Business Hours</p>
+                    <p className="text-gray-600">
+                      Monday - Sunday<br />
+                      24/7 Service Available
+                    </p>
                   </div>
                 </div>
               </div>
-
-              <div className="mt-8 pt-6 border-t border-gray-100">
-                <h4 className="font-medium text-gray-900 mb-4">Follow Us</h4>
-                <div className="flex space-x-4">
-                  <a href="#" className="bg-blue-100 p-2 rounded-full text-blue-600 hover:bg-blue-200 transition-colors">
-                    <Facebook className="w-5 h-5" />
-                  </a>
-                  <a href="#" className="bg-blue-100 p-2 rounded-full text-blue-600 hover:bg-blue-200 transition-colors">
-                    <Twitter className="w-5 h-5" />
-                  </a>
-                  <a href="#" className="bg-blue-100 p-2 rounded-full text-blue-600 hover:bg-blue-200 transition-colors">
-                    <Instagram className="w-5 h-5" />
-                  </a>
-                  <a href="#" className="bg-blue-100 p-2 rounded-full text-blue-600 hover:bg-blue-200 transition-colors">
-                    <Linkedin className="w-5 h-5" />
-                  </a>
-                </div>
-              </div>
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
 
           {/* Contact Form */}
-          <div className="md:col-span-3">
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-xl rounded-2xl p-8 border border-blue-100/20 shadow-lg"
-            >
-              <Toaster richColors />
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-gray-700">Name</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="Your name" 
-                              className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
-                              {...field} 
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-2"
+          >
+            <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+              <div className="flex items-center space-x-3 mb-8">
+                <div className="bg-blue-100 rounded-full p-2">
+                  <MessageSquare className="w-6 h-6 text-blue-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900">
+                  Submit Your Enquiry
+                </h3>
+              </div>
 
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-gray-700">Email</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="email" 
-                              placeholder="Your email" 
-                              className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
-                              {...field} 
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+              {isSuccess ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-green-50 rounded-lg p-8 text-center"
+                >
+                  <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                    <CheckCircle2 className="w-8 h-8 text-green-600" />
+                  </div>
+                  <h4 className="text-2xl font-semibold text-gray-900 mb-4">
+                    Enquiry Submitted Successfully!
+                  </h4>
+                  <p className="text-gray-600 text-lg mb-6">
+                    Thank you for reaching out to us. Our team will review your enquiry and get back to you within 24 hours. 
+                    For urgent assistance, please call us at <a href="tel:+919876543210" className="text-blue-600 hover:text-blue-700 font-medium">+91 98765 43210</a>.
+                  </p>
+                  <button
+                    onClick={() => setIsSuccess(false)}
+                    className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300"
+                  >
+                    Submit Another Enquiry
+                  </button>
+                </motion.div>
+              ) : (
+                <form onSubmit={onSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Name
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
+                        placeholder="Your name"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
+                        placeholder="your@email.com"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Phone
+                      </label>
+                      <input
+                        type="tel"
+                        required
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
+                        placeholder="Your phone number"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Location
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.location}
+                        onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
+                        placeholder="Your location (e.g., Chennai)"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Service Type
+                    </label>
+                    <select
+                      value={formData.service_type}
+                      onChange={(e) => setFormData({ ...formData, service_type: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
+                    >
+                      <option value="appliance_sales">Appliance Sales</option>
+                      <option value="appliance_service">Appliance Service</option>
+                      <option value="appliance_rental">Appliance Rental</option>
+                      <option value="others">Others</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Message
+                    </label>
+                    <textarea
+                      required
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      rows={4}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 resize-none"
+                      placeholder="Example: I am interested in renting a washing machine for 6 months. I need it delivered to Anna Nagar, Chennai. Please provide details about the rental terms and available models."
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-gray-700">Phone</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="Your phone number" 
-                              className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
-                              {...field} 
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="service_type"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-gray-700">Service Type</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger className="bg-gray-50/50 border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                                <SelectValue placeholder="Select service type" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent className="bg-white shadow-md border-gray-200">
-                              {serviceTypes.map((type) => (
-                                <SelectItem 
-                                  key={type} 
-                                  value={type}
-                                  className="hover:bg-gray-50 cursor-pointer"
-                                >
-                                  {type.split("_").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <FormField
-                    control={form.control}
-                    name="message"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-700">Message</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="How can we help you?"
-                            className="min-h-[120px] resize-none bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <Button
+                  <button
                     type="submit"
-                    className="w-full md:w-auto px-8 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
                     disabled={isSubmitting}
+                    className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                   >
                     {isSubmitting ? (
-                      <div className="flex items-center justify-center">
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        <span>Sending...</span>
-                      </div>
+                      'Sending...'
                     ) : (
-                      "Submit Enquiry"
+                      <>
+                        <Send className="w-5 h-5" />
+                        Send Message
+                      </>
                     )}
-                  </Button>
+                  </button>
                 </form>
-              </Form>
-            </motion.div>
-          </div>
+              )}
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>

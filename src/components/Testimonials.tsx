@@ -68,7 +68,7 @@ const Testimonials = () => {
     rating: 5,
     comment: '',
     location: '',
-    service_type: 'rental'
+    service_type: 'appliance_rental'
   });
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -148,7 +148,8 @@ const Testimonials = () => {
         message: formData.comment.trim(),
         location: (formData.location || 'Chennai').trim(),
         service_type: formData.service_type.trim(),
-        status: 'pending'
+        status: 'pending',
+        created_at: new Date().toISOString()
       };
 
       console.log('Formatted testimonial data:', testimonialData);
@@ -170,17 +171,16 @@ const Testimonials = () => {
 
       console.log('Successfully submitted testimonial:', data);
 
-      // Reset form and show success
       setFormData({
         name: '',
         rating: 5,
         comment: '',
         location: '',
-        service_type: 'rental'
+        service_type: 'appliance_rental'
       });
       setIsModalOpen(false);
-      alert('Thank you for your feedback! Your testimonial will be reviewed and published soon.');
-    } catch (error) {
+      alert('Thank you for sharing your experience! Your testimonial will be reviewed and published on our website soon. We appreciate your feedback and trust in our services.');
+    } catch (error: any) {
       console.error('Error submitting testimonial:', {
         error,
         formData,
@@ -188,7 +188,7 @@ const Testimonials = () => {
         // Don't log the key for security
         authHeader: 'Bearer [REDACTED]'
       });
-      alert('There was an error submitting your testimonial. Please try again.');
+      alert(error?.message || 'There was an error submitting your testimonial. Please try again.');
     }
   };
 
@@ -397,9 +397,9 @@ const Testimonials = () => {
                       onChange={(e) => setFormData({ ...formData, service_type: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     >
-                      <option value="rental">Rental</option>
-                      <option value="maintenance">Maintenance</option>
-                      <option value="installation">Installation</option>
+                      <option value="appliance_sales">Appliance Sales</option>
+                      <option value="appliance_service">Appliance Service</option>
+                      <option value="appliance_rental">Appliance Rental</option>
                     </select>
                   </div>
 
