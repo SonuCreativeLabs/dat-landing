@@ -21,8 +21,8 @@ const services = [
 
 const Services = () => {
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400">
-      <div className="max-w-7xl mx-auto">
+    <section className="w-full py-20 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
         <div className="text-center mb-16">
           <motion.span
             initial={{ opacity: 0, y: 20 }}

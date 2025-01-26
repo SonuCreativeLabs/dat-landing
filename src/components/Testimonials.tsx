@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { FaStar } from "react-icons/fa";
 import { Button } from "./ui/button";
 import TestimonialForm from "./TestimonialForm";
+import { User } from "lucide-react";
 
 const Testimonials = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -60,119 +61,114 @@ const Testimonials = () => {
   }
 
   return (
-    <div className="bg-gray-50 py-16 px-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl mb-4">
-            What Our Clients Say
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Read testimonials from our valued clients about their experiences working with us.
-          </p>
-        </div>
+    <div className="w-full bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400">
+      <div className="w-full py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+          <div className="text-center mb-12">
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="inline-block px-4 py-1 mb-4 text-sm font-medium bg-white/20 text-white rounded-full backdrop-blur-sm"
+            >
+              Client Testimonials
+            </motion.span>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="text-4xl sm:text-5xl font-bold text-white mb-4"
+            >
+              What Our Clients Say
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="text-lg text-white/90 max-w-2xl mx-auto"
+            >
+              Don't just take our word for it - hear what our satisfied customers have to say
+            </motion.p>
+          </div>
 
-        <div className="relative">
-          {/* Left Arrow */}
-          <button
-            onClick={() => scroll('left')}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-50 transition-colors"
-          >
-            <ChevronLeft className="w-6 h-6 text-gray-600" />
-          </button>
-
-          {/* Testimonials Container */}
-          <div
-            ref={containerRef}
-            className="flex overflow-x-auto space-x-6 pb-8 scrollbar-hide snap-x snap-mandatory scroll-smooth mx-8"
-            style={{ WebkitOverflowScrolling: "touch" }}
-          >
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={testimonial.id}
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="flex-none w-[350px] snap-center"
-              >
-                <div className="bg-white rounded-xl shadow-lg p-8 h-full transform transition-all duration-300 hover:shadow-xl hover:scale-[1.02] flex flex-col relative">
-                  {testimonial.location && (
-                    <div className="absolute top-6 right-6">
-                      <span className="text-sm font-medium bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
-                        {testimonial.location}
-                      </span>
-                    </div>
-                  )}
-                  <div className="flex items-center gap-4 mb-8">
-                    <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                      <span className="text-2xl font-semibold text-blue-600">
-                        {testimonial.name.charAt(0)}
-                      </span>
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-semibold text-lg text-gray-900 mb-1">{testimonial.name}</h3>
-                      <div className="text-sm text-gray-500">
-                        {testimonial.service_type.split('_').map(word => 
-                          word.charAt(0).toUpperCase() + word.slice(1)
-                        ).join(' ')}
+          <div className="relative px-16 md:px-20">
+            <div
+              ref={containerRef}
+              className="flex gap-8 overflow-x-auto no-scrollbar snap-x snap-mandatory py-8"
+            >
+              {testimonials.map((testimonial) => (
+                <div
+                  key={testimonial.id}
+                  className="flex-none w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1rem)] snap-start px-2"
+                >
+                  <div className="bg-white/80 backdrop-blur-md rounded-2xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/40 hover:shadow-[0_8px_30px_rgb(0,0,0,0.18)] transition-all duration-300">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="bg-blue-100/50 backdrop-blur-sm p-3 rounded-full">
+                        <User className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-900">{testimonial.name}</p>
+                        <p className="text-sm text-gray-500">{testimonial.location}</p>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex-1 flex flex-col">
-                    <p className="text-gray-600 text-base leading-relaxed mb-8 flex-1">{testimonial.message}</p>
-                    <div className="flex items-center gap-1 pt-4 border-t border-gray-100">
+                    <p className="text-gray-600 mb-6 leading-relaxed">{testimonial.message}</p>
+                    <div className="flex items-center gap-1">
                       {[...Array(5)].map((_, i) => (
                         <FaStar
                           key={i}
-                          className={`w-5 h-5 ${
-                            i < testimonial.rating
-                              ? "text-yellow-400"
-                              : "text-gray-200"
-                          } transition-colors duration-200`}
+                          className={`h-5 w-5 ${
+                            i < testimonial.rating ? "text-yellow-400" : "text-gray-200"
+                          }`}
                         />
                       ))}
-                      <span className="ml-auto text-sm text-gray-500">
-                        {new Date(testimonial.created_at).toLocaleDateString('en-US', {
-                          month: 'short',
-                          year: 'numeric'
+                      <span className="ml-3 text-sm text-gray-500">
+                        {new Date(testimonial.created_at).toLocaleDateString("en-US", {
+                          month: "short",
+                          year: "numeric",
                         })}
                       </span>
                     </div>
                   </div>
                 </div>
-              </motion.div>
-            ))}
+              ))}
+            </div>
+
+            <button
+              onClick={() => scroll("left")}
+              className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-md text-blue-600 p-4 rounded-full shadow-lg hover:bg-blue-50 transition-all duration-200 border border-white/40"
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </button>
+            <button
+              onClick={() => scroll("right")}
+              className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-md text-blue-600 p-4 rounded-full shadow-lg hover:bg-blue-50 transition-all duration-200 border border-white/40"
+            >
+              <ChevronRight className="h-6 w-6" />
+            </button>
           </div>
 
-          {/* Right Arrow */}
-          <button
-            onClick={() => scroll('right')}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-50 transition-colors"
-          >
-            <ChevronRight className="w-6 h-6 text-gray-600" />
-          </button>
-        </div>
-
-        {/* Add Experience Button */}
-        <div className="text-center mt-12">
-          <Button
-            onClick={() => setShowForm(!showForm)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-          >
-            Share Your Experience
-          </Button>
-        </div>
-
-        {/* Testimonial Form Modal */}
-        {showForm && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="mt-12"
+            transition={{ delay: 0.2 }}
+            className="text-center mt-12"
           >
-            <TestimonialForm />
+            <Button
+              onClick={() => setShowForm(true)}
+              className="bg-white/80 hover:bg-white/90 text-blue-600 backdrop-blur-md px-8 py-4 rounded-xl shadow-lg border border-white/40 font-medium"
+            >
+              Share Your Experience
+            </Button>
           </motion.div>
-        )}
+
+          {showForm && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="mt-12"
+            >
+              <TestimonialForm />
+            </motion.div>
+          )}
+        </div>
       </div>
     </div>
   );

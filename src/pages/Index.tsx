@@ -13,10 +13,12 @@ import { Button } from "@/components/ui/button";
 import { Mail, MapPin, Clock, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
+import Header from "@/components/Header";
 
 const Index = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen w-full pt-20">
+      <Header />
       <SupabaseTest />
       <Hero />
       <AboutUs />
@@ -24,8 +26,8 @@ const Index = () => {
       <Services />
       
       {/* Rental Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 via-white to-blue-50">
-        <div className="container mx-auto px-4">
+      <section className="w-full py-20 bg-gradient-to-br from-blue-50 via-white to-blue-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
           <div className="text-center mb-12">
             <motion.span
               initial={{ opacity: 0, y: 20 }}
@@ -109,102 +111,10 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="py-24 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="max-w-7xl mx-auto"
-          >
-            <Testimonials />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section className="relative py-32 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 overflow-hidden">
-        {/* Decorative Elements */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20" />
-          <div className="absolute -left-10 -top-10 w-40 h-40 rounded-full bg-white opacity-20" />
-          <div className="absolute right-0 bottom-0 w-80 h-80 rounded-full bg-white opacity-20" />
-          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 rounded-full bg-white opacity-20" />
-        </div>
-
-        <div className="container mx-auto px-4 relative">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-12">
-              <motion.span
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                className="inline-block px-4 py-1 mb-4 text-sm font-medium bg-white/20 text-white rounded-full backdrop-blur-sm"
-              >
-                Get in Touch
-              </motion.span>
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                className="text-4xl sm:text-5xl font-bold text-white mb-4"
-              >
-                Contact Us
-              </motion.h2>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                className="text-lg text-blue-100 max-w-2xl mx-auto"
-              >
-                Have questions about our services? We'd love to hear from you. 
-                Send us a message and we'll get back to you shortly.
-              </motion.p>
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl shadow-2xl p-8 sm:p-10 backdrop-blur-sm bg-white/95"
-            >
-              <div className="grid md:grid-cols-5 gap-8">
-                {/* Contact Info */}
-                <div className="md:col-span-2 space-y-6">
-                  <div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">Contact Information</h3>
-                    <p className="text-gray-600">Fill out the form and we will get back to you within 24 hours.</p>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-3 text-gray-600">
-                      <Phone className="w-5 h-5 text-blue-600" />
-                      <span>+91 6379496755</span>
-                    </div>
-                    <div className="flex items-center space-x-3 text-gray-600">
-                      <Mail className="w-5 h-5 text-blue-600" />
-                      <span>dreamsairtech21@gmail.com</span>
-                    </div>
-                    <div className="flex items-center space-x-3 text-gray-600">
-                      <MapPin className="w-5 h-5 text-blue-600" />
-                      <span className="text-sm">15, 1st Main Rd, Udayam Nagar, Velachery, Chennai, Tamil Nadu 600042</span>
-                    </div>
-                    <div className="flex items-center space-x-3 text-gray-600">
-                      <Clock className="w-5 h-5 text-blue-600" />
-                      <span>24/7 Service Available</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Contact Form */}
-                <div className="md:col-span-3">
-                  <Contact />
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* WhatsApp Button */}
-      <WhatsAppButton phoneNumber="6379496755" />
-
+      <Testimonials />
+      <div className="w-full bg-white">
+        <Contact />
+      </div>
       <Footer />
     </div>
   );
