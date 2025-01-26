@@ -1,30 +1,98 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from 'react';
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
-import { motion } from "framer-motion";
-import { FaStar } from "react-icons/fa";
+import type { TestimonialStatus, Testimonial, Database } from '@/integrations/supabase/types';
+import { motion, AnimatePresence } from "framer-motion";
+import { Star, X, Send } from "lucide-react";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Mousewheel, Keyboard, Autoplay } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 import { Button } from "./ui/button";
 import TestimonialForm from "./TestimonialForm";
-import { User } from "lucide-react";
+
+interface TestimonialProps {
+  name: string;
+  rating: number;
+  comment: string;
+  location?: string;
+}
+
+const testimonials = [
+  {
+    name: "Rajesh Kumar",
+    role: "Homeowner",
+    content: "Exceptional service! They installed my AC and have been maintaining it perfectly. The rental options are very convenient.",
+    rating: 5,
+    image: "/testimonials/person1.jpg"
+  },
+  {
+    name: "Priya Sharma",
+    role: "Business Owner",
+    content: "Great experience with their refrigerator rental service. Professional team and prompt support whenever needed.",
+    rating: 5,
+    image: "/testimonials/person2.jpg"
+  },
+  {
+    name: "Mohammed Ali",
+    role: "Restaurant Owner",
+    content: "Their commercial appliance solutions are top-notch. The maintenance service is reliable and efficient.",
+    rating: 5,
+    image: "/testimonials/person3.jpg"
+  },
+  {
+    name: "Lakshmi Venkat",
+    role: "Apartment Resident",
+    content: "Very satisfied with their water purifier service. The team is knowledgeable and professional.",
+    rating: 5,
+    image: "/testimonials/person4.jpg"
+  },
+  {
+    name: "Suresh Patel",
+    role: "Property Manager",
+    content: "Managing multiple properties becomes easier with their appliance rental and maintenance services.",
+    rating: 5,
+    image: "/testimonials/person5.jpg"
+  }
+];
+
+type TestimonialInsert = Database['public']['Tables']['testimonials']['Insert'];
 
 const Testimonials = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [showForm, setShowForm] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    rating: 5,
+    comment: '',
+    location: '',
+    service_type: 'rental'
+  });
+  const modalRef = useRef<HTMLDivElement>(null);
 
-  const { data: testimonials = [], isLoading } = useQuery({
-    queryKey: ["public-testimonials"],
+  const { data: testimonials, isLoading, error: queryError } = useQuery({
+    queryKey: ['testimonials'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("testimonials")
-        .select("*")
-        .eq("status", "approved")
-        .order("created_at", { ascending: false });
+        .from('testimonials')
+        .select('*')
+        .eq('status', 'approved')
+        .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      return data;
-    },
+      if (error) {
+        console.error('Error fetching testimonials:', error);
+        throw error;
+      }
+
+      return data || [];
+    }
   });
+
+  if (queryError) {
+    console.error('Query error:', queryError);
+  }
 
   const scroll = (direction: 'left' | 'right') => {
     if (!containerRef.current) return;
@@ -52,157 +120,303 @@ const Testimonials = () => {
     return () => container.removeEventListener("wheel", handleWheel);
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        setIsModalOpen(false);
+      }
+    };
+
+    if (isModalOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isModalOpen]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      console.log('Submitting testimonial with data:', formData);
+      
+      const testimonialData: TestimonialInsert = {
+        name: formData.name.trim(),
+        rating: Number(formData.rating),
+        message: formData.comment.trim(),
+        location: (formData.location || 'Chennai').trim(),
+        service_type: formData.service_type.trim(),
+        status: 'pending'
+      };
+
+      console.log('Formatted testimonial data:', testimonialData);
+
+      const { data, error } = await supabase
+        .from('testimonials')
+        .insert(testimonialData)
+        .select();
+
+      if (error) {
+        console.error('Supabase error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+        throw error;
+      }
+
+      console.log('Successfully submitted testimonial:', data);
+
+      // Reset form and show success
+      setFormData({
+        name: '',
+        rating: 5,
+        comment: '',
+        location: '',
+        service_type: 'rental'
+      });
+      setIsModalOpen(false);
+      alert('Thank you for your feedback! Your testimonial will be reviewed and published soon.');
+    } catch (error) {
+      console.error('Error submitting testimonial:', {
+        error,
+        formData,
+        supabaseUrl: supabase.supabaseUrl,
+        // Don't log the key for security
+        authHeader: 'Bearer [REDACTED]'
+      });
+      alert('There was an error submitting your testimonial. Please try again.');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin" />
+        <div className="loader"></div>
       </div>
     );
   }
 
   return (
-    <div className="w-full bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400 relative overflow-hidden">
-      {/* Decorative Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute w-96 h-96 -top-48 -left-48 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
-        <div className="absolute w-96 h-96 -bottom-48 -right-48 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
-        <div className="absolute w-96 h-96 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
+    <section id="testimonials" className="relative py-20 bg-gradient-to-b from-[#0EA5E9] to-[#0284C7]">
+      {/* Background Elements */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0EA5E9]/10 via-[#0284C7]/30 to-[#0EA5E9]/80" />
       </div>
 
-      <div className="w-full py-24 relative">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
-          <div className="text-center mb-16">
-            <motion.span
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              className="inline-block px-6 py-2 mb-6 text-sm font-medium bg-white/20 text-white rounded-full backdrop-blur-sm border border-white/30"
-            >
-              Client Testimonials
-            </motion.span>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              className="text-4xl sm:text-5xl font-bold text-white mb-6 tracking-tight"
-            >
-              What Our Clients Say
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              className="text-lg text-white/90 max-w-2xl mx-auto leading-relaxed"
-            >
-              Don't just take our word for it - hear what our satisfied customers have to say about their experience with us
-            </motion.p>
-          </div>
+      <div className="relative container mx-auto px-4">
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-3xl mx-auto mb-16 space-y-4"
+        >
+          <h2 className="text-4xl font-bold text-white">Client Testimonials</h2>
+          <p className="text-white/80">
+            Hear what our satisfied customers have to say about their experience with Dreams Air Tech.
+          </p>
+        </motion.div>
 
-          {/* Testimonials Carousel */}
-          <div className="relative px-8 md:px-12">
-            <div
-              ref={containerRef}
-              className="flex gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory py-8"
-            >
-              {testimonials.map((testimonial) => (
-                <div
-                  key={testimonial.id}
-                  className="flex-none w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.33%-1rem)] snap-start px-2"
-                >
-                  <div
-                    className="bg-gradient-to-br from-white/95 via-white/90 to-white/80 backdrop-blur-xl rounded-2xl p-6 lg:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-white/40 hover:shadow-[0_20px_40px_rgba(0,0,0,0.12)] transition-all duration-500 h-full flex flex-col relative overflow-hidden group hover:-translate-y-1"
-                  >
-                    {/* Decorative elements */}
-                    <div className="absolute top-0 left-0 w-full h-full overflow-hidden rounded-2xl">
-                      <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-200/20 via-transparent to-transparent rotate-12 transform origin-top-left group-hover:scale-150 transition-transform duration-500"></div>
-                      <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-blue-100/20 via-transparent to-transparent -rotate-12 transform origin-bottom-right group-hover:scale-150 transition-transform duration-500"></div>
+        {/* Testimonials Grid */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="relative px-4"
+        >
+          <Swiper
+            modules={[Navigation, Pagination, Mousewheel, Keyboard, Autoplay]}
+            spaceBetween={30}
+            slidesPerView={1}
+            navigation
+            pagination={{ clickable: true }}
+            mousewheel
+            keyboard
+            autoplay={{ delay: 5000 }}
+            breakpoints={{
+              640: {
+                slidesPerView: 2,
+              },
+              1024: {
+                slidesPerView: 3,
+              },
+            }}
+            className="pb-12"
+          >
+            {testimonials?.map((testimonial, index) => (
+              <SwiperSlide key={testimonial.id || index}>
+                <div className="bg-white rounded-2xl shadow-lg p-8 h-full">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
+                      <span className="text-2xl font-semibold text-gray-600">
+                        {testimonial.name.charAt(0).toUpperCase()}
+                      </span>
                     </div>
-                    
-                    {/* Glass effect overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 rounded-2xl"></div>
-                    
-                    {/* Content */}
-                    <div className="relative z-10">
-                      <div className="flex items-center gap-4 mb-8">
-                        <div className="bg-gradient-to-br from-blue-100 via-blue-50 to-white p-3 rounded-full shadow-md group-hover:shadow-lg transition-all duration-300 relative">
-                          <div className="absolute inset-0 rounded-full bg-blue-200/20 animate-pulse"></div>
-                          <User className="w-5 h-5 text-blue-600 relative z-10" />
-                        </div>
-                        <div>
-                          <p className="font-semibold text-gray-900 line-clamp-1 text-lg">{testimonial.name}</p>
-                          <p className="text-sm text-gray-500 line-clamp-1">{testimonial.location}</p>
-                        </div>
-                      </div>
-                      <div className="mb-8 flex-grow">
-                        <div className="text-blue-600 mb-4 transform -translate-x-2">
-                          <svg className="w-10 h-10 opacity-40" fill="currentColor" viewBox="0 0 32 32">
-                            <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
-                          </svg>
-                        </div>
-                        <p className="text-gray-600 leading-relaxed italic text-base lg:text-lg line-clamp-4 font-light">{testimonial.message}</p>
-                      </div>
-                      <div className="flex items-center justify-between pt-6 border-t border-gray-100/50">
-                        <div className="flex gap-0.5">
-                          {[...Array(5)].map((_, i) => (
-                            <FaStar
-                              key={i}
-                              className={`h-5 w-5 transform transition-transform group-hover:scale-110 ${
-                                i < testimonial.rating ? "text-yellow-400" : "text-gray-200"
-                              }`}
-                            />
-                          ))}
-                        </div>
-                        <span className="text-sm text-gray-500 font-medium">
-                          {new Date(testimonial.created_at).toLocaleDateString("en-US", {
-                            month: "short",
-                            year: "numeric",
-                          })}
-                        </span>
-                      </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">{testimonial.name}</h3>
+                      <p className="text-gray-500 text-sm">{testimonial.location || 'Chennai'}</p>
+                      <p className="text-gray-500 text-sm capitalize">{testimonial.service_type}</p>
                     </div>
                   </div>
+                  <p className="text-gray-600 mb-6">{testimonial.message}</p>
+                  <div className="flex gap-1">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className="w-5 h-5 text-yellow-400 fill-current"
+                      />
+                    ))}
+                  </div>
                 </div>
-              ))}
-            </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </motion.div>
 
-            <button
-              onClick={() => scroll("left")}
-              className="absolute -left-2 md:left-2 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-xl text-blue-600 p-4 rounded-full shadow-lg hover:bg-blue-50 hover:scale-110 transition-all duration-200 border border-white/40 z-10"
-            >
-              <ChevronLeft className="h-6 w-6" />
-            </button>
-            <button
-              onClick={() => scroll("right")}
-              className="absolute -right-2 md:right-2 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-xl text-blue-600 p-4 rounded-full shadow-lg hover:bg-blue-50 hover:scale-110 transition-all duration-200 border border-white/40 z-10"
-            >
-              <ChevronRight className="h-6 w-6" />
-            </button>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-center mt-16"
+        {/* Call to Action */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center mt-16"
+        >
+          <p className="text-white/90 text-lg mb-6">
+            Join our growing family of satisfied customers today!
+          </p>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="px-8 py-3 bg-white text-[#0EA5E9] rounded-lg font-semibold hover:bg-white/90 transition-all duration-300"
           >
-            <Button
-              onClick={() => setShowForm(true)}
-              className="bg-white/90 hover:bg-white text-blue-600 backdrop-blur-xl px-8 py-4 rounded-xl shadow-lg border border-white/40 font-medium hover:scale-105 transition-all duration-300"
-            >
-              Share Your Experience
-            </Button>
-          </motion.div>
+            Share Your Experience
+          </button>
+        </motion.div>
 
-          {showForm && (
+        {/* Share Experience Modal */}
+        <AnimatePresence>
+          {isModalOpen && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="mt-12"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
             >
-              <TestimonialForm />
+              <motion.div
+                ref={modalRef}
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl"
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-2xl font-bold text-gray-900">Share Your Experience</h3>
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  >
+                    <X className="w-6 h-6 text-gray-500" />
+                  </button>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Your Name
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Rating
+                    </label>
+                    <div className="flex gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, rating: star })}
+                          className="p-1 hover:scale-110 transition-transform"
+                        >
+                          <Star
+                            className={`w-8 h-8 ${
+                              star <= formData.rating
+                                ? 'text-yellow-400 fill-current'
+                                : 'text-gray-300'
+                            }`}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Your Experience
+                    </label>
+                    <textarea
+                      value={formData.comment}
+                      onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-32"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Location (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.location}
+                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="e.g., Anna Nagar, Chennai"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Service Type
+                    </label>
+                    <select
+                      value={formData.service_type}
+                      onChange={(e) => setFormData({ ...formData, service_type: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="rental">Rental</option>
+                      <option value="maintenance">Maintenance</option>
+                      <option value="installation">Installation</option>
+                    </select>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center gap-2"
+                  >
+                    <Send className="w-5 h-5" />
+                    Submit Review
+                  </button>
+                </form>
+              </motion.div>
             </motion.div>
           )}
-        </div>
+        </AnimatePresence>
       </div>
-    </div>
+    </section>
   );
 };
 

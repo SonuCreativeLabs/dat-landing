@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowDown } from "lucide-react";
-import { HERO_IMAGES, BRAND_ASSETS } from "@/config/assets";
+import { Wind, Snowflake, Waves, Power, ArrowRight } from "lucide-react";
 
 const Hero = () => {
   const scrollToSection = (id: string) => {
@@ -8,108 +7,132 @@ const Hero = () => {
     element?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const services = [
+    {
+      icon: Wind,
+      title: "Air Conditioners",
+      description: "Sales, Service & Rental of Split AC, Window AC, and Cassette AC in Chennai",
+      delay: 0.4
+    },
+    {
+      icon: Snowflake,
+      title: "Refrigerators",
+      description: "Single-door, Double-door Fridge Sales, Repair & Rental Services",
+      delay: 0.5
+    },
+    {
+      icon: Waves,
+      title: "Washing Machines",
+      description: "Top Load, Front Load Washing Machine Sales & Service",
+      delay: 0.6
+    },
+    {
+      icon: Power,
+      title: "Water Purifiers",
+      description: "RO, UV Water Purifier Installation & Maintenance",
+      delay: 0.7
+    }
+  ];
+
   return (
-    <section className="min-h-screen flex items-center justify-center relative overflow-hidden w-full">
-      {/* Background Image with Overlay */}
-      <div className="absolute inset-0 w-full h-full">
-        <img
-          src={HERO_IMAGES.BACKGROUND}
-          alt="Hero Background"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/90 via-blue-600/80 to-blue-400/70">
-          <div className="absolute inset-0 opacity-20">
-            {[...Array(50)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute rounded-full bg-white"
-                style={{
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                  width: `${Math.random() * 3}px`,
-                  height: `${Math.random() * 3}px`,
-                  animation: `twinkle ${Math.random() * 4 + 2}s infinite`,
-                }}
-              />
-            ))}
-          </div>
-        </div>
+    <section className="relative min-h-[calc(100vh-5rem)] w-full overflow-hidden bg-gradient-to-b from-[#0EA5E9] to-[#0284C7]">
+      {/* Background Elements */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0EA5E9]/10 via-[#0284C7]/30 to-[#0EA5E9]/80" />
       </div>
 
-      {/* Content */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 relative z-20">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center space-y-12"
-        >
+      {/* Main Content */}
+      <div className="relative z-10 container mx-auto px-4 h-full">
+        <div className="grid lg:grid-cols-2 gap-12 h-full items-center py-20">
+          {/* Left Column - Text Content */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="w-48 h-48 sm:w-56 sm:h-56 mx-auto mb-8"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-8"
           >
-            <img 
-              src={BRAND_ASSETS.LOGO}
-              alt="Dreams Air Tech Logo" 
-              className="w-full h-full object-contain drop-shadow-2xl" 
-            />
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="inline-block"
+            >
+              <span className="bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm">
+                #1 Home Appliance Solutions in Chennai
+              </span>
+            </motion.div>
 
-          <div className="max-w-4xl mx-auto">
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 drop-shadow-lg"
+              className="text-5xl lg:text-6xl font-bold text-white leading-tight"
             >
-              Your Trusted Partner in
-              <span className="text-blue-200"> Home Appliance Rentals</span>
+              Expert Home Appliance
+              <br />
+              <span className="text-sky-100">
+                Sales, Service & Rentals
+              </span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="text-lg sm:text-xl text-blue-50 mb-8 max-w-2xl mx-auto"
+              className="text-lg text-white/90 max-w-xl"
             >
-              Experience hassle-free living with our premium appliance rental services. Quality products, flexible plans, and exceptional service.
+              Chennai's trusted partner for AC, Refrigerator, Washing Machine, and Water Purifier solutions. Professional installation, maintenance, and 24/7 support at competitive prices.
             </motion.p>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
+              className="flex flex-col sm:flex-row gap-4"
             >
               <button
                 onClick={() => scrollToSection("contact")}
-                className="px-8 py-4 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors duration-300 shadow-lg hover:shadow-xl"
+                className="group flex items-center justify-center gap-2 px-6 py-3 bg-white text-[#0EA5E9] rounded-lg font-semibold hover:bg-white/90 transition-all duration-300"
               >
-                Get Started
+                Book Service Now
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
               <button
                 onClick={() => scrollToSection("products")}
-                className="px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors duration-300 shadow-lg hover:shadow-xl"
+                className="group flex items-center justify-center gap-2 px-6 py-3 bg-sky-600/20 backdrop-blur-sm text-white border border-white/20 rounded-lg font-semibold hover:bg-sky-600/30 transition-all duration-300"
               >
-                View Products
+                Explore Products
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </motion.div>
-          </div>
-        </motion.div>
-      </div>
+          </motion.div>
 
-      {/* Scroll Indicator */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8, duration: 0.5 }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 cursor-pointer"
-        onClick={() => scrollToSection("about")}
-      >
-        <ArrowDown className="w-6 h-6 text-white animate-bounce" />
-      </motion.div>
+          {/* Right Column - Service Grid */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="grid grid-cols-2 gap-6"
+          >
+            {services.map((service, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: service.delay }}
+                className="group p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all duration-300"
+              >
+                <service.icon className="w-10 h-10 text-white mb-4 group-hover:scale-110 transition-transform" />
+                <h3 className="text-lg font-semibold text-white mb-2">{service.title}</h3>
+                <p className="text-white/80 text-sm">
+                  {service.description}
+                </p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </div>
     </section>
   );
 };
