@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  line-height: 1.5;
+}
+
+.marquee-content {
+  display: inline-flex;
+  position: relative;
+  white-space: nowrap;
+  animation: marquee 20s linear infinite;
+  will-change: transform;
+}
+
+/* Optional: Pause on hover */
+.marquee-content:hover {
+  animation-play-state: paused;
+}

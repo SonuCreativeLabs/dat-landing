@@ -244,5 +244,6 @@ export interface ContactMessage {
   service_type: string;
   message: string;
   status: EnquiryStatus;
+  admin_comment?: string;
   created_at: string;
 }

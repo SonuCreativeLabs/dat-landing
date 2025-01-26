@@ -1,47 +1,21 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState } from "react";
+import { EnquiryStatus, ContactMessage } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Loader2, Phone, Mail, MapPin, MessageSquare, Calendar } from "lucide-react";
-import { toast } from "sonner";
-import { useState } from "react";
-import type { Database } from "@/integrations/supabase/types";
 
-type Tables = Database["public"]["Tables"];
-type Enquiry = Tables["enquiries"]["Row"];
-
-const statusColors = {
-  new: "bg-blue-100 text-blue-800",
-  "in-progress": "bg-yellow-100 text-yellow-800",
-  completed: "bg-green-100 text-green-800",
-  cancelled: "bg-red-100 text-red-800"
-} as const;
-
-type Status = keyof typeof statusColors;
-
-const ContactMessages = () => {
+export default function ContactMessages() {
   const queryClient = useQueryClient();
-  const [expandedMessage, setExpandedMessage] = useState<string | null>(null);
+  const [editingComment, setEditingComment] = useState<{ id: string; comment: string } | null>(null);
 
-  const { data: messages = [], isLoading } = useQuery<Enquiry[]>({
-    queryKey: ["enquiries"],
+  const { data: messages = [], isLoading } = useQuery({
+    queryKey: ["contact-messages"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("enquiries")
+        .from("contact_messages")
         .select("*")
         .order("created_at", { ascending: false });
 
@@ -51,174 +25,171 @@ const ContactMessages = () => {
   });
 
   const updateEnquiry = useMutation({
-    mutationFn: async ({ id, status, comment }: { id: string, status?: Status, comment?: string }) => {
-      const updates: Partial<Enquiry> = {};
-      if (status) updates.status = status;
-      if (comment !== undefined) updates.admin_comment = comment;
+    mutationFn: async ({ id, status, comment }: { id: string; status?: EnquiryStatus; comment?: string }) => {
+      const updateData: Partial<ContactMessage> = {};
+      if (status) updateData.status = status;
+      if (comment !== undefined) updateData.admin_comment = comment;
 
       const { error } = await supabase
-        .from("enquiries")
-        .update(updates)
+        .from("contact_messages")
+        .update(updateData)
         .eq("id", id);
 
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["enquiries"] });
-      toast.success("Enquiry updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["contact-messages"] });
+      setEditingComment(null);
     },
-    onError: (error) => {
-      toast.error("Failed to update enquiry: " + error.message);
-    }
   });
+
+  const handleCommentSave = (id: string) => {
+    if (!editingComment) return;
+    updateEnquiry.mutate({ id, comment: editingComment.comment });
+  };
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-8">
+      <div className="flex items-center justify-center min-h-[400px]">
         <Loader2 className="w-8 h-8 animate-spin" />
       </div>
     );
   }
 
-  if (messages.length === 0) {
-    return (
-      <div className="text-center py-8 text-gray-500">
-        No contact messages found
-      </div>
-    );
-  }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   return (
-    <div className="grid gap-6">
-      {messages.map((message) => (
-        <Card key={message.id} className="overflow-hidden">
-          <CardHeader className="bg-gray-50">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <span className="font-semibold">{message.name}</span>
-                <span className={`px-2 py-1 rounded-full text-xs ${statusColors[message.status as Status]}`}>
-                  {message.status}
-                </span>
-              </CardTitle>
-              <span className="text-sm text-gray-500 flex items-center gap-1">
-                <Calendar className="w-4 h-4" />
-                {formatDate(message.created_at)}
-              </span>
-            </div>
-          </CardHeader>
-          
-          <CardContent className="p-6 space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-gray-500" />
-                <a href={`mailto:${message.email}`} className="text-blue-600 hover:underline">
-                  {message.email}
-                </a>
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            className="bg-white p-8 rounded-xl shadow-md border-l-4 border-blue-400 hover:shadow-lg transition-shadow h-full flex flex-col"
+          >
+            <div className="flex justify-between items-start gap-8">
+              <div className="flex items-start gap-4 flex-1 min-w-0">
+                <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                  <span className="text-xl font-semibold text-blue-600">
+                    {message.name.charAt(0)}
+                  </span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-lg text-gray-900 mb-2">
+                    {message.name}
+                  </h3>
+                  <div className="flex flex-col gap-1 text-sm text-gray-500">
+                    <span>{message.phone}</span>
+                    <span>{message.email}</span>
+                    <span className="mt-1">{message.service_type.split('_').map(word => 
+                      word.charAt(0).toUpperCase() + word.slice(1)
+                    ).join(' ')}</span>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-gray-500" />
-                <a href={`tel:${message.phone}`} className="text-blue-600 hover:underline">
-                  {message.phone}
-                </a>
+              <div className="flex-shrink-0 pt-1">
+                <Select
+                  defaultValue={message.status || 'pending'}
+                  onValueChange={(value: EnquiryStatus) => updateEnquiry.mutate({ id: message.id, status: value })}
+                >
+                  <SelectTrigger className="w-[130px] bg-white shadow-lg border-gray-200 hover:bg-gray-50 transition-all duration-200">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white shadow-xl border border-gray-100">
+                    <SelectItem value="pending" className="hover:bg-yellow-50">
+                      <span className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-yellow-400" />
+                        Pending
+                      </span>
+                    </SelectItem>
+                    <SelectItem value="contacted" className="hover:bg-blue-50">
+                      <span className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-blue-400" />
+                        Contacted
+                      </span>
+                    </SelectItem>
+                    <SelectItem value="resolved" className="hover:bg-green-50">
+                      <span className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-green-400" />
+                        Resolved
+                      </span>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
-
-            <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-gray-500" />
-              <span>{message.location}</span>
-            </div>
-
-            <div className="space-y-2">
-              <div className="font-medium">Service Required</div>
-              <div className="bg-gray-50 p-3 rounded-md">{message.service_type}</div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="font-medium">Message</div>
-              <div className="bg-gray-50 p-3 rounded-md whitespace-pre-wrap">
+            <div className="mt-6 flex-1 flex flex-col">
+              <p className="text-gray-600 text-base leading-relaxed flex-1">
                 {message.message}
+              </p>
+              <div className="flex flex-col gap-4 pt-4 border-t border-gray-100 mt-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-500">
+                    {new Date(message.created_at).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  </span>
+                </div>
+                <div className="space-y-3">
+                  {editingComment?.id === message.id ? (
+                    <div className="space-y-2">
+                      <Textarea
+                        placeholder="Add your comment here..."
+                        value={editingComment.comment}
+                        onChange={(e) => setEditingComment({ id: message.id, comment: e.target.value })}
+                        className="min-h-[80px] text-sm"
+                      />
+                      <div className="flex gap-2 justify-end">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setEditingComment(null)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => handleCommentSave(message.id)}
+                        >
+                          Save
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      {message.admin_comment ? (
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <p className="text-sm text-gray-600">{message.admin_comment}</p>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="mt-2"
+                            onClick={() => setEditingComment({ id: message.id, comment: message.admin_comment || '' })}
+                          >
+                            Edit Comment
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setEditingComment({ id: message.id, comment: '' })}
+                        >
+                          Add Comment
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-
-            <div className="space-y-2">
-              <div className="font-medium">Admin Comment</div>
-              <Textarea
-                placeholder="Add your comment here..."
-                defaultValue={message.admin_comment || ""}
-                className="min-h-[100px]"
-                onChange={(e) => {
-                  const newComment = e.target.value;
-                  updateEnquiry.mutate({ id: message.id, comment: newComment });
-                }}
-              />
-            </div>
-          </CardContent>
-
-          <CardFooter className="bg-gray-50 p-4">
-            <div className="flex items-center justify-between w-full">
-              <Select
-                defaultValue={message.status}
-                onValueChange={(value) => {
-                  updateEnquiry.mutate({ 
-                    id: message.id, 
-                    status: value as Status 
-                  });
-                }}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Update status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="new">New</SelectItem>
-                  <SelectItem value="in-progress">In Progress</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select
-                defaultValue={message.status || 'pending'}
-                onValueChange={(value: 'pending' | 'contacted' | 'resolved') => updateEnquiry.mutate({ id: message.id, status: value })}
-              >
-                <SelectTrigger className="w-[130px] bg-white shadow-lg border-gray-200 hover:bg-gray-50 transition-all duration-200">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent className="bg-white shadow-xl border border-gray-100">
-                  <SelectItem value="pending" className="hover:bg-yellow-50">
-                    <span className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-yellow-400" />
-                      Pending
-                    </span>
-                  </SelectItem>
-                  <SelectItem value="contacted" className="hover:bg-blue-50">
-                    <span className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-blue-400" />
-                      Contacted
-                    </span>
-                  </SelectItem>
-                  <SelectItem value="resolved" className="hover:bg-green-50">
-                    <span className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-green-400" />
-                      Resolved
-                    </span>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardFooter>
-        </Card>
-      ))}
+          </div>
+        ))}
+      </div>
+      {messages.length === 0 && (
+        <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
+          No enquiries yet
+        </div>
+      )}
     </div>
   );
-};
-
-export default ContactMessages;
+}

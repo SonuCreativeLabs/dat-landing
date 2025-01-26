@@ -12,6 +12,7 @@ import { Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Mail, MapPin, Clock, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import AnnouncementBanner from "@/components/AnnouncementBanner";
 
 const Index = () => {
   return (
@@ -19,6 +20,7 @@ const Index = () => {
       <SupabaseTest />
       <Hero />
       <AboutUs />
+      <AnnouncementBanner />
       <Services />
       
       {/* Rental Section */}
