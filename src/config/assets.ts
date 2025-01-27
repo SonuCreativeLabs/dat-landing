@@ -6,7 +6,6 @@ export const HERO_IMAGES = {
   WASHING_MACHINE: "https://ik.imagekit.io/projectassets/Assets/Washing%20machine.jpg?updatedAt=1737896178813",
   WATER_PURIFIER: "https://ik.imagekit.io/projectassets/Assets/Water%20purifier.jpg?updatedAt=1737896178721",
   MAIN: "https://ik.imagekit.io/projectassets/Assets/DAT%20MAIN-02.png?updatedAt=1737896983644",
-  
 } as const;
 
 // About section images
@@ -25,5 +24,33 @@ export const SERVICE_IMAGES = {
 // Company logos and branding
 export const BRAND_ASSETS = {
   LOGO: "https://ik.imagekit.io/projectassets/Assets/DAT%20MAIN-01.png?updatedAt=1737896983874",
-  FAVICON: "https://ik.imagekit.io/projectassets/Assets/DAT%20MAIN-02.png?updatedAt=1737896983644",
+  FAVICON: "https://ik.imagekit.io/projectassets/Assets/DAT%20NEW%20LOGO-04.png?updatedAt=1737985280218",
+} as const;
+
+export const ASSETS = {
+  LOGO: {
+    MAIN: 'https://ik.imagekit.io/projectassets/Assets/DAT%20MAIN-01.png?updatedAt=1737896983644',
+    MINI: 'https://ik.imagekit.io/projectassets/Assets/DAT%20MAIN-02.png?updatedAt=1737896983644',
+    ALT: 'DAT Appliances Logo'
+  },
+  HERO: {
+    MAIN: '/hero/hero-main.jpg',
+    ALT: 'DAT Appliances Hero Image'
+  },
+  ABOUT: {
+    TEAM: '/about/team.jpg',
+    STORE: '/about/store.jpg',
+    SERVICE: '/about/service.jpg'
+  },
+  PRODUCTS: {
+    REFRIGERATOR: '/products/refrigerator.jpg',
+    WASHING_MACHINE: '/products/washing-machine.jpg',
+    AC: '/products/ac.jpg',
+    WATER_PURIFIER: '/products/water-purifier.jpg'
+  },
+  PATTERNS: {
+    APPLIANCES: '/appliances-pattern.svg',
+    DOTS: '/patterns/dots.svg',
+    WAVES: '/patterns/waves.svg'
+  }
 } as const;

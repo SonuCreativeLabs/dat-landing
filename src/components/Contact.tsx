@@ -13,6 +13,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 import { CONTACT_INFO } from '@/config/contact';
+import { ASSETS } from '@/config/assets';
 
 type ContactFormData = {
   name: string;
@@ -31,140 +32,118 @@ const Contact = () => {
     email: '',
     phone: '',
     location: '',
-    service_type: 'appliance_sales',
+    service_type: 'appliance_rental',
     message: ''
   });
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setIsSuccess(false);
+    setError(null);
 
     try {
-      console.log('Submitting contact form:', formData);
-
-      const location = formData.location.trim() || 'Chennai';
-      const fullMessage = `Location: ${location}\n\n${formData.message.trim()}`;
-
-      const enquiryData: EnquiryInsert = {
-        name: formData.name.trim(),
-        email: formData.email.trim(),
-        phone: formData.phone.trim(),
-        service_type: formData.service_type.trim(),
-        message: fullMessage,
-        status: 'pending',
-        created_at: new Date().toISOString()
-      };
-
-      console.log('Formatted enquiry data:', enquiryData);
-
-      const { data, error } = await supabase
+      const { error: supabaseError } = await supabase
         .from('enquiries')
-        .insert(enquiryData)
-        .select();
+        .insert([
+          {
+            ...formData,
+            status: 'new'
+          }
+        ]);
 
-      if (error) {
-        console.error('Supabase error details:', {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code
-        });
-        throw error;
-      }
+      if (supabaseError) throw supabaseError;
 
-      console.log('Successfully submitted contact form:', data);
-
+      setIsSuccess(true);
       setFormData({
         name: '',
         email: '',
         phone: '',
         location: '',
-        service_type: 'appliance_sales',
+        service_type: 'appliance_rental',
         message: ''
       });
-
-      setIsSuccess(true);
-    } catch (error: any) {
-      console.error('Error submitting enquiry:', error);
-      alert(error?.message || 'There was an error submitting your message. Please try again.');
+    } catch (err) {
+      console.error('Error submitting form:', err);
+      setError('Failed to submit form. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <section id="contact" className="py-20 bg-gradient-to-b from-white to-blue-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+    <section id="contact" className="relative py-20 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-[url('/patterns/dots.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/10 via-gray-900/50 to-gray-900/90" />
+      </div>
+
+      <div className="relative container mx-auto px-4">
+        <div className="flex flex-col lg:flex-row gap-12 max-w-7xl mx-auto">
           {/* Contact Information */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="space-y-8"
+            transition={{ duration: 0.5 }}
+            className="lg:w-1/3 space-y-8"
           >
+            {/* Title */}
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Get in Touch</h2>
-              <p className="text-lg text-gray-600">
-                We're here to help with all your home appliance needs.
-              </p>
+              <h2 className="text-3xl font-bold text-white mb-2">Contact Us</h2>
+              <p className="text-gray-400">Get in touch with our team</p>
             </div>
 
             <div className="space-y-6">
-              {/* Phone */}
               <div className="flex items-start gap-4">
-                <div className="bg-blue-100 rounded-lg p-3">
-                  <Phone className="w-6 h-6 text-blue-600" />
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-3">
+                  <Phone className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Phone</h3>
-                  <a 
-                    href={`tel:${CONTACT_INFO.PHONE}`}
-                    className="text-blue-600 hover:text-blue-700 font-medium"
-                  >
-                    {CONTACT_INFO.PHONE_DISPLAY}
-                  </a>
+                  <h3 className="text-lg font-semibold text-white">Phone</h3>
+                  <p className="text-gray-400">{CONTACT_INFO.PHONE}</p>
+                  <p className="text-sm text-gray-500">Mon-Sat 9am to 8pm</p>
                 </div>
               </div>
 
-              {/* Email */}
               <div className="flex items-start gap-4">
-                <div className="bg-blue-100 rounded-lg p-3">
-                  <Mail className="w-6 h-6 text-blue-600" />
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-3">
+                  <Mail className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
-                  <a 
-                    href={`mailto:${CONTACT_INFO.EMAIL}`}
-                    className="text-blue-600 hover:text-blue-700"
-                  >
-                    {CONTACT_INFO.EMAIL}
-                  </a>
+                  <h3 className="text-lg font-semibold text-white">Email</h3>
+                  <p className="text-gray-400">{CONTACT_INFO.EMAIL}</p>
+                  <p className="text-sm text-gray-500">Online support 24/7</p>
                 </div>
               </div>
 
-              {/* Address */}
               <div className="flex items-start gap-4">
-                <div className="bg-blue-100 rounded-lg p-3">
-                  <MapPin className="w-6 h-6 text-blue-600" />
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-3">
+                  <MapPin className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Office Address</h3>
-                  <p className="text-gray-600 mb-2">
-                    {CONTACT_INFO.ADDRESS.STREET}<br />
-                    {CONTACT_INFO.ADDRESS.AREA}<br />
-                    {CONTACT_INFO.ADDRESS.CITY}, {CONTACT_INFO.ADDRESS.STATE}<br />
-                    {CONTACT_INFO.ADDRESS.PINCODE}
+                  <h3 className="text-lg font-semibold text-white">Location</h3>
+                  <p className="text-gray-400 whitespace-pre-line">
+                    {`${CONTACT_INFO.ADDRESS.STREET}
+${CONTACT_INFO.ADDRESS.AREA}
+${CONTACT_INFO.ADDRESS.CITY}, ${CONTACT_INFO.ADDRESS.STATE}
+${CONTACT_INFO.ADDRESS.PINCODE}`}
                   </p>
                   <a 
                     href={CONTACT_INFO.ADDRESS.MAPS_LINK}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium gap-1"
+                    className="text-sm text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1 mt-2"
                   >
                     <Navigation className="w-4 h-4" />
                     Get Directions
@@ -172,16 +151,14 @@ const Contact = () => {
                 </div>
               </div>
 
-              {/* Business Hours */}
               <div className="flex items-start gap-4">
-                <div className="bg-blue-100 rounded-lg p-3">
-                  <Clock className="w-6 h-6 text-blue-600" />
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-3">
+                  <Clock className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Business Hours</h3>
-                  <p className="text-gray-600">
-                    Monday - Sunday: 9:00 AM - 8:00 PM
-                  </p>
+                  <h3 className="text-lg font-semibold text-white">Business Hours</h3>
+                  <p className="text-gray-400">Monday - Saturday</p>
+                  <p className="text-sm text-gray-500">9:00 AM - 8:00 PM</p>
                 </div>
               </div>
             </div>
@@ -192,147 +169,150 @@ const Contact = () => {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="space-y-8"
+            transition={{ duration: 0.5 }}
+            className="lg:w-2/3"
           >
-            <div className="flex items-center space-x-3 mb-8">
-              <div className="bg-blue-100 rounded-lg p-2">
-                <MessageSquare className="w-6 h-6 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900">
-                Submit Your Enquiry
-              </h3>
-            </div>
-
-            {isSuccess ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-green-50 rounded-lg p-8 text-center"
-              >
-                <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                  <CheckCircle2 className="w-8 h-8 text-green-600" />
-                </div>
-                <h4 className="text-2xl font-semibold text-gray-900 mb-4">
-                  Enquiry Submitted Successfully!
-                </h4>
-                <p className="text-gray-600 text-lg mb-6">
-                  Thank you for reaching out to us. Our team will review your enquiry and get back to you within 24 hours. 
-                  For urgent assistance, please call us at <a href="tel:+919876543210" className="text-blue-600 hover:text-blue-700 font-medium">+91 98765 43210</a>.
-                </p>
-                <button
-                  onClick={() => setIsSuccess(false)}
-                  className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300"
-                >
-                  Submit Another Enquiry
-                </button>
-              </motion.div>
-            ) : (
-              <form onSubmit={onSubmit} className="space-y-6">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-300">
                       Name
                     </label>
                     <input
                       type="text"
-                      required
+                      id="name"
+                      name="name"
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
+                      onChange={handleChange}
+                      required
+                      className="mt-1 block w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                       placeholder="Your name"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-300">
                       Email
                     </label>
                     <input
                       type="email"
-                      required
+                      id="email"
+                      name="email"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
+                      onChange={handleChange}
+                      required
+                      className="mt-1 block w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                       placeholder="your@email.com"
                     />
                   </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-300">
                       Phone
                     </label>
                     <input
                       type="tel"
-                      required
+                      id="phone"
+                      name="phone"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
+                      onChange={handleChange}
+                      required
+                      className="mt-1 block w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                       placeholder="Your phone number"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="location" className="block text-sm font-medium text-gray-300">
                       Location
                     </label>
                     <input
                       type="text"
+                      id="location"
+                      name="location"
                       value={formData.location}
-                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
-                      placeholder="Your location (e.g., Chennai)"
+                      onChange={handleChange}
+                      required
+                      className="mt-1 block w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                      placeholder="Your location"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="service_type" className="block text-sm font-medium text-gray-300">
                     Service Type
                   </label>
                   <select
+                    id="service_type"
+                    name="service_type"
                     value={formData.service_type}
-                    onChange={(e) => setFormData({ ...formData, service_type: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
+                    onChange={handleChange}
+                    required
+                    className="mt-1 block w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                   >
-                    <option value="appliance_sales">Appliance Sales</option>
-                    <option value="appliance_service">Appliance Service</option>
                     <option value="appliance_rental">Appliance Rental</option>
-                    <option value="others">Others</option>
+                    <option value="appliance_service">Appliance Service</option>
+                    <option value="appliance_purchase">Appliance Purchase</option>
+                    <option value="other">Other</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-300">
                     Message
                   </label>
                   <textarea
-                    required
+                    id="message"
+                    name="message"
                     value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    onChange={handleChange}
+                    required
                     rows={4}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 resize-none"
-                    placeholder="Example: I am interested in renting a washing machine for 6 months. I need it delivered to Anna Nagar, Chennai. Please provide details about the rental terms and available models."
+                    className="mt-1 block w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                    placeholder="How can we help you?"
                   />
                 </div>
+
+                {error && (
+                  <div className="text-red-500 text-sm">{error}</div>
+                )}
+
+                {isSuccess && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-2 text-green-500"
+                  >
+                    <CheckCircle2 className="w-5 h-5" />
+                    <span>Message sent successfully!</span>
+                  </motion.div>
+                )}
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                  className={`w-full flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 
+                            text-white font-semibold rounded-xl transition-all duration-300 
+                            hover:shadow-[0_8px_30px_rgba(59,130,246,0.3)] hover:-translate-y-0.5
+                            disabled:opacity-50 disabled:cursor-not-allowed
+                            ${isSubmitting ? 'animate-pulse' : ''}`}
                 >
                   {isSubmitting ? (
-                    'Sending...'
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                      <span>Sending...</span>
+                    </>
                   ) : (
                     <>
                       <Send className="w-5 h-5" />
-                      Send Message
+                      <span>Send Message</span>
                     </>
                   )}
                 </button>
               </form>
-            )}
+            </div>
           </motion.div>
         </div>
       </div>
