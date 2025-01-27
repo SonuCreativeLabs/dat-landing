@@ -1,8 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Phone } from 'lucide-react';
+import { Phone, Mail } from 'lucide-react';
 import ProductCard from './ProductCard';
 import { HERO_IMAGES } from '@/config/assets';
+import { CONTACT_INFO } from '@/config/contact';
 
 const products = [
   {
@@ -97,17 +98,28 @@ const Products = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-center mt-16"
+          className="text-center mt-16 space-y-4"
         >
-          <a
-            href="tel:+919876543210"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 
-                     hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-semibold 
-                     transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-          >
-            <Phone className="w-5 h-5" />
-            Contact for Details
-          </a>
+          <div className="flex items-center justify-center">
+            <a
+              href={`tel:${CONTACT_INFO.PHONE}`}
+              className="group relative inline-flex items-center gap-2 px-8 py-4 
+                       bg-gradient-to-br from-[#0EA5E9] to-[#0284C7]
+                       hover:from-[#0284C7] hover:to-[#0EA5E9]
+                       text-white rounded-xl font-semibold 
+                       transition-all duration-300 shadow-lg 
+                       hover:shadow-[0_8px_30px_rgba(14,165,233,0.3)]
+                       hover:-translate-y-0.5
+                       backdrop-blur-sm"
+            >
+              <Phone className="w-5 h-5" />
+              <span>Call Now: {CONTACT_INFO.PHONE_DISPLAY}</span>
+              <div className="absolute inset-0 rounded-xl bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </a>
+          </div>
+          <p className="text-sm text-gray-500">
+            Contact us for detailed pricing and availability
+          </p>
         </motion.div>
       </div>
     </section>

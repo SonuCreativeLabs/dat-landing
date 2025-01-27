@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Check } from "lucide-react";
+import { ChevronDown, ChevronUp, Check, Phone } from "lucide-react";
+import { CONTACT_INFO } from "@/config/contact";
 
 interface ProductCardProps {
   title: string;
@@ -85,7 +86,13 @@ const ProductCard = ({ title, description, features, price, imageUrl }: ProductC
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">Sale Price</span>
-                  <span className="text-sm text-blue-600 font-medium">Contact for Quote</span>
+                  <a 
+                    href={`tel:${CONTACT_INFO.PHONE}`}
+                    className="text-sm text-blue-600 font-medium hover:text-blue-700 flex items-center gap-1"
+                  >
+                    <Phone className="w-3 h-3" />
+                    Call for Quote
+                  </a>
                 </div>
               </div>
             </motion.div>

@@ -12,6 +12,7 @@ import Contact from "@/components/Contact";
 import Products from "@/components/Products";
 import { motion } from "framer-motion";
 import { Phone } from "lucide-react";
+import { CONTACT_INFO } from "@/config/contact";
 
 const products = [
   {
@@ -99,8 +100,8 @@ const Index = () => {
         <Header />
         <Hero />
         <AboutUs />
-        <AnnouncementBanner />
         <Services />
+        <AnnouncementBanner />
         <Products />
         <Testimonials />
         <Contact />
