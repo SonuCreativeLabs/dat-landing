@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Premium Gradients -->
+    <linearGradient id="premium-white" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF"/>
+      <stop offset="50%" style="stop-color:#F8FAFC"/>
+      <stop offset="100%" style="stop-color:#F1F5F9"/>
+    </linearGradient>
+    
+    <linearGradient id="metallic-edge" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E2E8F0"/>
+      <stop offset="50%" style="stop-color:#CBD5E1"/>
+      <stop offset="100%" style="stop-color:#94A3B8"/>
+    </linearGradient>
+    
+    <!-- Enhanced Glow Effects -->
+    <filter id="premium-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="20"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.235   0 0 0 0 0.647   0 0 0 0 1  0 0 0 1 0"/>
+    </filter>
+    
+    <filter id="soft-blue-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.235   0 0 0 0 0.647   0 0 0 0 1  0 0 0 0.6 0"/>
+    </filter>
+    
+    <!-- Air Flow Gradients -->
+    <linearGradient id="air-flow-1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:rgba(59,130,246,0.9)"/>
+      <stop offset="100%" style="stop-color:rgba(59,130,246,0)"/>
+    </linearGradient>
+    
+    <linearGradient id="air-flow-2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:rgba(96,165,250,0.8)"/>
+      <stop offset="100%" style="stop-color:rgba(96,165,250,0)"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Premium 3D AC Unit -->
+  <g transform="translate(150,50)">
+    <!-- Main Body Shadow -->
+    <path d="M20,40 L480,40 L460,290 L40,290 Z" 
+          fill="#000000" 
+          opacity="0.2" 
+          filter="url(#premium-glow)"/>
+    
+    <!-- Main Body -->
+    <g transform="skewY(-10)">
+      <!-- Back Panel -->
+      <rect x="40" y="40" width="440" height="240" rx="20" 
+            fill="#F1F5F9" 
+            opacity="0.8"/>
+      
+      <!-- Side Panels with Metallic Effect -->
+      <path d="M480,40 L520,20 L520,260 L480,280 Z" 
+            fill="url(#metallic-edge)" 
+            opacity="0.9">
+        <animate attributeName="opacity" 
+                 values="0.8;0.95;0.8" 
+                 dur="3s" 
+                 repeatCount="indefinite"/>
+      </path>
+      
+      <!-- Top Panel with Premium Finish -->
+      <path d="M40,40 L480,40 L520,20 L80,20 Z" 
+            fill="url(#metallic-edge)" 
+            opacity="0.95"/>
+      
+      <!-- Front Panel with Premium White -->
+      <rect x="40" y="40" width="440" height="240" rx="20" 
+            fill="url(#premium-white)" 
+            stroke="#E2E8F0" 
+            stroke-width="2">
+        <animate attributeName="opacity" 
+                 values="0.95;1;0.95" 
+                 dur="3s" 
+                 repeatCount="indefinite"/>
+      </rect>
+    </g>
+    
+    <!-- Premium Air Vents -->
+    <g transform="translate(70,70) skewY(-10)">
+      {[...Array(6)].map((_, i) => (
+        <g transform={`translate(0,${i * 25})`}>
+          <!-- Vent Background -->
+          <rect x="0" y="0" width="380" height="15" rx="7.5" 
+                fill="#F8FAFC" 
+                stroke="#E2E8F0">
+            <animate attributeName="opacity" 
+                     values="0.8;1;0.8" 
+                     dur="2s" 
+                     begin={`${i * 0.2}s`} 
+                     repeatCount="indefinite"/>
+          </rect>
+          
+          <!-- Vent Glow -->
+          <rect x="0" y="0" width="380" height="15" rx="7.5" 
+                fill="#3B82F6" 
+                opacity="0.2" 
+                filter="url(#soft-blue-glow)">
+            <animate attributeName="opacity" 
+                     values="0.1;0.3;0.1" 
+                     dur="2s" 
+                     begin={`${i * 0.2}s`} 
+                     repeatCount="indefinite"/>
+          </rect>
+        </g>
+      ))}
+    </g>
+    
+    <!-- Premium Display Panel -->
+    <g transform="translate(70,240) skewY(-10)">
+      <!-- Display Background -->
+      <rect x="0" y="0" width="120" height="45" rx="10" 
+            fill="#1E293B" 
+            stroke="#3B82F6"/>
+      
+      <!-- Temperature Display -->
+      <text x="60" y="30" 
+            fill="#3B82F6" 
+            font-family="Arial" 
+            font-size="24" 
+            font-weight="bold" 
+            text-anchor="middle">18°C</text>
+      
+      <!-- Mode Indicator -->
+      <text x="140" y="30" 
+            fill="#3B82F6" 
+            font-family="Arial" 
+            font-size="14" 
+            opacity="0.8">COOL</text>
+    </g>
+    
+    <!-- Premium LED Indicators -->
+    <g transform="translate(240,250) skewY(-10)">
+      <!-- Power LED -->
+      <circle cx="0" cy="0" r="6" fill="#3B82F6" filter="url(#premium-glow)">
+        <animate attributeName="opacity" 
+                 values="0.6;1;0.6" 
+                 dur="2s" 
+                 repeatCount="indefinite"/>
+      </circle>
+      
+      <!-- Mode LED -->
+      <circle cx="25" cy="0" r="6" fill="#10B981" filter="url(#premium-glow)">
+        <animate attributeName="opacity" 
+                 values="0.6;1;0.6" 
+                 dur="2s" 
+                 begin="0.5s" 
+                 repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Premium Cool Air Effect -->
+  <g transform="translate(150,290)">
+    <!-- Multiple Enhanced Air Waves -->
+    <g opacity="0.9">
+      <!-- Primary Wave -->
+      <path d="M40,0 Q250,60 460,0" 
+            stroke="#3B82F6" 
+            stroke-width="60" 
+            fill="none" 
+            filter="url(#premium-glow)">
+        <animate attributeName="d" 
+                 dur="3s" 
+                 repeatCount="indefinite"
+                 values="M40,0 Q250,60 460,0;
+                         M40,30 Q250,90 460,30;
+                         M40,0 Q250,60 460,0"/>
+      </path>
+      
+      <!-- Secondary Wave -->
+      <path d="M40,40 Q250,100 460,40" 
+            stroke="#3B82F6" 
+            stroke-width="50" 
+            fill="none" 
+            filter="url(#premium-glow)" 
+            opacity="0.7">
+        <animate attributeName="d" 
+                 dur="3s" 
+                 repeatCount="indefinite"
+                 begin="0.5s"
+                 values="M40,40 Q250,100 460,40;
+                         M40,70 Q250,130 460,70;
+                         M40,40 Q250,100 460,40"/>
+      </path>
+      
+      <!-- Tertiary Wave -->
+      <path d="M40,80 Q250,140 460,80" 
+            stroke="#3B82F6" 
+            stroke-width="40" 
+            fill="none" 
+            filter="url(#premium-glow)" 
+            opacity="0.5">
+        <animate attributeName="d" 
+                 dur="3s" 
+                 repeatCount="indefinite"
+                 begin="1s"
+                 values="M40,80 Q250,140 460,80;
+                         M40,110 Q250,170 460,110;
+                         M40,80 Q250,140 460,80"/>
+      </path>
+    </g>
+  </g>
+  
+  <!-- Premium Sparkle Effects -->
+  <g>
+    {[...Array(10)].map((_, i) => (
+      <circle cx={200 + i * 50} 
+              cy={100 + (i % 3) * 30} 
+              r="2" 
+              fill="#3B82F6" 
+              filter="url(#premium-glow)">
+        <animate attributeName="opacity" 
+                 values="0;1;0" 
+                 dur="2s" 
+                 begin={`${i * 0.2}s`} 
+                 repeatCount="indefinite"/>
+        <animate attributeName="r" 
+                 values="2;4;2" 
+                 dur="2s" 
+                 begin={`${i * 0.2}s`} 
+                 repeatCount="indefinite"/>
+      </circle>
+    ))}
+  </g>
+</svg>

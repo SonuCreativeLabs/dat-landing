@@ -158,58 +158,60 @@ const Hero = () => {
           </motion.div>
 
           {/* Right Column - 3D AC */}
-          <motion.div
-            ref={containerRef}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            className="relative lg:-mt-20 perspective-2000"
-          >
+          <div className="relative w-full h-full min-h-[600px] flex items-center justify-center">
             <motion.div
+              ref={containerRef}
               style={{
+                perspective: 1000,
                 rotateX,
                 rotateY,
                 transformStyle: "preserve-3d",
               }}
-              className="w-full h-full relative"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+              className="relative w-full max-w-3xl mx-auto"
             >
-              {/* Glow Effects */}
-              <div className="absolute inset-0 scale-90 bg-gradient-to-br from-sky-400/30 via-blue-400/20 to-sky-400/30 blur-3xl rounded-full" />
-              <div className="absolute inset-0 scale-95 bg-gradient-to-tr from-sky-400/20 via-blue-400/10 to-sky-400/20 blur-2xl rounded-full" />
+              {/* Background Glow */}
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-blue-400/30 to-blue-500/20 blur-3xl rounded-[32px]" />
+              <div className="absolute inset-0 bg-gradient-to-b from-blue-400/10 via-blue-500/20 to-blue-400/10 blur-2xl rounded-[32px]" />
               
-              {/* 3D AC Image */}
-              <motion.div
-                className="relative transform-gpu"
-                style={{
-                  transformStyle: "preserve-3d",
-                  transform: "translateZ(50px)",
-                }}
-              >
-                <img 
-                  src="/ac-3d-realistic.svg" 
-                  alt="3D Air Conditioner" 
-                  className="relative w-full h-auto max-w-3xl mx-auto filter drop-shadow-[0_35px_60px_rgba(14,165,233,0.3)]"
-                />
-              </motion.div>
-              
-              {/* Cool Air Effect */}
-              <motion.div
-                className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-full h-40 pointer-events-none"
-                initial={{ opacity: 0 }}
-                animate={{ 
-                  opacity: [0.4, 0.8, 0.4],
-                  y: [0, 10, 0]
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              >
-                <div className="w-full h-full bg-gradient-to-b from-blue-400/30 via-blue-400/10 to-transparent blur-xl" />
-              </motion.div>
+              {/* AC Container */}
+              <div className="relative transform-gpu">
+                <motion.div
+                  className="relative z-10"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <img 
+                    src="/ac-3d-fixed.svg" 
+                    alt="3D Air Conditioner" 
+                    width={800}
+                    height={600}
+                    className="w-full h-auto select-none drop-shadow-2xl"
+                    draggable="false"
+                  />
+                </motion.div>
+                
+                {/* Cool Air Effect */}
+                <motion.div
+                  className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-full h-80"
+                  initial={{ opacity: 0 }}
+                  animate={{ 
+                    opacity: [0.4, 0.8, 0.4],
+                    y: [0, 20, 0]
+                  }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >
+                  <div className="w-full h-full bg-gradient-to-b from-blue-500/40 via-blue-400/20 to-transparent blur-3xl" />
+                </motion.div>
+              </div>
             </motion.div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

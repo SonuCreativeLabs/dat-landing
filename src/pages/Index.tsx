@@ -9,7 +9,7 @@ import AboutUs from "@/components/AboutUs";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import Contact from "@/components/Contact";
-import ProductCard from "@/components/ProductCard";
+import Products from "@/components/Products";
 import { motion } from "framer-motion";
 import { Phone } from "lucide-react";
 
@@ -101,52 +101,12 @@ const Index = () => {
         <AboutUs />
         <AnnouncementBanner />
         <Services />
-        
-        {/* Products Section */}
-        <section className="py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="text-center max-w-3xl mx-auto mb-16"
-            >
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Products</h2>
-              <p className="text-gray-600">
-                Explore our range of quality appliances available for sale and rental
-              </p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-              {products.map((product, index) => (
-                <ProductCard key={index} {...product} />
-              ))}
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="text-center"
-            >
-              <a
-                href="tel:+919876543210"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300 shadow-lg hover:shadow-xl"
-              >
-                <Phone className="w-5 h-5" />
-                Call Now to Rent
-              </a>
-            </motion.div>
-          </div>
-        </section>
-
+        <Products />
         <Testimonials />
         <Contact />
-        <Footer />
-        <WhatsAppButton phoneNumber="+919876543210" />
+        <WhatsAppButton />
       </main>
+      <Footer />
     </>
   );
 };

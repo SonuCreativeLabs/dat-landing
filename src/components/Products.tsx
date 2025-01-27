@@ -1,80 +1,94 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { HERO_IMAGES } from '@/config/assets';
-import ProductCard from './ProductCard';
 import { Phone } from 'lucide-react';
+import ProductCard from './ProductCard';
+import { HERO_IMAGES } from '@/config/assets';
 
 const products = [
   {
     title: "Air Conditioners",
-    description: "Wide range of energy-efficient ACs for all spaces. Available in Split AC (1 to 2 Ton), Window AC (1 to 1.5 Ton), and Cassette AC for commercial use. Features include anti-bacterial filters, inverter technology, and smart climate control.",
+    description: "Premium ACs with advanced cooling technology. Available in Split AC (1-2 Ton), Window AC (1-1.5 Ton), and Cassette AC. Features include smart climate control and energy-efficient operation. Perfect for homes and offices with professional installation and maintenance.",
     features: [
-      "5-star rated energy efficiency",
-      "Auto-cleaning & Anti-bacterial filters",
-      "Smart temperature control with WiFi",
-      "Professional installation included"
+      "5-star energy rating",
+      "Smart temperature control",
+      "Anti-bacterial filters",
+      "Professional installation"
     ],
     price: "₹2,999",
     imageUrl: HERO_IMAGES.AC
   },
   {
     title: "Refrigerators",
-    description: "Premium refrigerators with advanced cooling. Choose from Single Door (180L-250L), Double Door (250L-500L), and Side-by-Side (500L+) models. Features include digital inverter technology and convertible storage options.",
+    description: "Modern refrigerators with superior cooling performance. Choose from Single Door (180-250L), Double Door (250-500L), and Side-by-Side (500L+) models. Features digital inverter technology and convertible storage options.",
     features: [
-      "Digital Inverter Technology",
-      "Multi-door convertible storage",
+      "Digital inverter technology",
+      "Convertible storage modes",
       "Frost-free operation",
-      "10-year compressor warranty"
+      "10-year warranty"
     ],
     price: "₹1,999",
     imageUrl: HERO_IMAGES.FRIDGE
   },
   {
     title: "Washing Machines",
-    description: "High-efficiency washing machines for every need. Available in Front Load (6-9kg), Top Load (6-11kg), and Semi-Automatic variants. Advanced features include steam wash, quick wash, and fabric care programs.",
+    description: "High-performance washing machines for every household. Available in Front Load (6-9kg), Top Load (6-11kg), and Semi-Automatic variants. Includes steam wash and quick wash programs for efficient cleaning.",
     features: [
-      "Multiple wash programs (15+)",
-      "Steam wash & Quick wash",
-      "Inverter motor technology",
-      "5-year motor warranty"
+      "Multiple wash programs",
+      "Steam wash technology",
+      "Energy efficient motor",
+      "5-year warranty"
     ],
     price: "₹1,499",
     imageUrl: HERO_IMAGES.WASHING_MACHINE
   },
   {
     title: "Water Purifiers",
-    description: "Advanced water purification systems with multi-stage filtration. RO+UV+UF technology with TDS control. Capacity ranges from 7L to 15L. Smart indicators for filter change and tank full alerts.",
+    description: "Advanced water purifiers with multi-stage filtration. Features RO+UV+UF technology for safe drinking water. Includes TDS controller and mineral enrichment for better taste and health benefits.",
     features: [
       "RO+UV+UF purification",
-      "Mineral retention technology",
-      "Real-time TDS monitoring",
-      "1-year comprehensive warranty"
+      "TDS controller",
+      "Mineral enrichment",
+      "Annual maintenance"
     ],
     price: "₹799",
     imageUrl: HERO_IMAGES.WATER_PURIFIER
   }
 ];
 
-const Products: React.FC = () => {
+const Products = () => {
   return (
-    <section className="py-20 bg-white">
-      <div className="container mx-auto px-4">
+    <section
+      id="products"
+      className="py-24 bg-gradient-to-b from-gray-50 via-white to-gray-50"
+    >
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-16"
+          className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Products</h2>
-          <p className="text-gray-600">
-            Explore our range of quality appliances available for sale and rental
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-4">
+            Our Products
+          </h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Discover our premium range of home appliances.
+            Available for both sale and rental with professional maintenance.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {products.map((product, index) => (
-            <ProductCard key={index} {...product} />
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <ProductCard {...product} />
+            </motion.div>
           ))}
         </div>
 
@@ -82,15 +96,17 @@ const Products: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center"
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="text-center mt-16"
         >
           <a
             href="tel:+919876543210"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300 shadow-lg hover:shadow-xl"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 
+                     hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-semibold 
+                     transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           >
             <Phone className="w-5 h-5" />
-            Call Now to Rent
+            Contact for Details
           </a>
         </motion.div>
       </div>
