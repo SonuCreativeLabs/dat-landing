@@ -21,6 +21,7 @@ import {
   Archive
 } from "lucide-react";
 import TestimonialReview from "@/components/admin/TestimonialReview";
+import EnquiryReview from "@/components/admin/EnquiryReview";
 import ContactMessages from "@/components/admin/ContactMessages";
 import { Button } from "@/components/ui/button";
 import {
@@ -546,28 +547,7 @@ const Admin = () => {
           {activePage === 'enquiry' && (
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-gray-800">Enquiries</h2>
-              <div className="grid gap-6">
-                {enquiries.map((enquiry) => (
-                  <div key={enquiry.id} className="bg-white p-6 rounded-xl shadow-sm">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="font-semibold text-lg">{enquiry.name}</h3>
-                        <p className="text-sm text-gray-500">{enquiry.phone}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {renderEnquiryStatus(enquiry.status as EnquiryStatus)}
-                      </div>
-                    </div>
-                    <div className="mt-2">
-                      <p className="text-sm font-medium text-gray-500">Message</p>
-                      <p className="text-gray-800">{enquiry.message}</p>
-                    </div>
-                    <div className="mt-2 text-sm text-gray-500">
-                      {new Date(enquiry.created_at).toLocaleString()}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <EnquiryReview />
             </div>
           )}
 
@@ -641,17 +621,19 @@ const Admin = () => {
                         <div className="mt-6 flex-1 flex flex-col">
                           <p className="text-gray-600 text-base leading-relaxed flex-1">{testimonial.message}</p>
                           <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-4">
-                            <div className="flex items-center gap-1">
-                              {[...Array(5)].map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className={`w-5 h-5 ${
-                                    i < testimonial.rating
-                                      ? "text-yellow-400 fill-current"
-                                      : "text-gray-200"
-                                  }`}
-                                />
-                              ))}
+                            <div className="flex-1">
+                              <div className="flex items-center">
+                                {[...Array(5)].map((_, i) => (
+                                  <Star
+                                    key={i}
+                                    className={`w-5 h-5 ${
+                                      i < testimonial.rating
+                                        ? "text-yellow-400 fill-current"
+                                        : "text-gray-200"
+                                    }`}
+                                  />
+                                ))}
+                              </div>
                             </div>
                             <span className="text-sm text-gray-500">
                               {new Date(testimonial.created_at).toLocaleDateString('en-US', {

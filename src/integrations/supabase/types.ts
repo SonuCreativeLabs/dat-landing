@@ -1,4 +1,4 @@
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       enquiries: {
@@ -8,6 +8,7 @@ export interface Database {
           name: string;
           email: string;
           phone: string;
+          location: string;
           service_type: string;
           message: string;
           status: EnquiryStatus;
@@ -19,6 +20,7 @@ export interface Database {
           name: string;
           email: string;
           phone: string;
+          location: string;
           service_type: string;
           message: string;
           status?: EnquiryStatus;
@@ -30,6 +32,7 @@ export interface Database {
           name?: string;
           email?: string;
           phone?: string;
+          location?: string;
           service_type?: string;
           message?: string;
           status?: EnquiryStatus;
@@ -42,33 +45,27 @@ export interface Database {
           id: string;
           created_at: string;
           name: string;
-          service_type: string;
-          message: string;
           rating: number;
+          comment: string;
           status: TestimonialStatus;
-          location?: string;
           admin_comment?: string;
         };
         Insert: {
           id?: string;
           created_at?: string;
           name: string;
-          service_type: string;
-          message: string;
           rating: number;
+          comment: string;
           status?: TestimonialStatus;
-          location?: string;
           admin_comment?: string;
         };
         Update: {
           id?: string;
           created_at?: string;
           name?: string;
-          service_type?: string;
-          message?: string;
           rating?: number;
+          comment?: string;
           status?: TestimonialStatus;
-          location?: string;
           admin_comment?: string;
         };
         Relationships: [];
@@ -84,10 +81,19 @@ export interface Database {
       [_ in never]: never;
     };
   };
-}
+};
 
 export type TestimonialStatus = 'pending' | 'approved' | 'rejected';
-export type EnquiryStatus = 'pending' | 'contacted' | 'resolved';
+
+export type EnquiryStatus = 
+  | "new"           // Just received
+  | "pending"       // Waiting for review
+  | "in_progress"   // Currently working on it
+  | "contacted"     // Customer has been contacted
+  | "scheduled"     // Service has been scheduled
+  | "completed"     // Service completed
+  | "cancelled"     // Customer cancelled or unreachable
+  | "resolved"      // Issue resolved without service
 
 export type Enquiry = Database['public']['Tables']['enquiries']['Row'];
 export type Testimonial = Database['public']['Tables']['testimonials']['Row'];
