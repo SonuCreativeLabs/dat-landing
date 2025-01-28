@@ -184,7 +184,7 @@ const Hero = () => {
                   transition={{ type: "spring", stiffness: 300 }}
                 >
                   <img 
-                    src="/ac-3d-fixed.svg" 
+                    src="/ac-realistic.png" 
                     alt="3D Air Conditioner" 
                     width={800}
                     height={600}
@@ -194,21 +194,54 @@ const Hero = () => {
                 </motion.div>
                 
                 {/* Cool Air Effect */}
-                <motion.div
-                  className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-full h-80"
-                  initial={{ opacity: 0 }}
-                  animate={{ 
-                    opacity: [0.4, 0.8, 0.4],
-                    y: [0, 20, 0]
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  <div className="w-full h-full bg-gradient-to-b from-blue-500/40 via-blue-400/20 to-transparent blur-3xl" />
-                </motion.div>
+                <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-full h-80 overflow-hidden">
+                  {/* Primary Airflow */}
+                  <motion.div
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-full"
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ 
+                      opacity: [0.3, 0.6, 0.3],
+                      y: [0, 100],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "linear"
+                    }}
+                    style={{
+                      background: 'linear-gradient(180deg, rgba(148, 214, 255, 0.3) 0%, rgba(148, 214, 255, 0) 100%)',
+                      filter: 'blur(8px)',
+                    }}
+                  />
+                  
+                  {/* Secondary Airflow Particles */}
+                  {[...Array(6)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      className="absolute top-0 w-16 h-16"
+                      initial={{ 
+                        opacity: 0,
+                        x: Math.random() * 300 - 150,
+                        y: -20
+                      }}
+                      animate={{ 
+                        opacity: [0, 0.3, 0],
+                        x: Math.random() * 400 - 200,
+                        y: 200,
+                      }}
+                      transition={{
+                        duration: 3 + Math.random() * 2,
+                        repeat: Infinity,
+                        delay: i * 0.5,
+                        ease: "linear"
+                      }}
+                      style={{
+                        background: 'radial-gradient(circle, rgba(148, 214, 255, 0.2) 0%, rgba(148, 214, 255, 0) 70%)',
+                        filter: 'blur(4px)',
+                      }}
+                    />
+                  ))}
+                </div>
               </div>
             </motion.div>
           </div>

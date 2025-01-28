@@ -316,7 +316,7 @@ const Testimonials = () => {
                 className="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl"
               >
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-2xl font-bold text-gray-900">Share Your Experience</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-800">Share Your Experience</h3>
                   <button
                     onClick={() => setIsModalOpen(false)}
                     className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -327,7 +327,7 @@ const Testimonials = () => {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-600 mb-2">
                       Your Name
                     </label>
                     <input
@@ -340,7 +340,7 @@ const Testimonials = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-600 mb-2">
                       Rating
                     </label>
                     <div className="flex gap-2">
@@ -364,7 +364,7 @@ const Testimonials = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-600 mb-2">
                       Your Experience
                     </label>
                     <textarea
@@ -376,7 +376,7 @@ const Testimonials = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-600 mb-2">
                       Location (Optional)
                     </label>
                     <input
@@ -389,7 +389,7 @@ const Testimonials = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-600 mb-2">
                       Service Type
                     </label>
                     <select
