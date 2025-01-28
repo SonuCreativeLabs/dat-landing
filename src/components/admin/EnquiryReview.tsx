@@ -170,32 +170,6 @@ const EnquiryReview = () => {
   
   const queryClient = useQueryClient();
 
-  // Fetch enquiries
-  const { data: enquiries = [], isLoading } = useQuery({
-    queryKey: ['enquiries'],
-    queryFn: async () => {
-      console.log("Fetching enquiries...");
-      const { data, error } = await supabase
-        .from('enquiries')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error("Error fetching enquiries:", error);
-        throw error;
-      }
-
-      console.log("Fetched enquiries:", data);
-      return data as Enquiry[];
-    },
-    // Disable automatic refetching
-    refetchInterval: false,
-    refetchOnWindowFocus: false,
-    // Only refetch when explicitly invalidated
-    staleTime: Infinity,
-    gcTime: Infinity,
-  });
-
   // Update enquiry mutation
   const updateEnquiry = useMutation({
     mutationFn: async ({ id, status, admin_comment }: { id: string; status?: EnquiryStatus; admin_comment?: string }) => {
@@ -210,26 +184,20 @@ const EnquiryReview = () => {
       console.log("Sending update:", updateData);
 
       // Perform the update
-      const { error: updateError } = await supabase
+      const { data: updated, error: updateError } = await supabase
         .from('enquiries')
         .update(updateData)
-        .eq('id', id);
+        .eq('id', id)
+        .select()
+        .single();
 
       if (updateError) {
         console.error("Update error:", updateError);
         throw new Error(updateError.message);
       }
 
-      // Fetch the updated record
-      const { data: updated, error: fetchError } = await supabase
-        .from('enquiries')
-        .select()
-        .eq('id', id)
-        .single();
-
-      if (fetchError || !updated) {
-        console.error("Fetch error:", fetchError);
-        throw new Error(fetchError?.message || 'Failed to fetch updated record');
+      if (!updated) {
+        throw new Error('Failed to update record');
       }
 
       console.log("Successfully updated enquiry:", updated);
@@ -238,18 +206,8 @@ const EnquiryReview = () => {
     onSuccess: (updatedEnquiry) => {
       console.log("Update successful:", updatedEnquiry);
       
-      // Update the cache
-      queryClient.setQueryData<Enquiry[]>(['enquiries'], (old) => {
-        if (!old) return [updatedEnquiry];
-        return old.map(item => 
-          item.id === updatedEnquiry.id ? updatedEnquiry : item
-        );
-      });
-
-      // Update selected enquiry if needed
-      if (selectedEnquiry?.id === updatedEnquiry.id) {
-        setSelectedEnquiry(updatedEnquiry);
-      }
+      // Invalidate and refetch the enquiries query
+      queryClient.invalidateQueries({ queryKey: ['enquiries'] });
 
       // Show success message
       toast.success(`Status updated to ${statusColors[updatedEnquiry.status].label}`);
@@ -272,6 +230,29 @@ const EnquiryReview = () => {
       console.error("Status update failed:", error);
     }
   };
+
+  // Fetch enquiries
+  const { data: enquiries = [], isLoading } = useQuery({
+    queryKey: ['enquiries'],
+    queryFn: async () => {
+      console.log("Fetching enquiries...");
+      const { data, error } = await supabase
+        .from('enquiries')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error("Error fetching enquiries:", error);
+        throw error;
+      }
+
+      console.log("Fetched enquiries:", data);
+      return data as Enquiry[];
+    },
+    // Enable refetching on window focus and interval
+    refetchOnWindowFocus: true,
+    refetchInterval: 30000, // Refetch every 30 seconds
+  });
 
   // Ensure UI reflects the latest status
   useEffect(() => {
