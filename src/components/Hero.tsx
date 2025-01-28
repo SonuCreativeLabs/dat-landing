@@ -41,177 +41,93 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative min-h-[calc(100vh-5rem)] w-full overflow-hidden bg-gradient-to-b from-[#0EA5E9] to-[#0284C7]">
-      {/* Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-30 [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0EA5E9]/10 via-[#0284C7]/30 to-[#0EA5E9]/80" />
-        
-        {/* Animated Background Elements */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0.3, 0.2, 0.3] }}
-          transition={{ duration: 4, repeat: Infinity }}
-          className="absolute inset-0 bg-[url('/appliances-pattern.svg')] bg-repeat bg-[length:200px_200px]"
-        />
+    <section 
+      ref={containerRef}
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800"
+    >
+      {/* Background Pattern */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] dark:opacity-[0.02]" />
       </div>
 
-      {/* Floating Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(8)].map((_, i) => (
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Text Content */}
           <motion.div
-            key={i}
-            initial={{ 
-              opacity: 0, 
-              x: Math.random() * window.innerWidth, 
-              y: Math.random() * window.innerHeight 
-            }}
-            animate={{ 
-              opacity: [0.2, 0.5, 0.2],
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
-              rotate: 360
-            }}
-            transition={{ 
-              duration: 10 + Math.random() * 10,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-            className="absolute w-8 h-8 text-white/20"
-          >
-            <div className="w-full h-full rounded-full bg-current" />
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Main Content */}
-      <div className="relative z-10 container mx-auto px-4 h-full">
-        <div className="grid lg:grid-cols-2 gap-16 h-full items-center py-24">
-          {/* Left Column - Text Content */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="space-y-10"
+            className="text-center lg:text-left"
           >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="inline-block"
-            >
-              <span className="bg-white/10 backdrop-blur-sm text-white px-6 py-2 rounded-full text-sm font-medium">
-                #1 Home Appliance Solutions in Chennai
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
+              Your Trusted Partner in{" "}
+              <span className="text-blue-600 dark:text-blue-400">
+                Air Conditioning
               </span>
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-5xl lg:text-6xl font-bold text-white leading-tight"
-            >
-              Expert Home Appliance
-              <br />
-              <span className="text-sky-100 relative">
-                Sales, Service & Rentals
-                <motion.div
-                  className="absolute -right-8 top-0 text-yellow-400"
-                  animate={{ rotate: [0, 10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  ✨
-                </motion.div>
-              </span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="text-lg text-white/90 max-w-xl leading-relaxed"
-            >
-              Chennai's trusted partner for AC, Refrigerator, Washing Machine, and Water Purifier solutions. Professional installation, maintenance, and 24/7 support at competitive prices.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="flex flex-col sm:flex-row gap-4"
-            >
-              <button
-                onClick={() => scrollToSection("contact")}
-                className="group flex items-center justify-center gap-2 px-8 py-4 bg-white text-[#0EA5E9] rounded-xl font-semibold hover:bg-white/90 transition-all duration-300 shadow-lg hover:shadow-xl"
+            </h1>
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-8">
+              Experience comfort like never before with our premium AC rental and service solutions.
+              Professional installation, maintenance, and support at your fingertips.
+            </p>
+            
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-8 py-3 bg-blue-600 dark:bg-blue-500 text-white rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
+                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
               >
-                Book Service Now
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-              <button
-                onClick={() => scrollToSection("products")}
-                className="group flex items-center justify-center gap-2 px-8 py-4 bg-sky-600/20 backdrop-blur-sm text-white border border-white/20 rounded-xl font-semibold hover:bg-sky-600/30 transition-all duration-300"
+                Get Started
+                <ArrowRight className="w-5 h-5" />
+              </motion.button>
+              
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-8 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
               >
-                Explore Products
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </motion.div>
+                Learn More
+              </motion.button>
+            </div>
           </motion.div>
 
-          {/* Right Column - 3D AC */}
-          <div className="relative w-full h-full min-h-[600px] flex items-center justify-center">
+          {/* 3D Image */}
+          <motion.div
+            style={{
+              perspective: 2000,
+              rotateX,
+              rotateY,
+            }}
+            className="relative lg:block"
+          >
             <motion.div
-              ref={containerRef}
-              style={{
-                perspective: 1000,
-                rotateX,
-                rotateY,
-                transformStyle: "preserve-3d",
-              }}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-              className="relative w-full max-w-3xl mx-auto"
+              transition={{
+                duration: 0.8,
+                delay: 0.2,
+                type: "spring",
+                stiffness: 100
+              }}
+              className="relative w-full max-w-lg mx-auto"
             >
-              {/* Background Glow */}
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-blue-400/30 to-blue-500/20 blur-3xl rounded-[32px]" />
-              <div className="absolute inset-0 bg-gradient-to-b from-blue-400/10 via-blue-500/20 to-blue-400/10 blur-2xl rounded-[32px]" />
-              
-              {/* AC Container */}
-              <div className="relative transform-gpu">
-                <motion.div
-                  className="relative z-10"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <img 
-                    src="/ac-3d-fixed.svg" 
-                    alt="3D Air Conditioner" 
-                    width={800}
-                    height={600}
-                    className="w-full h-auto select-none drop-shadow-2xl"
-                    draggable="false"
-                  />
-                </motion.div>
-                
-                {/* Cool Air Effect */}
-                <motion.div
-                  className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-full h-80"
-                  initial={{ opacity: 0 }}
-                  animate={{ 
-                    opacity: [0.4, 0.8, 0.4],
-                    y: [0, 20, 0]
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  <div className="w-full h-full bg-gradient-to-b from-blue-500/40 via-blue-400/20 to-transparent blur-3xl" />
-                </motion.div>
+              {/* Gradient Orbs */}
+              <div className="absolute top-0 -left-4 w-72 h-72 bg-blue-300 dark:bg-blue-600 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-xl opacity-50 animate-blob" />
+              <div className="absolute top-0 -right-4 w-72 h-72 bg-cyan-300 dark:bg-cyan-600 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-xl opacity-50 animate-blob animation-delay-2000" />
+              <div className="absolute -bottom-8 left-20 w-72 h-72 bg-indigo-300 dark:bg-indigo-600 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-xl opacity-50 animate-blob animation-delay-4000" />
+
+              {/* Main Image */}
+              <div className="relative">
+                <img
+                  src="/ac-3d-premium.svg"
+                  alt="Premium AC Unit"
+                  className="relative rounded-lg shadow-2xl transform transition-transform duration-500 hover:scale-105"
+                />
               </div>
             </motion.div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

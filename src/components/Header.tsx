@@ -54,196 +54,127 @@ const Header = () => {
     setActiveSection(id);
   };
 
-  // Header animation variants
-  const headerVariants = {
-    initial: { 
-      backgroundColor: "rgba(255, 255, 255, 0.8)",
-      backdropFilter: "blur(10px)",
-    },
-    scrolled: { 
-      backgroundColor: "rgba(255, 255, 255, 0.95)",
-      backdropFilter: "blur(16px)",
-    },
-  };
-
-  // Navigation item variants
-  const navItemVariants = {
-    initial: { opacity: 0, y: -20 },
-    animate: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.1,
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    }),
-    hover: {
-      scale: 1.05,
-      transition: { duration: 0.2 },
-    },
-  };
-
-  // Navigation items
-  const navItems = [
-    { id: "about", label: "About" },
-    { id: "services", label: "Services" },
-    { id: "products", label: "Products" },
-    { id: "testimonials", label: "Testimonials" },
+  const navigationLinks = [
+    { href: "#about", label: "About" },
+    { href: "#services", label: "Services" },
+    { href: "#products", label: "Products" },
+    { href: "#testimonials", label: "Testimonials" },
   ];
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    e.preventDefault();
+    scrollToSection(sectionId);
+  };
 
   return (
     <motion.header
-      variants={headerVariants}
-      initial="initial"
-      animate={scrolled ? "scrolled" : "initial"}
-      className="fixed top-0 left-0 right-0 z-50 border-b border-white/30"
-      style={{
-        boxShadow: scrolled 
-          ? "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)" 
-          : "0 2px 4px rgba(255, 255, 255, 0.2)",
-        WebkitBackdropFilter: scrolled ? "blur(16px)" : "blur(10px)",
-        backdropFilter: scrolled ? "blur(16px)" : "blur(10px)",
-      }}
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm"
+          : "bg-transparent"
+      }`}
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-        <div className="flex items-center justify-between h-20">
-          {/* Logo with enhanced visibility */}
+      <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.5 }}
-            className="w-40 relative p-2"
           >
-            <div className="absolute inset-0 bg-white/60 rounded-lg filter blur-md" />
-            <img 
-              src={BRAND_ASSETS.LOGO}
-              alt="Dreams Air Tech Logo" 
-              className="w-full h-full object-contain relative z-10 drop-shadow-lg"
-            />
+            <a href="/" className="flex items-center space-x-2">
+              <img
+                src={BRAND_ASSETS.LOGO}
+                alt="Logo"
+                className="h-8 w-auto"
+              />
+              <span className="font-semibold text-xl text-gray-900 dark:text-white">
+                DAT
+              </span>
+            </a>
           </motion.div>
 
-          {/* Desktop Navigation with enhanced text */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navItems.map((item, i) => (
-              <motion.button
-                key={item.id}
-                custom={i}
-                variants={navItemVariants}
-                initial="initial"
-                animate="animate"
-                whileHover="hover"
-                onClick={() => scrollToSection(item.id)}
-                className={`relative text-gray-900 font-semibold hover:text-[#0EA5E9] transition-colors ${
-                  activeSection === item.id ? "text-[#0EA5E9]" : ""
+          {/* Desktop Navigation */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="hidden md:flex md:items-center md:space-x-8"
+          >
+            {navigationLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={(e) => handleNavClick(e, link.href.slice(1))}
+                className={`text-sm font-medium transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${
+                  activeSection === link.href.slice(1)
+                    ? "text-blue-600 dark:text-blue-400"
+                    : "text-gray-700 dark:text-gray-300"
                 }`}
               >
-                <span className="relative z-10 drop-shadow-sm">{item.label}</span>
-                {activeSection === item.id && (
-                  <motion.div
-                    layoutId="activeSection"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#0EA5E9] shadow-lg"
-                    initial={false}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  />
-                )}
-              </motion.button>
+                {link.label}
+              </a>
             ))}
-            
-            {/* Contact Button with enhanced visibility */}
-            <motion.button
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              whileHover={{ 
-                scale: 1.05,
-                boxShadow: "0 4px 15px rgba(14, 165, 233, 0.4)",
-              }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => scrollToSection("contact")}
-              className="px-6 py-2.5 bg-[#0EA5E9] text-white rounded-lg flex items-center space-x-2 hover:bg-[#0284C7] transition-colors relative overflow-hidden shadow-lg"
-              style={{
-                background: "linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)",
-              }}
-            >
-              <div className="absolute inset-0 bg-white/20 opacity-0 hover:opacity-100 transition-opacity" />
-              <span className="relative z-10 font-semibold">Contact Us</span>
-              <ChevronRight className="w-4 h-4 relative z-10" />
-            </motion.button>
-          </nav>
+          </motion.div>
 
-          {/* Mobile Menu Button with enhanced visibility */}
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden text-gray-900 p-2 relative"
+          {/* Mobile Menu Button */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="md:hidden"
           >
-            <div className="absolute inset-0 bg-white/60 rounded-lg filter blur-sm" />
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={isMenuOpen ? "close" : "menu"}
-                initial={{ rotate: -90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: 90, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="relative z-10"
-              >
-                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </motion.div>
-            </AnimatePresence>
-          </motion.button>
-        </div>
-
-        {/* Mobile Navigation with enhanced visibility */}
-        <AnimatePresence>
-          {isMenuOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="md:hidden overflow-hidden bg-white/95 backdrop-blur-xl border-t border-white/30 shadow-lg"
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
             >
-              {navItems.map((item, i) => (
-                <motion.button
-                  key={item.id}
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: i * 0.1 }}
-                  onClick={() => scrollToSection(item.id)}
-                  className={`block w-full text-left px-4 py-3 text-gray-900 font-medium hover:text-[#0EA5E9] hover:bg-white/70 transition-colors ${
-                    activeSection === item.id ? "text-[#0EA5E9] bg-white/50" : ""
+              {isMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
+          </motion.div>
+        </div>
+      </nav>
+
+      {/* Mobile Navigation */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-white dark:bg-gray-900 border-t dark:border-gray-800"
+          >
+            <div className="px-4 py-2 space-y-1">
+              {navigationLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={(e) => {
+                    handleNavClick(e, link.href.slice(1));
+                    setIsMenuOpen(false);
+                  }}
+                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                    activeSection === link.href.slice(1)
+                      ? "bg-blue-50 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
                   }`}
                 >
-                  <span className="flex items-center">
-                    <ChevronRight className={`w-4 h-4 mr-2 transition-transform ${
-                      activeSection === item.id ? "rotate-90" : ""
-                    }`} />
-                    {item.label}
+                  <span className="flex items-center justify-between">
+                    {link.label}
+                    <ChevronRight className="h-4 w-4" />
                   </span>
-                </motion.button>
+                </a>
               ))}
-              
-              {/* Mobile Contact Button with enhanced visibility */}
-              <motion.button
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: navItems.length * 0.1 }}
-                onClick={() => scrollToSection("contact")}
-                className="w-full px-4 py-3 mt-2 mb-4 bg-gradient-to-r from-[#0EA5E9] to-[#0284C7] text-white hover:from-[#0284C7] hover:to-[#0EA5E9] transition-all mx-4 rounded-lg relative overflow-hidden shadow-lg"
-                style={{ maxWidth: "calc(100% - 2rem)" }}
-              >
-                <div className="absolute inset-0 bg-white/20 opacity-0 hover:opacity-100 transition-opacity" />
-                <span className="relative z-10 flex items-center justify-center font-semibold">
-                  Contact Us
-                  <ChevronRight className="w-4 h-4 ml-2" />
-                </span>
-              </motion.button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.header>
   );
 };
