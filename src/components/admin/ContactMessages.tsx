@@ -5,17 +5,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
-import { ContactMessage, EnquiryStatus } from "@/integrations/supabase/types";
+import { Enquiry, EnquiryStatus } from "@/integrations/supabase/types";
+import { cn } from "@/lib/utils";
 
 export default function ContactMessages() {
   const queryClient = useQueryClient();
   const [editingComment, setEditingComment] = useState<{ id: string; comment: string } | null>(null);
 
-  const { data: messages = [], isLoading } = useQuery<ContactMessage[]>({
+  const { data: messages = [], isLoading } = useQuery<Enquiry[]>({
     queryKey: ["contact-messages"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("contact_messages")
+        .from("enquiries")
         .select("*")
         .order("created_at", { ascending: false });
 
@@ -26,12 +27,12 @@ export default function ContactMessages() {
 
   const updateEnquiry = useMutation({
     mutationFn: async ({ id, status, comment }: { id: string; status?: EnquiryStatus; comment?: string }) => {
-      const updateData: Partial<ContactMessage> = {};
+      const updateData: Partial<Enquiry> = {};
       if (status) updateData.status = status;
       if (comment !== undefined) updateData.admin_comment = comment;
 
       const { error } = await supabase
-        .from("contact_messages")
+        .from("enquiries")
         .update(updateData)
         .eq("id", id);
 
@@ -62,7 +63,17 @@ export default function ContactMessages() {
         {messages.map((message) => (
           <div
             key={message.id}
-            className="bg-white p-8 rounded-xl shadow-md border-l-4 border-blue-400 hover:shadow-lg transition-shadow h-full flex flex-col"
+            className={cn(
+              "bg-white p-8 rounded-xl shadow-md border-l-4 hover:shadow-lg transition-shadow h-full flex flex-col",
+              message.status === "new" && "border-blue-400",
+              message.status === "pending" && "border-yellow-400",
+              message.status === "in_progress" && "border-purple-400",
+              message.status === "contacted" && "border-indigo-400",
+              message.status === "scheduled" && "border-cyan-400",
+              message.status === "completed" && "border-green-400",
+              message.status === "cancelled" && "border-red-400",
+              message.status === "resolved" && "border-emerald-400"
+            )}
           >
             <div className="flex justify-between items-start gap-8">
               <div className="flex items-start gap-4 flex-1 min-w-0">
@@ -86,28 +97,68 @@ export default function ContactMessages() {
               </div>
               <div className="flex-shrink-0 pt-1">
                 <Select
-                  defaultValue={message.status}
+                  defaultValue={message.status || "new"}
                   onValueChange={(value: EnquiryStatus) => updateEnquiry.mutate({ id: message.id, status: value })}
                 >
-                  <SelectTrigger className="w-[130px] bg-white shadow-lg border-gray-200 hover:bg-gray-50 transition-all duration-200">
+                  <SelectTrigger className={cn(
+                    "w-[130px] shadow-lg border-gray-200 hover:bg-gray-50 transition-all duration-200",
+                    message.status === "new" && "bg-blue-50 border-blue-200",
+                    message.status === "pending" && "bg-yellow-50 border-yellow-200",
+                    message.status === "in_progress" && "bg-purple-50 border-purple-200",
+                    message.status === "contacted" && "bg-indigo-50 border-indigo-200",
+                    message.status === "scheduled" && "bg-cyan-50 border-cyan-200",
+                    message.status === "completed" && "bg-green-50 border-green-200",
+                    message.status === "cancelled" && "bg-red-50 border-red-200",
+                    message.status === "resolved" && "bg-emerald-50 border-emerald-200",
+                  )}>
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent className="bg-white shadow-xl border border-gray-100">
+                    <SelectItem value="new" className="hover:bg-blue-50">
+                      <span className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-blue-400" />
+                        New
+                      </span>
+                    </SelectItem>
                     <SelectItem value="pending" className="hover:bg-yellow-50">
                       <span className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-yellow-400" />
                         Pending
                       </span>
                     </SelectItem>
-                    <SelectItem value="contacted" className="hover:bg-blue-50">
+                    <SelectItem value="in_progress" className="hover:bg-purple-50">
                       <span className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-blue-400" />
+                        <div className="w-2 h-2 rounded-full bg-purple-400" />
+                        In Progress
+                      </span>
+                    </SelectItem>
+                    <SelectItem value="contacted" className="hover:bg-indigo-50">
+                      <span className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-indigo-400" />
                         Contacted
                       </span>
                     </SelectItem>
-                    <SelectItem value="resolved" className="hover:bg-green-50">
+                    <SelectItem value="scheduled" className="hover:bg-cyan-50">
+                      <span className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-cyan-400" />
+                        Scheduled
+                      </span>
+                    </SelectItem>
+                    <SelectItem value="completed" className="hover:bg-green-50">
                       <span className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-green-400" />
+                        Completed
+                      </span>
+                    </SelectItem>
+                    <SelectItem value="cancelled" className="hover:bg-red-50">
+                      <span className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-red-400" />
+                        Cancelled
+                      </span>
+                    </SelectItem>
+                    <SelectItem value="resolved" className="hover:bg-emerald-50">
+                      <span className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-emerald-400" />
                         Resolved
                       </span>
                     </SelectItem>
