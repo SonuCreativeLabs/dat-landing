@@ -98,7 +98,7 @@ export default function TestimonialForm() {
       // Insert the testimonial
       const { error } = await supabase
         .from('testimonials')
-        .insert(testimonialData);
+        .insert({ ...testimonialData, comment: testimonialData.message });
 
       if (error) {
         console.error('Database error:', error);

@@ -53,6 +53,9 @@ export type Database = {
           status: TestimonialStatus;
           admin_comment?: string;
           archived: boolean;
+          service_type?: string;
+          location?: string;
+          source?: 'justdial' | 'website';
         };
         Insert: {
           id?: string;
@@ -63,6 +66,9 @@ export type Database = {
           status?: TestimonialStatus;
           admin_comment?: string;
           archived?: boolean;
+          service_type?: string;
+          location?: string;
+          source?: 'justdial' | 'website';
         };
         Update: {
           id?: string;
@@ -73,6 +79,9 @@ export type Database = {
           status?: TestimonialStatus;
           admin_comment?: string;
           archived?: boolean;
+          service_type?: string;
+          location?: string;
+          source?: 'justdial' | 'website';
         };
         Relationships: [];
       };
