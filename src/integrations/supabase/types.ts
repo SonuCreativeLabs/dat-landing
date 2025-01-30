@@ -13,6 +13,7 @@ export type Database = {
           message: string;
           status: EnquiryStatus;
           admin_comment?: string;
+          archived: boolean;
         };
         Insert: {
           id?: string;
@@ -25,6 +26,7 @@ export type Database = {
           message: string;
           status?: EnquiryStatus;
           admin_comment?: string;
+          archived?: boolean;
         };
         Update: {
           id?: string;
@@ -37,6 +39,7 @@ export type Database = {
           message?: string;
           status?: EnquiryStatus;
           admin_comment?: string;
+          archived?: boolean;
         };
         Relationships: [];
       };
@@ -49,6 +52,7 @@ export type Database = {
           comment: string;
           status: TestimonialStatus;
           admin_comment?: string;
+          archived: boolean;
         };
         Insert: {
           id?: string;
@@ -58,6 +62,7 @@ export type Database = {
           comment: string;
           status?: TestimonialStatus;
           admin_comment?: string;
+          archived?: boolean;
         };
         Update: {
           id?: string;
@@ -67,6 +72,7 @@ export type Database = {
           comment?: string;
           status?: TestimonialStatus;
           admin_comment?: string;
+          archived?: boolean;
         };
         Relationships: [];
       };

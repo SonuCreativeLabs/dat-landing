@@ -49,12 +49,16 @@ const EnquiryCard = ({
   enquiry, 
   onClick, 
   onStatusChange,
-  onArchive
+  onArchive,
+  onUnarchive,
+  archived
 }: { 
   enquiry: Enquiry; 
   onClick: () => void; 
   onStatusChange: (status: EnquiryStatus) => void;
   onArchive: (id: string) => void;
+  onUnarchive: (id: string) => void;
+  archived: boolean;
 }) => {
   const currentStatus = getValidStatus(enquiry.status);
   const statusColor = statusColors[currentStatus];
@@ -90,18 +94,33 @@ const EnquiryCard = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 p-0 hover:bg-gray-100"
-            onClick={(e) => {
-              e.stopPropagation();
-              onArchive(enquiry.id);
-            }}
-            title="Archive"
-          >
-            <Archive className="h-4 w-4 text-gray-500 hover:text-gray-700" />
-          </Button>
+          {archived ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8"
+              onClick={(e) => {
+                e.stopPropagation();
+                onUnarchive(enquiry.id);
+              }}
+              title="Restore"
+            >
+              Restore
+            </Button>
+          ) : (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 hover:bg-gray-100"
+              onClick={(e) => {
+                e.stopPropagation();
+                onArchive(enquiry.id);
+              }}
+              title="Archive"
+            >
+              <Archive className="h-4 w-4 text-gray-500 hover:text-gray-700" />
+            </Button>
+          )}
           <Select
             value={currentStatus}
             onValueChange={(status) => onStatusChange(status as EnquiryStatus)}
@@ -173,7 +192,6 @@ const EnquiryReview = ({ archived = false }: EnquiryReviewProps) => {
   const [comment, setComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<EnquiryStatus | null>(null);
-  const [activeTab, setActiveTab] = useState("active");
   
   const queryClient = useQueryClient();
 
@@ -204,6 +222,7 @@ const EnquiryReview = ({ archived = false }: EnquiryReviewProps) => {
   // Archive enquiry mutation
   const archiveEnquiry = useMutation({
     mutationFn: async (id: string) => {
+      console.log("Archiving enquiry:", id);
       const { error } = await supabase
         .from("enquiries")
         .update({ 
@@ -212,14 +231,49 @@ const EnquiryReview = ({ archived = false }: EnquiryReviewProps) => {
         })
         .eq("id", id);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Archive error:", error);
+        throw error;
+      }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["enquiries"] });
+      // Invalidate both active and archived queries
+      queryClient.invalidateQueries({ queryKey: ["enquiries", false] });
+      queryClient.invalidateQueries({ queryKey: ["enquiries", true] });
       toast.success("Enquiry moved to archive");
     },
     onError: (error) => {
+      console.error("Archive failed:", error);
       toast.error("Failed to archive: " + error.message);
+    }
+  });
+
+  // Unarchive enquiry mutation
+  const unarchiveEnquiry = useMutation({
+    mutationFn: async (id: string) => {
+      console.log("Unarchiving enquiry:", id);
+      const { error } = await supabase
+        .from("enquiries")
+        .update({ 
+          archived: false,
+          status: 'new' 
+        })
+        .eq("id", id);
+
+      if (error) {
+        console.error("Unarchive error:", error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      // Invalidate both active and archived queries
+      queryClient.invalidateQueries({ queryKey: ["enquiries", false] });
+      queryClient.invalidateQueries({ queryKey: ["enquiries", true] });
+      toast.success("Enquiry restored from archive");
+    },
+    onError: (error) => {
+      console.error("Unarchive failed:", error);
+      toast.error("Failed to restore: " + error.message);
     }
   });
 
@@ -227,6 +281,7 @@ const EnquiryReview = ({ archived = false }: EnquiryReviewProps) => {
   const { data: enquiries = [], isLoading } = useQuery<Enquiry[]>({
     queryKey: ["enquiries", archived],
     queryFn: async () => {
+      console.log("Fetching enquiries with archived =", archived);
       const { data, error } = await supabase
         .from("enquiries")
         .select("*")
@@ -234,6 +289,7 @@ const EnquiryReview = ({ archived = false }: EnquiryReviewProps) => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
+      console.log("Fetched enquiries:", data);
       return data;
     },
   });
@@ -299,120 +355,92 @@ const EnquiryReview = ({ archived = false }: EnquiryReviewProps) => {
 
   return (
     <div className="space-y-8">
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
-          <TabsTrigger value="active">Active Enquiries</TabsTrigger>
-          <TabsTrigger value="archived">Archived</TabsTrigger>
-        </TabsList>
+      {!archived && (
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Status Overview</h2>
+          <div className="grid grid-cols-4 gap-4">
+            {/* All Status */}
+            <div
+              className={cn(
+                "p-4 rounded-lg flex flex-col gap-2 bg-white border border-gray-200",
+                "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
+                selectedStatus === null && "ring-2 ring-offset-2 ring-gray-400"
+              )}
+              onClick={() => setSelectedStatus(null)}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-900">All</span>
+                <Badge variant="secondary">{statusCounts.all}</Badge>
+              </div>
+            </div>
 
-        <TabsContent value="active">
-          {/* Status Overview */}
-          <div>
-            <h2 className="text-lg font-semibold mb-4">Status Overview</h2>
-            <div className="grid grid-cols-4 gap-4">
-              {/* All Status */}
+            {/* Status Filters */}
+            {Object.entries(statusColors).map(([status, colors]) => (
               <div
+                key={status}
                 className={cn(
-                  "p-4 rounded-lg flex flex-col gap-2 bg-white border border-gray-200",
+                  "p-4 rounded-lg flex flex-col gap-2",
                   "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
-                  selectedStatus === null && "ring-2 ring-offset-2 ring-gray-400"
+                  colors.bg,
+                  selectedStatus === status && "ring-2 ring-offset-2",
+                  selectedStatus === status && colors.border
                 )}
-                onClick={() => setSelectedStatus(null)}
+                onClick={() => setSelectedStatus(status as EnquiryStatus)}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-900">All</span>
-                  <Badge variant="secondary">{statusCounts.all}</Badge>
+                  <span className={cn("text-sm font-medium", colors.text)}>
+                    {colors.label}
+                  </span>
+                  <Badge
+                    variant="secondary"
+                    className={cn(
+                      "bg-white",
+                      selectedStatus === status ? colors.text : "text-gray-600"
+                    )}
+                  >
+                    {statusCounts[status as EnquiryStatus] || 0}
+                  </Badge>
                 </div>
               </div>
-
-              {/* Status Filters */}
-              {Object.entries(statusColors).map(([status, colors]) => (
-                <div
-                  key={status}
-                  className={cn(
-                    "p-4 rounded-lg flex flex-col gap-2",
-                    "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
-                    colors.bg,
-                    selectedStatus === status && "ring-2 ring-offset-2",
-                    selectedStatus === status && colors.border
-                  )}
-                  onClick={() => setSelectedStatus(status as EnquiryStatus)}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className={cn("text-sm font-medium", colors.text)}>
-                      {colors.label}
-                    </span>
-                    <Badge
-                      variant="secondary"
-                      className={cn(
-                        "bg-white",
-                        selectedStatus === status ? colors.text : "text-gray-600"
-                      )}
-                    >
-                      {statusCounts[status as EnquiryStatus] || 0}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
+        </div>
+      )}
 
-          {/* Enquiry List */}
-          <div>
-            <h2 className="text-lg font-semibold mb-4">Enquiries</h2>
-            {isLoading ? (
-              <div className="text-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin mx-auto" />
-                <p className="text-sm text-gray-500 mt-2">Loading enquiries...</p>
-              </div>
-            ) : filteredEnquiries.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-sm text-gray-500">No enquiries found</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredEnquiries.map((enquiry) => (
-                  <EnquiryCard
-                    key={enquiry.id}
-                    enquiry={enquiry}
-                    onClick={() => setSelectedEnquiry(enquiry)}
-                    onStatusChange={(status) => updateEnquiry.mutate({ id: enquiry.id, status })}
-                    onArchive={(id) => archiveEnquiry.mutate(id)}
-                  />
-                ))}
-              </div>
-            )}
+      {/* Enquiry List */}
+      <div>
+        <h2 className="text-lg font-semibold mb-4">
+          {archived ? "Archived Enquiries" : "Active Enquiries"}
+        </h2>
+        {isLoading ? (
+          <div className="text-center py-8">
+            <Loader2 className="w-6 h-6 animate-spin mx-auto" />
+            <p className="text-sm text-gray-500 mt-2">
+              Loading {archived ? "archived" : "active"} enquiries...
+            </p>
           </div>
-        </TabsContent>
-
-        <TabsContent value="archived">
-          <div>
-            <h2 className="text-lg font-semibold mb-4">Archived Enquiries</h2>
-            {isLoading ? (
-              <div className="text-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin mx-auto" />
-                <p className="text-sm text-gray-500 mt-2">Loading archived enquiries...</p>
-              </div>
-            ) : enquiries.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-sm text-gray-500">No archived enquiries found</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {enquiries.map((enquiry) => (
-                  <EnquiryCard
-                    key={enquiry.id}
-                    enquiry={enquiry}
-                    onClick={() => setSelectedEnquiry(enquiry)}
-                    onStatusChange={(status) => updateEnquiry.mutate({ id: enquiry.id, status })}
-                    onArchive={(id) => archiveEnquiry.mutate(id)}
-                  />
-                ))}
-              </div>
-            )}
+        ) : filteredEnquiries.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="text-sm text-gray-500">
+              No {archived ? "archived" : "active"} enquiries found
+            </p>
           </div>
-        </TabsContent>
-      </Tabs>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredEnquiries.map((enquiry) => (
+              <EnquiryCard
+                key={enquiry.id}
+                enquiry={enquiry}
+                onClick={() => setSelectedEnquiry(enquiry)}
+                onStatusChange={(status) => updateEnquiry.mutate({ id: enquiry.id, status })}
+                onArchive={(id) => archiveEnquiry.mutate(id)}
+                onUnarchive={(id) => unarchiveEnquiry.mutate(id)}
+                archived={archived}
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Enquiry Dialog */}
       <Dialog 

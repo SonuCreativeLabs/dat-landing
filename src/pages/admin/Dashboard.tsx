@@ -129,7 +129,7 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* Tabs for Enquiries and Testimonials */}
+      {/* Main Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="enquiries">Enquiries</TabsTrigger>
@@ -137,6 +137,7 @@ const Dashboard = () => {
           <TabsTrigger value="archived">Archive</TabsTrigger>
         </TabsList>
 
+        {/* Enquiries Tab */}
         <TabsContent value="enquiries">
           <div className="bg-white rounded-lg shadow">
             <div className="p-6">
@@ -146,6 +147,7 @@ const Dashboard = () => {
           </div>
         </TabsContent>
 
+        {/* Testimonials Tab */}
         <TabsContent value="testimonials">
           <div className="bg-white rounded-lg shadow">
             <div className="p-6">
@@ -155,25 +157,28 @@ const Dashboard = () => {
           </div>
         </TabsContent>
 
+        {/* Archive Tab */}
         <TabsContent value="archived">
           <div className="bg-white rounded-lg shadow">
             <div className="p-6">
               <h2 className="text-xl font-semibold mb-4">Archive</h2>
               
+              {/* Archive Type Tabs */}
               <Tabs value={archiveTab} onValueChange={setArchiveTab} className="space-y-6">
                 <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
                   <TabsTrigger value="enquiries">Enquiries</TabsTrigger>
                   <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
                 </TabsList>
 
+                {/* Archived Enquiries */}
                 <TabsContent value="enquiries" className="mt-6">
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium text-gray-700">Archived Enquiries</h3>
-                    {/* Archived enquiries section */}
                     <ContactMessages archived={true} />
                   </div>
                 </TabsContent>
 
+                {/* Archived Testimonials */}
                 <TabsContent value="testimonials" className="mt-6">
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium text-gray-700">Archived Testimonials</h3>

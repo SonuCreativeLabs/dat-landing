@@ -756,54 +756,82 @@ const Admin = () => {
           )}
 
           {activePage === 'archive' && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-800">Archived Testimonials</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {archivedTestimonials.map((testimonial) => (
-                  <div key={testimonial.id} className="bg-white p-6 rounded-xl shadow-sm opacity-75">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-semibold">{testimonial.name}</h3>
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                          <span>{testimonial.service_type}</span>
-                          {testimonial.location && (
-                            <>
-                              <span>•</span>
-                              <span>{testimonial.location}</span>
-                            </>
-                          )}
+            <div className="space-y-8">
+              <h2 className="text-2xl font-bold text-gray-800">Archive</h2>
+              
+              {/* Archive Type Tabs */}
+              <Tabs defaultValue="enquiries" className="space-y-6">
+                <TabsList>
+                  <TabsTrigger value="enquiries">Enquiries</TabsTrigger>
+                  <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
+                </TabsList>
+
+                {/* Archived Enquiries */}
+                <TabsContent value="enquiries">
+                  <div className="space-y-6">
+                    <h3 className="text-xl font-semibold text-gray-800">Archived Enquiries</h3>
+                    <EnquiryReview archived={true} />
+                  </div>
+                </TabsContent>
+
+                {/* Archived Testimonials */}
+                <TabsContent value="testimonials">
+                  <div className="space-y-6">
+                    <h3 className="text-xl font-semibold text-gray-800">Archived Testimonials</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {archivedTestimonials.map((testimonial) => (
+                        <div key={testimonial.id} className="bg-white p-6 rounded-xl shadow-sm opacity-75">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="font-semibold">{testimonial.name}</h3>
+                              <div className="flex items-center gap-2 text-sm text-gray-500">
+                                <span>{testimonial.service_type}</span>
+                                {testimonial.location && (
+                                  <>
+                                    <span>•</span>
+                                    <span>{testimonial.location}</span>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => handleTestimonialAction(testimonial.id, 'restore')}
+                              className="px-3 py-1 text-sm font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100"
+                            >
+                              Restore
+                            </button>
+                          </div>
+                          <p className="mt-4 text-gray-600">{testimonial.message}</p>
+                          <div className="mt-4 flex items-center">
+                            <div className="flex-1">
+                              <div className="flex items-center">
+                                {[...Array(5)].map((_, i) => (
+                                  <Star
+                                    key={i}
+                                    className={`w-4 h-4 ${
+                                      i < testimonial.rating
+                                        ? "text-yellow-400 fill-current"
+                                        : "text-gray-300"
+                                    }`}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                            <span className="text-sm text-gray-500">
+                              {new Date(testimonial.created_at).toLocaleDateString()}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                      <button
-                        onClick={() => handleTestimonialAction(testimonial.id, 'restore')}
-                        className="px-3 py-1 text-sm font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100"
-                      >
-                        Restore
-                      </button>
-                    </div>
-                    <p className="mt-4 text-gray-600">{testimonial.message}</p>
-                    <div className="mt-4 flex items-center">
-                      <div className="flex-1">
-                        <div className="flex items-center">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-4 h-4 ${
-                                i < testimonial.rating
-                                  ? "text-yellow-400 fill-current"
-                                  : "text-gray-300"
-                              }`}
-                            />
-                          ))}
+                      ))}
+                      {archivedTestimonials.length === 0 && (
+                        <div className="col-span-full text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
+                          No archived testimonials found
                         </div>
-                      </div>
-                      <span className="text-sm text-gray-500">
-                        {new Date(testimonial.created_at).toLocaleDateString()}
-                      </span>
+                      )}
                     </div>
                   </div>
-                ))}
-              </div>
+                </TabsContent>
+              </Tabs>
             </div>
           )}
 
