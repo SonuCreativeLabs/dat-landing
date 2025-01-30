@@ -13,6 +13,7 @@ import { Button } from "./ui/button";
 import TestimonialForm from "./TestimonialForm";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { JustDialLogo } from "./icons/JustDialLogo";
 
 interface TestimonialProps {
   name: string;
@@ -83,25 +84,13 @@ const TestimonialCard = ({ testimonial }: { testimonial: TestimonialData }) => {
       {/* JustDial Badge */}
       {testimonial.source === 'justdial' && (
         <div className={cn(
-          "absolute top-4 right-4 flex items-center gap-2 px-4 py-2 rounded-full",
-          imageError ? "bg-orange-100" : "bg-white shadow-md border border-orange-100"
+          "absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-full",
+          "bg-orange-50 border border-orange-100 shadow-sm"
         )}>
-          {!imageError ? (
-            <div className="flex items-center gap-2">
-              <img 
-                src="/images/justdial-logo.png"
-                alt="JustDial"
-                className="h-5 w-auto"
-                onError={() => setImageError(true)}
-              />
-              <span className="text-xs font-medium text-orange-600">Verified Review</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <span className="text-orange-600 font-bold">JD</span>
-              <span className="text-xs font-medium text-orange-600">JustDial Review</span>
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            <JustDialLogo />
+            <span className="text-xs font-medium text-orange-600">Verified Review</span>
+          </div>
         </div>
       )}
       

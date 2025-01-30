@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { Loader2, Send, X } from "lucide-react";
+import { Loader2, Send, X, Star } from "lucide-react";
 import { Toaster, toast } from "sonner";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import type { Database } from "@/integrations/supabase/types";
 import { cn } from "@/lib/utils";
+import { JustDialLogo } from "@/components/icons/JustDialLogo";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -33,11 +34,63 @@ const serviceTypes = [
 ] as const;
 
 const ratings = [
-  { value: "5", label: "⭐⭐⭐⭐⭐ Excellent" },
-  { value: "4", label: "⭐⭐⭐⭐ Very Good" },
-  { value: "3", label: "⭐⭐⭐ Good" },
-  { value: "2", label: "⭐⭐ Fair" },
-  { value: "1", label: "⭐ Poor" },
+  { value: "5", label: (
+    <div className="flex items-center gap-2">
+      <div className="flex gap-0.5">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+        ))}
+      </div>
+      <span>Excellent</span>
+      <div className={cn(
+        "flex items-center gap-1 px-2 py-0.5 rounded-full ml-2",
+        "bg-orange-50 border border-orange-100"
+      )}>
+        <JustDialLogo />
+        <span className="text-xs font-medium text-orange-600">Verified</span>
+      </div>
+    </div>
+  ) },
+  { value: "4", label: (
+    <div className="flex items-center gap-2">
+      <div className="flex gap-0.5">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+        ))}
+      </div>
+      <span>Very Good</span>
+    </div>
+  ) },
+  { value: "3", label: (
+    <div className="flex items-center gap-2">
+      <div className="flex gap-0.5">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+        ))}
+      </div>
+      <span>Good</span>
+    </div>
+  ) },
+  { value: "2", label: (
+    <div className="flex items-center gap-2">
+      <div className="flex gap-0.5">
+        {Array.from({ length: 2 }).map((_, i) => (
+          <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+        ))}
+      </div>
+      <span>Fair</span>
+    </div>
+  ) },
+  { value: "1", label: (
+    <div className="flex items-center gap-2">
+      <div className="flex gap-0.5">
+        {Array.from({ length: 1 }).map((_, i) => (
+          <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+        ))}
+      </div>
+      <span>Poor</span>
+    </div>
+  ) },
 ] as const;
 
 export default function TestimonialForm() {
@@ -100,7 +153,7 @@ export default function TestimonialForm() {
 
       // Show success toast with custom styling
       toast.custom((t) => (
-        <div className="bg-white rounded-lg shadow-lg border border-green-100 p-6 max-w-md mx-auto">
+        <div className="bg-white rounded-lg shadow-lg border border-green-100 p-6 max-w-md w-full mx-auto">
           <div className="flex items-start gap-4">
             <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
               <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -109,10 +162,19 @@ export default function TestimonialForm() {
             </div>
             <div className="flex-1">
               <h3 className="text-lg font-semibold text-gray-900">Thank you for your feedback!</h3>
-              <p className="mt-1 text-sm text-gray-500">
-                Your testimonial has been submitted successfully and will be reviewed shortly.
-              </p>
-              <div className="mt-4 flex gap-2">
+              <div className="mt-2 space-y-2">
+                <p className="text-sm text-gray-600">
+                  Your testimonial has been submitted successfully and is pending review.
+                </p>
+                <p className="text-sm text-gray-500">
+                  Once approved by our team, your review will appear on our website.
+                </p>
+                <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
+                  <span>•</span>
+                  <span>Review Status: Pending Approval</span>
+                </div>
+              </div>
+              <div className="mt-4">
                 <button
                   onClick={() => toast.dismiss(t)}
                   className="px-4 py-2 bg-green-50 text-green-600 text-sm font-medium rounded-md hover:bg-green-100 transition-colors"
@@ -124,23 +186,19 @@ export default function TestimonialForm() {
           </div>
         </div>
       ), {
-        duration: 5000,
+        duration: 8000,
         position: "top-center",
       });
 
-      // Reset form
-      form.reset({
-        name: "",
-        location: "",
-        service_type: undefined,
-        message: "",
-        rating: "",
-      });
+      // Reset form and close modal
+      form.reset();
 
     } catch (error) {
-      console.error('Submission error:', error);
+      console.error('Error submitting testimonial:', error);
       toast.error(
-        error instanceof Error ? error.message : 'Failed to submit testimonial'
+        error instanceof Error 
+          ? error.message 
+          : 'Failed to submit testimonial. Please try again.'
       );
     } finally {
       setIsSubmitting(false);
