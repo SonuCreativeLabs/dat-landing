@@ -14,6 +14,7 @@ import TestimonialForm from "./TestimonialForm";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { JustDialLogo } from "./icons/JustDialLogo";
+import { Container, Section } from "./Container";
 
 interface TestimonialProps {
   name: string;
@@ -80,31 +81,41 @@ const TestimonialCard = ({ testimonial }: { testimonial: TestimonialData }) => {
   const [imageError, setImageError] = useState(false);
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 relative">
+    <motion.div 
+      whileHover={{ y: -5 }}
+      className="bg-white rounded-2xl shadow-xl p-6 lg:p-8 relative min-h-[280px] lg:min-h-[320px] backdrop-blur-sm border border-white/20 hover:border-white/40 transition-colors"
+    >
       {/* JustDial Badge */}
       {testimonial.source === 'justdial' && (
-        <div className={cn(
-          "absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-full",
-          "bg-orange-50 border border-orange-100 shadow-sm"
-        )}>
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={cn(
+            "absolute top-4 lg:top-6 right-4 lg:right-6 flex items-center gap-2 px-3 lg:px-4 py-1.5 lg:py-2 rounded-full",
+            "bg-orange-50 border border-orange-100 shadow-lg hover:shadow-xl transition-shadow"
+          )}
+        >
           <div className="flex items-center gap-2">
             <JustDialLogo />
-            <span className="text-xs font-medium text-orange-600">Verified Review</span>
+            <span className="text-xs lg:text-sm font-medium text-orange-600">Verified Review</span>
           </div>
-        </div>
+        </motion.div>
       )}
       
-      <div className="flex flex-col gap-4 mt-8">
+      <div className="flex flex-col gap-4 lg:gap-6">
         <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-              <span className="text-xl font-semibold text-blue-600">
+          <div className="flex items-center gap-3 lg:gap-4">
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
+              className="w-12 h-12 lg:w-16 lg:h-16 rounded-xl lg:rounded-2xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center shadow-lg"
+            >
+              <span className="text-xl lg:text-2xl font-bold text-blue-600">
                 {testimonial.name.charAt(0)}
               </span>
-            </div>
+            </motion.div>
             <div>
-              <h3 className="font-semibold text-gray-900">{testimonial.name}</h3>
-              <div className="flex items-center gap-2 text-sm text-gray-500">
+              <h3 className="text-lg lg:text-xl font-bold text-gray-900">{testimonial.name}</h3>
+              <div className="flex items-center gap-2 text-sm lg:text-base text-gray-500 mt-0.5 lg:mt-1">
                 {testimonial.service_type && (
                   <span>{testimonial.service_type.split('_').map(word => 
                     word.charAt(0).toUpperCase() + word.slice(1)
@@ -119,15 +130,33 @@ const TestimonialCard = ({ testimonial }: { testimonial: TestimonialData }) => {
               </div>
             </div>
           </div>
-          <div className="flex gap-1">
+          <div className="flex gap-0.5 lg:gap-1">
             {Array.from({ length: testimonial.rating }).map((_, i) => (
-              <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+              <motion.div
+                key={i}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Star className="w-4 h-4 lg:w-6 lg:h-6 text-yellow-400 fill-current drop-shadow-md" />
+              </motion.div>
             ))}
           </div>
         </div>
-        <p className="text-gray-600 line-clamp-4">{testimonial.message}</p>
+        <div className="relative">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.1 }}
+            className="absolute -left-2 lg:-left-4 -top-2 text-4xl lg:text-6xl text-blue-500 font-serif"
+          >
+            "
+          </motion.div>
+          <p className="text-gray-600 text-base lg:text-lg leading-relaxed relative z-10 pl-2">
+            {testimonial.message}
+          </p>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -266,30 +295,34 @@ const Testimonials = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="loader"></div>
-      </div>
+      <Section className="bg-gradient-to-b from-[#0EA5E9] to-[#0284C7]">
+        <Container>
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="loader"></div>
+          </div>
+        </Container>
+      </Section>
     );
   }
 
   return (
-    <section id="testimonials" className="relative py-20 bg-gradient-to-b from-[#0EA5E9] to-[#0284C7]">
+    <Section id="testimonials" className="bg-gradient-to-b from-[#0EA5E9] to-[#0284C7]">
       {/* Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#0EA5E9]/10 via-[#0284C7]/30 to-[#0EA5E9]/80" />
       </div>
 
-      <div className="relative container mx-auto px-4">
+      <Container className="relative">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-16 space-y-4"
+          className="text-center max-w-3xl mx-auto mb-16 space-y-6"
         >
-          <h2 className="text-4xl font-bold text-white">Client Testimonials</h2>
+          <h2 className="text-4xl lg:text-5xl font-bold text-white">Client Testimonials</h2>
           
           {/* Enhanced Justdial Rating Badge */}
           <div className="flex items-center justify-center gap-4">
@@ -344,7 +377,7 @@ const Testimonials = () => {
             </motion.a>
           </div>
 
-          <p className="text-white/80">
+          <p className="text-white/80 text-lg">
             Hear what our satisfied customers have to say about their experience with Dreams Air Tech.
           </p>
         </motion.div>
@@ -355,7 +388,7 @@ const Testimonials = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="relative px-4"
+          className="relative"
         >
           <Swiper
             modules={[Navigation, Pagination, Mousewheel, Keyboard, Autoplay]}
@@ -520,8 +553,8 @@ const Testimonials = () => {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 };
 
