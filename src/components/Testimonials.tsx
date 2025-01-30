@@ -11,6 +11,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { Button } from "./ui/button";
 import TestimonialForm from "./TestimonialForm";
+import { toast } from "react-hot-toast";
 
 interface TestimonialProps {
   name: string;
@@ -24,7 +25,7 @@ interface TestimonialData {
   created_at: string;
   name: string;
   rating: number;
-  comment: string;
+  message: string;
   status: TestimonialStatus;
   admin_comment?: string;
   archived: boolean;
@@ -80,7 +81,7 @@ const Testimonials = () => {
   const [formData, setFormData] = useState({
     name: '',
     rating: 5,
-    comment: '',
+    message: '',
     location: '',
     service_type: 'appliance_rental'
   });
@@ -93,6 +94,7 @@ const Testimonials = () => {
         .from('testimonials')
         .select('*')
         .eq('status', 'approved')
+        .eq('archived', false)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -159,10 +161,12 @@ const Testimonials = () => {
       const testimonialData: TestimonialInsert = {
         name: formData.name.trim(),
         rating: Number(formData.rating),
-        comment: formData.comment.trim(),
+        message: formData.message.trim(),
         status: 'pending',
         created_at: new Date().toISOString(),
-        archived: false
+        archived: false,
+        location: formData.location,
+        service_type: formData.service_type
       };
 
       console.log('Formatted testimonial data:', testimonialData);
@@ -187,18 +191,18 @@ const Testimonials = () => {
       setFormData({
         name: '',
         rating: 5,
-        comment: '',
+        message: '',
         location: '',
         service_type: 'appliance_rental'
       });
       setIsModalOpen(false);
-      alert('Thank you for sharing your experience! Your testimonial will be reviewed and published on our website soon. We appreciate your feedback and trust in our services.');
+      toast.success('Thank you for sharing your experience! Your testimonial will be reviewed and published soon.');
     } catch (error: any) {
       console.error('Error submitting testimonial:', {
         error,
         formData,
       });
-      alert(error?.message || 'There was an error submitting your testimonial. Please try again.');
+      toast.error(error?.message || 'There was an error submitting your testimonial. Please try again.');
     }
   };
 
@@ -314,8 +318,8 @@ const Testimonials = () => {
             }}
             className="pb-12"
           >
-            {testimonials?.map((testimonial: TestimonialData, index) => (
-              <SwiperSlide key={testimonial.id || index}>
+            {testimonials?.map((testimonial: TestimonialData) => (
+              <SwiperSlide key={testimonial.id}>
                 <div className="bg-white rounded-2xl shadow-lg p-8 h-full">
                   <div className="flex items-center gap-4 mb-6">
                     <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
@@ -337,16 +341,10 @@ const Testimonials = () => {
                             <span>{testimonial.location}</span>
                           </>
                         )}
-                        {testimonial.source === 'justdial' && (
-                          <>
-                            <span>•</span>
-                            <span className="text-blue-600 font-medium">Justdial Review</span>
-                          </>
-                        )}
                       </div>
                     </div>
                   </div>
-                  <p className="text-gray-600 mb-6">{testimonial.comment}</p>
+                  <p className="text-gray-600 mb-6">{testimonial.message}</p>
                   <div className="flex gap-1">
                     {[...Array(testimonial.rating)].map((_, i) => (
                       <Star
@@ -449,8 +447,8 @@ const Testimonials = () => {
                       Your Experience
                     </label>
                     <textarea
-                      value={formData.comment}
-                      onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-32"
                       required
                     />

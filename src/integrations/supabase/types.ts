@@ -49,7 +49,7 @@ export type Database = {
           created_at: string;
           name: string;
           rating: number;
-          comment: string;
+          message: string;
           status: TestimonialStatus;
           admin_comment?: string;
           archived: boolean;
@@ -62,7 +62,7 @@ export type Database = {
           created_at?: string;
           name: string;
           rating: number;
-          comment: string;
+          message: string;
           status?: TestimonialStatus;
           admin_comment?: string;
           archived?: boolean;
@@ -75,7 +75,7 @@ export type Database = {
           created_at?: string;
           name?: string;
           rating?: number;
-          comment?: string;
+          message?: string;
           status?: TestimonialStatus;
           admin_comment?: string;
           archived?: boolean;

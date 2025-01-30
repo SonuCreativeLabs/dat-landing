@@ -107,7 +107,7 @@ const TestimonialReview = ({ archived = false }: TestimonialReviewProps) => {
               <div className="flex items-center gap-2 mb-2">
                 <span className="font-medium">{testimonial.name}</span>
               </div>
-              <p className="text-gray-700 mb-2">{testimonial.comment}</p>
+              <p className="text-gray-700 mb-2">{testimonial.message}</p>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (
@@ -183,7 +183,7 @@ const TestimonialReview = ({ archived = false }: TestimonialReviewProps) => {
               <div className="flex items-center gap-2 mb-2">
                 <span className="font-medium">{testimonial.name}</span>
               </div>
-              <p className="text-gray-700 mb-2">{testimonial.comment}</p>
+              <p className="text-gray-700 mb-2">{testimonial.message}</p>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (

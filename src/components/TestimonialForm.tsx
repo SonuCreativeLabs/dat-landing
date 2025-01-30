@@ -28,7 +28,7 @@ const serviceTypes = [
   { value: "appliance_sales", label: "Appliance Sales" },
   { value: "appliance_service", label: "Appliance Service" },
   { value: "appliance_rentals", label: "Appliance Rentals" },
-  { value: "others", label: "Others" },
+  { value: "others", label: "Others" }
 ] as const;
 
 const ratings = [
@@ -79,9 +79,7 @@ export default function TestimonialForm() {
 
     try {
       setIsSubmitting(true);
-      console.log('Form values:', values);
 
-      // Prepare the testimonial data according to the actual table structure
       const testimonialData = {
         name: values.name.trim(),
         location: values.location.trim(),
@@ -89,41 +87,40 @@ export default function TestimonialForm() {
         message: values.message.trim(),
         rating: parseInt(values.rating),
         status: 'pending' as const,
-        image: null,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        archived: false
       };
 
-      console.log('Attempting to submit testimonial:', testimonialData);
-
-      // Insert the testimonial
       const { error } = await supabase
         .from('testimonials')
-        .insert({ ...testimonialData, comment: testimonialData.message });
+        .insert(testimonialData);
 
       if (error) {
         console.error('Database error:', error);
-        if (error.code === '23505') {
-          toast.error('You have already submitted a testimonial');
-        } else if (error.code === '23503') {
-          toast.error('Invalid service type selected');
-        } else if (error.code === '23502') {
-          toast.error('Please fill in all required fields');
-        } else {
-          toast.error(`Submission failed: ${error.message}`);
-        }
-        return;
+        throw error;
       }
 
-      // Clear form and show success message
-      form.reset({
-        name: "",
-        location: "",
-        service_type: undefined,
-        message: "",
-        rating: "",
-      });
-      
-      toast.success('Thank you for your review!');
+      // Clear form
+      form.reset();
+
+      // Show success message using sonner toast
+      toast.success(
+        <div className="flex flex-col gap-1">
+          <span className="font-medium">Thank you for your review!</span>
+          <span className="text-sm">
+            Your testimonial has been submitted successfully. Once reviewed, it will be displayed on our website.
+          </span>
+        </div>,
+        {
+          duration: 5000,
+          className: "bg-white text-gray-900",
+          position: "top-center",
+          style: {
+            minWidth: '400px',
+          },
+        }
+      );
+
     } catch (error) {
       console.error('Submission error:', error);
       if (error instanceof Error) {
