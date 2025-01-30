@@ -112,7 +112,7 @@ const Contact = () => {
                 <div>
                   <h3 className="text-lg font-semibold text-white">Phone</h3>
                   <p className="text-gray-400">{CONTACT_INFO.PHONE}</p>
-                  <p className="text-sm text-gray-500">Mon-Sat 9am to 8pm</p>
+                  <p className="text-sm text-gray-500">24/7 Support Available</p>
                 </div>
               </div>
 
@@ -157,8 +157,8 @@ ${CONTACT_INFO.ADDRESS.PINCODE}`}
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-white">Business Hours</h3>
-                  <p className="text-gray-400">Monday - Saturday</p>
-                  <p className="text-sm text-gray-500">9:00 AM - 8:00 PM</p>
+                  <p className="text-gray-400">Monday - Sunday</p>
+                  <p className="text-sm text-gray-500">24/7 Service Available</p>
                 </div>
               </div>
             </div>

@@ -15,7 +15,7 @@ const products = [
       "Anti-bacterial filters",
       "Professional installation"
     ],
-    price: "₹2,999",
+    price: "₹999",
     imageUrl: HERO_IMAGES.AC
   },
   {
@@ -27,7 +27,7 @@ const products = [
       "Frost-free operation",
       "10-year warranty"
     ],
-    price: "₹1,999",
+    price: "₹599",
     imageUrl: HERO_IMAGES.FRIDGE
   },
   {
@@ -39,7 +39,7 @@ const products = [
       "Energy efficient motor",
       "5-year warranty"
     ],
-    price: "₹1,499",
+    price: "₹399",
     imageUrl: HERO_IMAGES.WASHING_MACHINE
   },
   {
@@ -51,7 +51,7 @@ const products = [
       "Mineral enrichment",
       "Annual maintenance"
     ],
-    price: "₹799",
+    price: "₹499",
     imageUrl: HERO_IMAGES.WATER_PURIFIER
   }
 ];

@@ -1,8 +1,9 @@
 export const CONTACT_INFO = {
-  PHONE: "+916379496755",
-  PHONE_DISPLAY: "6379496755",
+  PHONE: "+919043726424",
+  PHONE_DISPLAY: "9043726424",
   EMAIL: "dreamsairtech21@gmail.com",
-  WHATSAPP: "+916379496755",
+  WHATSAPP: "+919043726424",
+  INSTAGRAM: "https://www.instagram.com/dreamsairtech",
   ADDRESS: {
     FULL: "15, 1st Main Rd, Udayam Nagar, Velachery, Chennai, Tamil Nadu 600042",
     STREET: "15, 1st Main Rd",

@@ -64,7 +64,7 @@ const Footer = () => {
                 <Phone className="w-5 h-5 text-white/90 shrink-0 mt-1" />
                 <div>
                   <p className="text-white/80">{CONTACT_INFO.PHONE}</p>
-                  <p className="text-sm text-white/60">Mon-Sat 9am to 8pm</p>
+                  <p className="text-sm text-white/60">24/7 Support Available</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
@@ -88,15 +88,7 @@ const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Follow Us</h4>
             <div className="flex gap-4">
               <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-white/10 backdrop-blur-sm p-2 rounded-lg hover:bg-white/20 transition-colors"
-              >
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a
-                href="https://instagram.com"
+                href={CONTACT_INFO.INSTAGRAM}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-white/10 backdrop-blur-sm p-2 rounded-lg hover:bg-white/20 transition-colors"

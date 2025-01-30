@@ -167,11 +167,11 @@ const Hero = () => {
               className="relative w-full max-w-2xl mx-auto bg-white/10 backdrop-blur-sm p-8 rounded-2xl"
             >
               <img 
-                src={HERO_IMAGES.AC} 
-                alt="Air Conditioner Services" 
+                src="https://ik.imagekit.io/projectassets/Assets/DAT%20NEW%20LOGO-04.png?updatedAt=1737985280218" 
+                alt="Dreams Air Tech Logo" 
                 width={800}
                 height={600}
-                className="w-full h-auto select-none rounded-xl"
+                className="w-full h-auto select-none rounded-xl object-contain"
                 draggable="false"
               />
             </motion.div>
