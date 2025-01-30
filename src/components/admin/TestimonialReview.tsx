@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Star, Loader2, Calendar, Archive } from "lucide-react";
 import { toast } from "sonner";
-import type { Database } from "@/integrations/supabase/types";
+import type { Database, TestimonialStatus, Testimonial } from "@/integrations/supabase/types";
 import {
   Select,
   SelectContent,
@@ -14,20 +14,6 @@ import {
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
-
-type Testimonial = {
-  id: string;
-  created_at: string;
-  name: string;
-  rating: number;
-  message: string;
-  service_type: string;
-  status: TestimonialStatus;
-  admin_comment?: string;
-  archived?: boolean;
-};
-
-type TestimonialStatus = "pending" | "approved" | "rejected";
 
 const statusStyles = {
   pending: { bg: "bg-yellow-100", text: "text-yellow-800", border: "border-yellow-300" },
@@ -42,8 +28,8 @@ interface TestimonialReviewProps {
 const TestimonialReview = ({ archived = false }: TestimonialReviewProps) => {
   const [activeTab, setActiveTab] = useState("active");
   const queryClient = useQueryClient();
+  const [editingComment, setEditingComment] = useState<{ id: string; comment: string } | null>(null);
 
-  // Fetch testimonials
   const { data: testimonials = [], isLoading } = useQuery<Testimonial[]>({
     queryKey: ["testimonials", archived],
     queryFn: async () => {
@@ -59,38 +45,39 @@ const TestimonialReview = ({ archived = false }: TestimonialReviewProps) => {
   });
 
   const updateTestimonial = useMutation({
-    mutationFn: async ({ id, status }: { id: string, status: TestimonialStatus }) => {
+    mutationFn: async ({ id, status, comment }: { id: string; status?: TestimonialStatus; comment?: string }) => {
+      const updateData: Partial<Testimonial> = {};
+      if (status) updateData.status = status;
+      if (comment !== undefined) updateData.admin_comment = comment;
+
       const { error } = await supabase
         .from("testimonials")
-        .update({ 
-          status,
-          archived: status === 'rejected' ? true : false
-        } as Partial<Testimonial>)
+        .update(updateData)
         .eq("id", id);
 
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["testimonials"] });
-      toast.success("Status updated successfully");
+      setEditingComment(null);
     },
-    onError: (error) => {
-      toast.error("Failed to update status: " + error.message);
-    }
   });
 
   const archiveTestimonial = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
         .from("testimonials")
-        .update({ archived: true })
+        .update({ 
+          archived: true,
+          status: 'rejected' 
+        })
         .eq("id", id);
 
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["testimonials"] });
-      toast.success("Testimonial archived successfully");
+      toast.success("Testimonial moved to archive");
     },
   });
 
@@ -119,9 +106,8 @@ const TestimonialReview = ({ archived = false }: TestimonialReviewProps) => {
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
                 <span className="font-medium">{testimonial.name}</span>
-                <span className="text-sm text-gray-500">({testimonial.service_type})</span>
               </div>
-              <p className="text-gray-700 mb-2">{testimonial.message}</p>
+              <p className="text-gray-700 mb-2">{testimonial.comment}</p>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (
@@ -196,9 +182,8 @@ const TestimonialReview = ({ archived = false }: TestimonialReviewProps) => {
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
                 <span className="font-medium">{testimonial.name}</span>
-                <span className="text-sm text-gray-500">({testimonial.service_type})</span>
               </div>
-              <p className="text-gray-700 mb-2">{testimonial.message}</p>
+              <p className="text-gray-700 mb-2">{testimonial.comment}</p>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (

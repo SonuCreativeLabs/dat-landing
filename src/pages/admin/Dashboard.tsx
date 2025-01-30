@@ -160,18 +160,25 @@ const Dashboard = () => {
             <div className="p-6">
               <h2 className="text-xl font-semibold mb-4">Archive</h2>
               
-              <Tabs value={archiveTab} onValueChange={setArchiveTab}>
-                <TabsList className="grid w-full grid-cols-2 lg:w-[400px] mb-4">
-                  <TabsTrigger value="enquiries">Archived Enquiries</TabsTrigger>
-                  <TabsTrigger value="testimonials">Archived Testimonials</TabsTrigger>
+              <Tabs value={archiveTab} onValueChange={setArchiveTab} className="space-y-6">
+                <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
+                  <TabsTrigger value="enquiries">Enquiries</TabsTrigger>
+                  <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="enquiries">
-                  <ContactMessages archived={true} />
+                <TabsContent value="enquiries" className="mt-6">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium text-gray-700">Archived Enquiries</h3>
+                    {/* Archived enquiries section */}
+                    <ContactMessages archived={true} />
+                  </div>
                 </TabsContent>
 
-                <TabsContent value="testimonials">
-                  <TestimonialReview archived={true} />
+                <TabsContent value="testimonials" className="mt-6">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium text-gray-700">Archived Testimonials</h3>
+                    <TestimonialReview archived={true} />
+                  </div>
                 </TabsContent>
               </Tabs>
             </div>

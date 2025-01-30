@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, Loader2, Calendar, Phone, Mail, X, Filter, Archive } from "lucide-react";
 import { toast } from "sonner";
-import type { Database } from "@/integrations/supabase/types";
+import type { Database, EnquiryStatus, Enquiry } from "@/integrations/supabase/types";
 import {
   Dialog,
   DialogContent,
@@ -24,33 +24,17 @@ import { useState, useMemo, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Types
-export type EnquiryStatus = 'new' | 'in_progress' | 'contacted' | 'scheduled' | 'completed' | 'cancelled' | 'resolved';
-
-export interface Enquiry {
-  id: string;
-  created_at: string;
-  name: string;
-  email: string;
-  phone?: string;
-  location?: string;
-  service_type: string;
-  message: string;
-  status: EnquiryStatus;
-  admin_comment?: string;
-  archived?: boolean;
-}
-
 // Status colors and labels
-export const statusColors = {
-  new: { bg: 'bg-blue-200', text: 'text-blue-800', border: 'border-blue-500', label: 'New' },
-  in_progress: { bg: 'bg-yellow-200', text: 'text-yellow-800', border: 'border-yellow-500', label: 'In Progress' },
-  contacted: { bg: 'bg-green-200', text: 'text-green-800', border: 'border-green-500', label: 'Contacted' },
-  scheduled: { bg: 'bg-purple-200', text: 'text-purple-800', border: 'border-purple-500', label: 'Scheduled' },
-  completed: { bg: 'bg-emerald-200', text: 'text-emerald-800', border: 'border-emerald-500', label: 'Completed' },
-  cancelled: { bg: 'bg-red-200', text: 'text-red-800', border: 'border-red-500', label: 'Cancelled' },
-  resolved: { bg: 'bg-gray-200', text: 'text-gray-800', border: 'border-gray-500', label: 'Resolved' }
-};
+const statusColors = {
+  new: { bg: "bg-blue-100", text: "text-blue-800", border: "border-blue-300", label: "New" },
+  pending: { bg: "bg-yellow-100", text: "text-yellow-800", border: "border-yellow-300", label: "Pending" },
+  in_progress: { bg: "bg-purple-100", text: "text-purple-800", border: "border-purple-300", label: "In Progress" },
+  contacted: { bg: "bg-indigo-100", text: "text-indigo-800", border: "border-indigo-300", label: "Contacted" },
+  scheduled: { bg: "bg-cyan-100", text: "text-cyan-800", border: "border-cyan-300", label: "Scheduled" },
+  completed: { bg: "bg-green-100", text: "text-green-800", border: "border-green-300", label: "Completed" },
+  cancelled: { bg: "bg-red-100", text: "text-red-800", border: "border-red-300", label: "Cancelled" },
+  resolved: { bg: "bg-gray-100", text: "text-gray-800", border: "border-gray-300", label: "Resolved" }
+} as const;
 
 // Get valid status
 const getValidStatus = (status: string | null | undefined): EnquiryStatus => {
@@ -180,7 +164,11 @@ const EnquiryCard = ({
   );
 };
 
-const EnquiryReview = () => {
+interface EnquiryReviewProps {
+  archived?: boolean;
+}
+
+const EnquiryReview = ({ archived = false }: EnquiryReviewProps) => {
   const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null);
   const [comment, setComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -191,45 +179,21 @@ const EnquiryReview = () => {
 
   // Update enquiry mutation
   const updateEnquiry = useMutation({
-    mutationFn: async ({ id, status, admin_comment }: { id: string; status?: EnquiryStatus; admin_comment?: string }) => {
-      console.log("Starting update for enquiry:", { id, status, admin_comment });
+    mutationFn: async ({ id, status, comment }: { id: string; status?: EnquiryStatus; comment?: string }) => {
+      const updateData: Partial<Enquiry> = {};
+      if (status) updateData.status = status;
+      if (comment !== undefined) updateData.admin_comment = comment;
 
-      // Prepare minimal update data
-      const updateData = {
-        ...(status !== undefined ? { status } : {}),
-        ...(admin_comment !== undefined ? { admin_comment } : {})
-      };
-
-      console.log("Sending update:", updateData);
-
-      // Perform the update
-      const { data: updated, error: updateError } = await supabase
-        .from('enquiries')
+      const { error } = await supabase
+        .from("enquiries")
         .update(updateData)
-        .eq('id', id)
-        .select()
-        .single();
+        .eq("id", id);
 
-      if (updateError) {
-        console.error("Update error:", updateError);
-        throw new Error(updateError.message);
-      }
-
-      if (!updated) {
-        throw new Error('Failed to update record');
-      }
-
-      console.log("Successfully updated enquiry:", updated);
-      return updated as Enquiry;
+      if (error) throw error;
     },
-    onSuccess: (updatedEnquiry) => {
-      console.log("Update successful:", updatedEnquiry);
-      
-      // Invalidate and refetch the enquiries query
-      queryClient.invalidateQueries({ queryKey: ['enquiries'] });
-
-      // Show success message
-      toast.success(`Status updated to ${statusColors[updatedEnquiry.status].label}`);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["enquiries"] });
+      setIsSubmitting(false);
     },
     onError: (error: any) => {
       console.error("Mutation error:", error);
@@ -241,17 +205,17 @@ const EnquiryReview = () => {
   const archiveEnquiry = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
-        .from('enquiries')
+        .from("enquiries")
         .update({ 
           archived: true,
-          status: 'cancelled'
-        } as Partial<Enquiry>)
-        .eq('id', id);
+          status: 'cancelled' 
+        })
+        .eq("id", id);
 
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['enquiries'] });
+      queryClient.invalidateQueries({ queryKey: ["enquiries"] });
       toast.success("Enquiry moved to archive");
     },
     onError: (error) => {
@@ -259,35 +223,19 @@ const EnquiryReview = () => {
     }
   });
 
-  // Handle status change
-  const handleStatusChange = async (enquiryId: string, newStatus: EnquiryStatus) => {
-    console.log("Status change requested:", { enquiryId, newStatus });
-    try {
-      await updateEnquiry.mutateAsync({
-        id: enquiryId,
-        status: newStatus,
-      });
-    } catch (error) {
-      console.error("Status update failed:", error);
-    }
-  };
-
   // Fetch enquiries
-  const { data: enquiries = [], isLoading } = useQuery({
-    queryKey: ['enquiries', activeTab],
+  const { data: enquiries = [], isLoading } = useQuery<Enquiry[]>({
+    queryKey: ["enquiries", archived],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('enquiries')
-        .select('*')
-        .eq('archived', activeTab === 'archived')
-        .order('created_at', { ascending: false });
+        .from("enquiries")
+        .select("*")
+        .eq("archived", archived)
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       return data;
     },
-    // Enable refetching on window focus and interval
-    refetchOnWindowFocus: true,
-    refetchInterval: 30000, // Refetch every 30 seconds
   });
 
   // Ensure UI reflects the latest status
@@ -311,13 +259,13 @@ const EnquiryReview = () => {
     
     setIsSubmitting(true);
     try {
-      const updatedEnquiry = await updateEnquiry.mutateAsync({
+      await updateEnquiry.mutateAsync({
         id: selectedEnquiry.id,
-        admin_comment: comment.trim(),
+        status: selectedStatus,
+        comment: comment.trim(),
       });
       
       // Update local state
-      setSelectedEnquiry(updatedEnquiry);
       setComment("");
       toast.success("Comment saved successfully");
     } catch (error) {
@@ -428,7 +376,7 @@ const EnquiryReview = () => {
                     key={enquiry.id}
                     enquiry={enquiry}
                     onClick={() => setSelectedEnquiry(enquiry)}
-                    onStatusChange={(status) => handleStatusChange(enquiry.id, status)}
+                    onStatusChange={(status) => updateEnquiry.mutate({ id: enquiry.id, status })}
                     onArchive={(id) => archiveEnquiry.mutate(id)}
                   />
                 ))}
@@ -456,7 +404,7 @@ const EnquiryReview = () => {
                     key={enquiry.id}
                     enquiry={enquiry}
                     onClick={() => setSelectedEnquiry(enquiry)}
-                    onStatusChange={(status) => handleStatusChange(enquiry.id, status)}
+                    onStatusChange={(status) => updateEnquiry.mutate({ id: enquiry.id, status })}
                     onArchive={(id) => archiveEnquiry.mutate(id)}
                   />
                 ))}
@@ -501,7 +449,7 @@ const EnquiryReview = () => {
                       newStatus: status,
                       enquiryId: selectedEnquiry.id 
                     });
-                    handleStatusChange(selectedEnquiry.id, status);
+                    updateEnquiry.mutate({ id: selectedEnquiry.id, status });
                   }}
                 >
                   <SelectTrigger
