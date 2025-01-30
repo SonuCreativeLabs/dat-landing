@@ -49,6 +49,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import Dashboard from "@/pages/admin/Dashboard";
 
 const SIDEBAR_ITEMS = [
   {
@@ -475,148 +476,7 @@ const Admin = () => {
         {/* Page Content */}
         <main className="pt-16 p-6 bg-gray-50 min-h-screen">
           {activePage === 'dashboard' && (
-            <>
-              {/* Stats Overview */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <Card className="hover:shadow-lg transition-shadow duration-200">
-                  <CardContent className="flex items-center gap-4 p-6">
-                    <div className="p-3 bg-blue-100 rounded-xl">
-                      <MessageSquare className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Total Enquiries</p>
-                      <h3 className="text-2xl font-bold text-gray-900">
-                        {isLoadingStats ? (
-                          <Loader2 className="w-6 h-6 animate-spin" />
-                        ) : (
-                          stats?.enquiries || 0
-                        )}
-                      </h3>
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card className="hover:shadow-lg transition-shadow duration-200">
-                  <CardContent className="flex items-center gap-4 p-6">
-                    <div className="p-3 bg-yellow-100 rounded-xl">
-                      <Star className="w-6 h-6 text-yellow-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Testimonials</p>
-                      <h3 className="text-2xl font-bold text-gray-900">
-                        {isLoadingStats ? (
-                          <Loader2 className="w-6 h-6 animate-spin" />
-                        ) : (
-                          stats?.testimonials || 0
-                        )}
-                      </h3>
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card className="hover:shadow-lg transition-shadow duration-200">
-                  <CardContent className="flex items-center gap-4 p-6">
-                    <div className="p-3 bg-green-100 rounded-xl">
-                      <User className="w-6 h-6 text-green-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Active Users</p>
-                      <h3 className="text-2xl font-bold text-gray-900">
-                        {isLoadingStats ? (
-                          <Loader2 className="w-6 h-6 animate-spin" />
-                        ) : (
-                          stats?.activeUsers || 0
-                        )}
-                      </h3>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Analytics and Activity Section */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                {/* Analytics Charts */}
-                <Card className="lg:col-span-2 hover:shadow-lg transition-shadow duration-200">
-                  <CardHeader className="border-b border-gray-100 bg-gray-50/50">
-                    <CardTitle className="flex items-center gap-2 text-gray-800">
-                      <BarChart3 className="w-5 h-5 text-blue-600" />
-                      Reports and Analytics
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    <div className="h-[300px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={analyticsData?.enquiriesTrend}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                          <XAxis 
-                            dataKey="date" 
-                            tick={{ fontSize: 12 }}
-                            tickFormatter={(value) => format(new Date(value), 'MMM d')}
-                            stroke="#9ca3af"
-                          />
-                          <YAxis 
-                            tick={{ fontSize: 12 }} 
-                            stroke="#9ca3af"
-                          />
-                          <Tooltip 
-                            labelFormatter={(value) => format(new Date(value), 'MMM d, yyyy')}
-                            contentStyle={{
-                              backgroundColor: 'white',
-                              border: '1px solid #e5e7eb',
-                              borderRadius: '0.5rem',
-                              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                            }}
-                          />
-                          <Line 
-                            type="monotone" 
-                            dataKey="count" 
-                            name="Enquiries"
-                            stroke="#2563eb" 
-                            strokeWidth={2}
-                            dot={{ fill: '#2563eb', strokeWidth: 2 }}
-                            activeDot={{ r: 6, fill: '#2563eb', stroke: 'white', strokeWidth: 2 }}
-                          />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Recent Activity */}
-                <Card className="hover:shadow-lg transition-shadow duration-200">
-                  <CardHeader className="border-b border-gray-100 bg-gray-50/50">
-                    <CardTitle className="flex items-center gap-2 text-gray-800">
-                      <Activity className="w-5 h-5 text-blue-600" />
-                      Recent Activity
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    <div className="space-y-4">
-                      {recentActivity?.map((activity, index) => (
-                        <div key={index} className="flex items-start gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                          <div className={`p-2 rounded-xl ${
-                            activity.type === 'enquiry' ? 'bg-blue-100' : 'bg-yellow-100'
-                          }`}>
-                            {activity.type === 'enquiry' ? (
-                              <MessageSquare className={`w-4 h-4 ${
-                                activity.type === 'enquiry' ? 'text-blue-600' : 'text-yellow-600'
-                              }`} />
-                            ) : (
-                              <Star className="w-4 h-4 text-yellow-600" />
-                            )}
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-gray-900">{activity.title}</p>
-                            <p className="text-sm text-gray-600">{activity.description}</p>
-                            <p className="text-xs text-gray-500 mt-1">
-                              {format(new Date(activity.timestamp), 'MMM d, h:mm a')}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </>
+            <Dashboard session={session} />
           )}
 
           {activePage === 'enquiry' && (

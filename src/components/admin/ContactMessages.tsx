@@ -28,24 +28,32 @@ const ContactMessages = ({ archived = false }: ContactMessagesProps) => {
     queryFn: async () => {
       console.log("Starting query with archived =", archived);
       
-      const { data, error } = await supabase
-        .from("enquiries")
-        .select("*")
-        .eq("archived", archived)
-        .order("created_at", { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from("enquiries")
+          .select("*")
+          .eq("archived", archived)
+          .order("created_at", { ascending: false });
 
-      if (error) {
+        if (error) {
+          console.error("Query error:", error);
+          throw error;
+        }
+
+        // Ensure all required fields have default values
+        return (data || []).map(message => ({
+          ...message,
+          name: message.name || 'Unknown',
+          email: message.email || 'No email',
+          status: message.status || 'new',
+          service_type: message.service_type || 'unknown_service',
+          message: message.message || 'No message',
+        }));
+
+      } catch (error) {
         console.error("Query error:", error);
         throw error;
       }
-
-      console.log("Query results:", {
-        archived: archived,
-        count: data?.length,
-        data: data
-      });
-
-      return data;
     },
   });
 
@@ -138,7 +146,7 @@ const ContactMessages = ({ archived = false }: ContactMessagesProps) => {
     updateEnquiry.mutate({ id, comment: editingComment.comment });
   };
 
-  const message_card = (message) => (
+  const message_card = (message: Enquiry) => (
     <div
       key={message.id}
       className={cn(
@@ -157,19 +165,24 @@ const ContactMessages = ({ archived = false }: ContactMessagesProps) => {
         <div className="flex items-start gap-4 flex-1 min-w-0">
           <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
             <span className="text-xl font-semibold text-blue-600">
-              {message.name.charAt(0)}
+              {message.name?.charAt(0) || '?'}
             </span>
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-lg text-gray-900 mb-2">
-              {message.name}
+              {message.name || 'Unknown'}
             </h3>
             <div className="flex flex-col gap-1 text-sm text-gray-500">
-              <span>{message.phone}</span>
-              <span>{message.email}</span>
-              <span className="mt-1">{message.service_type.split('_').map(word => 
-                word.charAt(0).toUpperCase() + word.slice(1)
-              ).join(' ')}</span>
+              <span>{message.phone || 'No phone'}</span>
+              <span>{message.email || 'No email'}</span>
+              <span className="mt-1">
+                {message.service_type 
+                  ? message.service_type.split('_').map(word => 
+                      word.charAt(0).toUpperCase() + word.slice(1)
+                    ).join(' ')
+                  : 'No service type'
+                }
+              </span>
             </div>
           </div>
         </div>

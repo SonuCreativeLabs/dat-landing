@@ -100,8 +100,23 @@ export type Database = {
 
 export type TestimonialStatus = 'pending' | 'approved' | 'rejected';
 
+export interface Enquiry {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  message: string;
+  service_type?: string;
+  status: EnquiryStatus;
+  admin_comment?: string;
+  created_at: string;
+  archived: boolean;
+  first_response_at?: string;
+}
+
 export type EnquiryStatus = 
   | "new" 
+  | "pending"
   | "in_progress"
   | "contacted"
   | "scheduled"
@@ -109,7 +124,6 @@ export type EnquiryStatus =
   | "cancelled"
   | "resolved";
 
-export type Enquiry = Database['public']['Tables']['enquiries']['Row'];
 export type Testimonial = Database['public']['Tables']['testimonials']['Row'] & {
   service_type: ServiceType;
 };
