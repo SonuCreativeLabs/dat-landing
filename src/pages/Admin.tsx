@@ -393,16 +393,19 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 fixed h-full">
+      <aside className="w-64 bg-white border-r border-gray-200 fixed h-full shadow-lg">
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="h-16 flex items-center gap-2 px-6 border-b border-gray-200">
+          <div className="h-16 flex items-center gap-2 px-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-white">
             <LayoutDashboard className="w-6 h-6 text-blue-600" />
-            <span className="font-semibold text-gray-900">Admin Panel</span>
+            <span className="font-semibold text-gray-900">Admin Dashboard</span>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4">
+          <nav className="flex-1 p-4 space-y-2">
+            <div className="mb-4 px-3">
+              <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Main Menu</h2>
+            </div>
             <ul className="space-y-1">
               {SIDEBAR_ITEMS.map((item) => (
                 <li key={item.title}>
@@ -413,13 +416,18 @@ const Admin = () => {
                       setActivePage(item.href.replace('#', ''));
                     }}
                     className={cn(
-                      "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                      "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                       activePage === item.href.replace('#', '')
-                        ? "bg-blue-50 text-blue-600"
-                        : "text-gray-600 hover:bg-gray-100"
+                        ? "bg-blue-50 text-blue-600 shadow-sm"
+                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                     )}
                   >
-                    <item.icon className="w-5 h-5" />
+                    <item.icon className={cn(
+                      "w-5 h-5 transition-colors",
+                      activePage === item.href.replace('#', '')
+                        ? "text-blue-600"
+                        : "text-gray-400 group-hover:text-gray-500"
+                    )} />
                     {item.title}
                   </a>
                 </li>
@@ -427,22 +435,23 @@ const Admin = () => {
             </ul>
           </nav>
 
-          {/* User */}
-          <div className="p-4 border-t border-gray-200">
-            <div className="flex items-center gap-3 px-3 py-2">
-              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white">
+          {/* User Profile Section */}
+          <div className="p-4 border-t border-gray-200 bg-gradient-to-r from-blue-50 to-white">
+            <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white shadow-sm">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 flex items-center justify-center text-white shadow-inner">
                 {session.user.email?.[0].toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">
                   {session.user.email}
                 </p>
+                <p className="text-xs text-gray-500">Administrator</p>
               </div>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={handleLogout}
-                className="text-gray-500 hover:text-red-600"
+                className="text-gray-500 hover:text-red-600 hover:bg-red-50"
               >
                 <LogOut className="w-5 h-5" />
               </Button>
@@ -454,24 +463,24 @@ const Admin = () => {
       {/* Main Content */}
       <div className="flex-1 ml-64">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 h-16 flex items-center fixed right-0 left-64 top-0 z-30 px-6">
+        <header className="bg-white border-b border-gray-200 h-16 flex items-center fixed right-0 left-64 top-0 z-30 px-6 shadow-sm">
           <div className="flex items-center gap-6 ml-auto">
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
+            <Button variant="ghost" size="icon" className="relative hover:bg-gray-100">
+              <Bell className="w-5 h-5 text-gray-600" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white" />
             </Button>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="pt-16 p-6">
+        <main className="pt-16 p-6 bg-gray-50 min-h-screen">
           {activePage === 'dashboard' && (
             <>
               {/* Stats Overview */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <Card>
+                <Card className="hover:shadow-lg transition-shadow duration-200">
                   <CardContent className="flex items-center gap-4 p-6">
-                    <div className="p-3 bg-blue-100 rounded-lg">
+                    <div className="p-3 bg-blue-100 rounded-xl">
                       <MessageSquare className="w-6 h-6 text-blue-600" />
                     </div>
                     <div>
@@ -486,9 +495,9 @@ const Admin = () => {
                     </div>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="hover:shadow-lg transition-shadow duration-200">
                   <CardContent className="flex items-center gap-4 p-6">
-                    <div className="p-3 bg-yellow-100 rounded-lg">
+                    <div className="p-3 bg-yellow-100 rounded-xl">
                       <Star className="w-6 h-6 text-yellow-600" />
                     </div>
                     <div>
@@ -503,9 +512,9 @@ const Admin = () => {
                     </div>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="hover:shadow-lg transition-shadow duration-200">
                   <CardContent className="flex items-center gap-4 p-6">
-                    <div className="p-3 bg-green-100 rounded-lg">
+                    <div className="p-3 bg-green-100 rounded-xl">
                       <User className="w-6 h-6 text-green-600" />
                     </div>
                     <div>
@@ -525,26 +534,36 @@ const Admin = () => {
               {/* Analytics and Activity Section */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                 {/* Analytics Charts */}
-                <Card className="lg:col-span-2">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <BarChart3 className="w-5 h-5" />
+                <Card className="lg:col-span-2 hover:shadow-lg transition-shadow duration-200">
+                  <CardHeader className="border-b border-gray-100 bg-gray-50/50">
+                    <CardTitle className="flex items-center gap-2 text-gray-800">
+                      <BarChart3 className="w-5 h-5 text-blue-600" />
                       Reports and Analytics
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-6">
                     <div className="h-[300px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={analyticsData?.enquiriesTrend}>
-                          <CartesianGrid strokeDasharray="3 3" />
+                          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                           <XAxis 
                             dataKey="date" 
                             tick={{ fontSize: 12 }}
                             tickFormatter={(value) => format(new Date(value), 'MMM d')}
+                            stroke="#9ca3af"
                           />
-                          <YAxis tick={{ fontSize: 12 }} />
+                          <YAxis 
+                            tick={{ fontSize: 12 }} 
+                            stroke="#9ca3af"
+                          />
                           <Tooltip 
                             labelFormatter={(value) => format(new Date(value), 'MMM d, yyyy')}
+                            contentStyle={{
+                              backgroundColor: 'white',
+                              border: '1px solid #e5e7eb',
+                              borderRadius: '0.5rem',
+                              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                            }}
                           />
                           <Line 
                             type="monotone" 
@@ -552,6 +571,8 @@ const Admin = () => {
                             name="Enquiries"
                             stroke="#2563eb" 
                             strokeWidth={2}
+                            dot={{ fill: '#2563eb', strokeWidth: 2 }}
+                            activeDot={{ r: 6, fill: '#2563eb', stroke: 'white', strokeWidth: 2 }}
                           />
                         </LineChart>
                       </ResponsiveContainer>
@@ -560,18 +581,18 @@ const Admin = () => {
                 </Card>
 
                 {/* Recent Activity */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Activity className="w-5 h-5" />
+                <Card className="hover:shadow-lg transition-shadow duration-200">
+                  <CardHeader className="border-b border-gray-100 bg-gray-50/50">
+                    <CardTitle className="flex items-center gap-2 text-gray-800">
+                      <Activity className="w-5 h-5 text-blue-600" />
                       Recent Activity
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-6">
                     <div className="space-y-4">
                       {recentActivity?.map((activity, index) => (
-                        <div key={index} className="flex items-start gap-4">
-                          <div className={`p-2 rounded-full ${
+                        <div key={index} className="flex items-start gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                          <div className={`p-2 rounded-xl ${
                             activity.type === 'enquiry' ? 'bg-blue-100' : 'bg-yellow-100'
                           }`}>
                             {activity.type === 'enquiry' ? (
@@ -585,7 +606,7 @@ const Admin = () => {
                           <div>
                             <p className="text-sm font-medium text-gray-900">{activity.title}</p>
                             <p className="text-sm text-gray-600">{activity.description}</p>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-gray-500 mt-1">
                               {format(new Date(activity.timestamp), 'MMM d, h:mm a')}
                             </p>
                           </div>
