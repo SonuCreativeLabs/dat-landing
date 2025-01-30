@@ -19,6 +19,20 @@ interface TestimonialProps {
   location?: string;
 }
 
+interface TestimonialData {
+  id: string;
+  created_at: string;
+  name: string;
+  rating: number;
+  comment: string;
+  status: TestimonialStatus;
+  admin_comment?: string;
+  archived: boolean;
+  service_type?: string;
+  location?: string;
+  source?: 'justdial' | 'website';
+}
+
 const testimonials = [
   {
     name: "Rajesh Kumar",
@@ -145,11 +159,10 @@ const Testimonials = () => {
       const testimonialData: TestimonialInsert = {
         name: formData.name.trim(),
         rating: Number(formData.rating),
-        message: formData.comment.trim(),
-        location: (formData.location || 'Chennai').trim(),
-        service_type: formData.service_type.trim(),
+        comment: formData.comment.trim(),
         status: 'pending',
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        archived: false
       };
 
       console.log('Formatted testimonial data:', testimonialData);
@@ -184,9 +197,6 @@ const Testimonials = () => {
       console.error('Error submitting testimonial:', {
         error,
         formData,
-        supabaseUrl: supabase.supabaseUrl,
-        // Don't log the key for security
-        authHeader: 'Bearer [REDACTED]'
       });
       alert(error?.message || 'There was an error submitting your testimonial. Please try again.');
     }
@@ -218,6 +228,60 @@ const Testimonials = () => {
           className="text-center max-w-3xl mx-auto mb-16 space-y-4"
         >
           <h2 className="text-4xl font-bold text-white">Client Testimonials</h2>
+          
+          {/* Enhanced Justdial Rating Badge */}
+          <div className="flex items-center justify-center gap-4">
+            <motion.a
+              href="https://www.justdial.com/Chennai/Dreams-AIR-Tech-Velacheri/044PXX44-XX44-240828150456-T6D3_BZDET"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-md rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/20"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className="bg-white/90 p-2 rounded-lg">
+                <img src="/justdial-logo.png" alt="Justdial" className="w-6 h-6" />
+              </div>
+              <div className="flex flex-col items-start">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-bold text-white">4.4</span>
+                  <div className="flex">
+                    {[1, 2, 3, 4].map((_, i) => (
+                      <Star 
+                        key={i} 
+                        className="w-5 h-5 text-yellow-400 fill-current drop-shadow" 
+                      />
+                    ))}
+                    <div className="relative">
+                      <Star className="w-5 h-5 text-gray-400/30 fill-current" />
+                      <div className="absolute inset-0 overflow-hidden w-[40%]">
+                        <Star className="w-5 h-5 text-yellow-400 fill-current drop-shadow" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-white/80">
+                  <span className="font-medium">76 Reviews</span>
+                  <span className="text-white/60">•</span>
+                  <span className="text-white/60">View on Justdial</span>
+                  <svg
+                    className="w-4 h-4 text-white/60 transform group-hover:translate-x-1 transition-transform"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </motion.a>
+          </div>
+
           <p className="text-white/80">
             Hear what our satisfied customers have to say about their experience with Dreams Air Tech.
           </p>
@@ -250,7 +314,7 @@ const Testimonials = () => {
             }}
             className="pb-12"
           >
-            {testimonials?.map((testimonial, index) => (
+            {testimonials?.map((testimonial: TestimonialData, index) => (
               <SwiperSlide key={testimonial.id || index}>
                 <div className="bg-white rounded-2xl shadow-lg p-8 h-full">
                   <div className="flex items-center gap-4 mb-6">
@@ -261,11 +325,28 @@ const Testimonials = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900">{testimonial.name}</h3>
-                      <p className="text-gray-500 text-sm">{testimonial.location || 'Chennai'}</p>
-                      <p className="text-gray-500 text-sm capitalize">{testimonial.service_type}</p>
+                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                        {testimonial.service_type && (
+                          <span>{testimonial.service_type.split('_').map(word => 
+                            word.charAt(0).toUpperCase() + word.slice(1)
+                          ).join(' ')}</span>
+                        )}
+                        {testimonial.location && (
+                          <>
+                            <span>•</span>
+                            <span>{testimonial.location}</span>
+                          </>
+                        )}
+                        {testimonial.source === 'justdial' && (
+                          <>
+                            <span>•</span>
+                            <span className="text-blue-600 font-medium">Justdial Review</span>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  <p className="text-gray-600 mb-6">{testimonial.message}</p>
+                  <p className="text-gray-600 mb-6">{testimonial.comment}</p>
                   <div className="flex gap-1">
                     {[...Array(testimonial.rating)].map((_, i) => (
                       <Star
@@ -316,7 +397,7 @@ const Testimonials = () => {
                 className="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl"
               >
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-2xl font-bold text-gray-900">Share Your Experience</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-800">Share Your Experience</h3>
                   <button
                     onClick={() => setIsModalOpen(false)}
                     className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -327,7 +408,7 @@ const Testimonials = () => {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-600 mb-2">
                       Your Name
                     </label>
                     <input
@@ -340,7 +421,7 @@ const Testimonials = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-600 mb-2">
                       Rating
                     </label>
                     <div className="flex gap-2">
@@ -364,7 +445,7 @@ const Testimonials = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-600 mb-2">
                       Your Experience
                     </label>
                     <textarea
@@ -376,7 +457,7 @@ const Testimonials = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-600 mb-2">
                       Location (Optional)
                     </label>
                     <input
@@ -389,7 +470,7 @@ const Testimonials = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-600 mb-2">
                       Service Type
                     </label>
                     <select

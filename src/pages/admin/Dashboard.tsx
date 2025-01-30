@@ -9,6 +9,7 @@ import { Loader2, MessageSquare, Star, AlertCircle } from "lucide-react";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("enquiries");
+  const [archiveTab, setArchiveTab] = useState("enquiries");
 
   // Fetch statistics
   const { data: stats, isLoading } = useQuery({
@@ -18,11 +19,11 @@ const Dashboard = () => {
         supabase
           .from("enquiries")
           .select("status", { count: "exact" })
-          .in("status", ["new", "in-progress", "completed", "cancelled"]),
+          .in("status", ["new", "in_progress", "completed", "cancelled"]),
         supabase
           .from("testimonials")
           .select("status", { count: "exact" })
-          .in("status", ["new", "approved", "rejected"]),
+          .in("status", ["pending", "approved", "rejected"]),
       ]);
 
       if (enquiriesStats.error) throw enquiriesStats.error;
@@ -128,31 +129,63 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* Tabs for Enquiries and Testimonials */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
-          <TabsTrigger value="enquiries">
-            Enquiries
-          </TabsTrigger>
-          <TabsTrigger value="testimonials">
-            Testimonials
-          </TabsTrigger>
+      {/* Main Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList>
+          <TabsTrigger value="enquiries">Enquiries</TabsTrigger>
+          <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
+          <TabsTrigger value="archived">Archive</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="enquiries" className="space-y-4">
+        {/* Enquiries Tab */}
+        <TabsContent value="enquiries">
           <div className="bg-white rounded-lg shadow">
             <div className="p-6">
               <h2 className="text-xl font-semibold mb-4">Recent Enquiries</h2>
-              <ContactMessages />
+              <ContactMessages archived={false} />
             </div>
           </div>
         </TabsContent>
 
-        <TabsContent value="testimonials" className="space-y-4">
+        {/* Testimonials Tab */}
+        <TabsContent value="testimonials">
           <div className="bg-white rounded-lg shadow">
             <div className="p-6">
               <h2 className="text-xl font-semibold mb-4">Testimonials Review</h2>
-              <TestimonialReview />
+              <TestimonialReview archived={false} />
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Archive Tab */}
+        <TabsContent value="archived">
+          <div className="bg-white rounded-lg shadow">
+            <div className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Archive</h2>
+              
+              {/* Archive Type Tabs */}
+              <Tabs value={archiveTab} onValueChange={setArchiveTab} className="space-y-6">
+                <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
+                  <TabsTrigger value="enquiries">Enquiries</TabsTrigger>
+                  <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
+                </TabsList>
+
+                {/* Archived Enquiries */}
+                <TabsContent value="enquiries" className="mt-6">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium text-gray-700">Archived Enquiries</h3>
+                    <ContactMessages archived={true} />
+                  </div>
+                </TabsContent>
+
+                {/* Archived Testimonials */}
+                <TabsContent value="testimonials" className="mt-6">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium text-gray-700">Archived Testimonials</h3>
+                    <TestimonialReview archived={true} />
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
         </TabsContent>

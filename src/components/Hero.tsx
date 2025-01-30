@@ -1,6 +1,7 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { HERO_IMAGES } from "@/config/assets";
 
 const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -157,59 +158,22 @@ const Hero = () => {
             </motion.div>
           </motion.div>
 
-          {/* Right Column - 3D AC */}
+          {/* Right Column - Main Image */}
           <div className="relative w-full h-full min-h-[600px] flex items-center justify-center">
             <motion.div
-              ref={containerRef}
-              style={{
-                perspective: 1000,
-                rotateX,
-                rotateY,
-                transformStyle: "preserve-3d",
-              }}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8 }}
-              className="relative w-full max-w-3xl mx-auto"
+              className="relative w-full max-w-2xl mx-auto bg-white/10 backdrop-blur-sm p-8 rounded-2xl"
             >
-              {/* Background Glow */}
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-blue-400/30 to-blue-500/20 blur-3xl rounded-[32px]" />
-              <div className="absolute inset-0 bg-gradient-to-b from-blue-400/10 via-blue-500/20 to-blue-400/10 blur-2xl rounded-[32px]" />
-              
-              {/* AC Container */}
-              <div className="relative transform-gpu">
-                <motion.div
-                  className="relative z-10"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <img 
-                    src="/ac-3d-fixed.svg" 
-                    alt="3D Air Conditioner" 
-                    width={800}
-                    height={600}
-                    className="w-full h-auto select-none drop-shadow-2xl"
-                    draggable="false"
-                  />
-                </motion.div>
-                
-                {/* Cool Air Effect */}
-                <motion.div
-                  className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-full h-80"
-                  initial={{ opacity: 0 }}
-                  animate={{ 
-                    opacity: [0.4, 0.8, 0.4],
-                    y: [0, 20, 0]
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  <div className="w-full h-full bg-gradient-to-b from-blue-500/40 via-blue-400/20 to-transparent blur-3xl" />
-                </motion.div>
-              </div>
+              <img 
+                src={HERO_IMAGES.AC} 
+                alt="Air Conditioner Services" 
+                width={800}
+                height={600}
+                className="w-full h-auto select-none rounded-xl"
+                draggable="false"
+              />
             </motion.div>
           </div>
         </div>

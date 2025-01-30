@@ -13,6 +13,7 @@ export type Database = {
           message: string;
           status: EnquiryStatus;
           admin_comment?: string;
+          archived: boolean;
         };
         Insert: {
           id?: string;
@@ -25,6 +26,7 @@ export type Database = {
           message: string;
           status?: EnquiryStatus;
           admin_comment?: string;
+          archived?: boolean;
         };
         Update: {
           id?: string;
@@ -37,6 +39,7 @@ export type Database = {
           message?: string;
           status?: EnquiryStatus;
           admin_comment?: string;
+          archived?: boolean;
         };
         Relationships: [];
       };
@@ -49,6 +52,10 @@ export type Database = {
           comment: string;
           status: TestimonialStatus;
           admin_comment?: string;
+          archived: boolean;
+          service_type?: string;
+          location?: string;
+          source?: 'justdial' | 'website';
         };
         Insert: {
           id?: string;
@@ -58,6 +65,10 @@ export type Database = {
           comment: string;
           status?: TestimonialStatus;
           admin_comment?: string;
+          archived?: boolean;
+          service_type?: string;
+          location?: string;
+          source?: 'justdial' | 'website';
         };
         Update: {
           id?: string;
@@ -67,6 +78,10 @@ export type Database = {
           comment?: string;
           status?: TestimonialStatus;
           admin_comment?: string;
+          archived?: boolean;
+          service_type?: string;
+          location?: string;
+          source?: 'justdial' | 'website';
         };
         Relationships: [];
       };
@@ -86,14 +101,13 @@ export type Database = {
 export type TestimonialStatus = 'pending' | 'approved' | 'rejected';
 
 export type EnquiryStatus = 
-  | "new"           // Just received
-  | "pending"       // Waiting for review
-  | "in_progress"   // Currently working on it
-  | "contacted"     // Customer has been contacted
-  | "scheduled"     // Service has been scheduled
-  | "completed"     // Service completed
-  | "cancelled"     // Customer cancelled or unreachable
-  | "resolved"      // Issue resolved without service
+  | "new" 
+  | "in_progress"
+  | "contacted"
+  | "scheduled"
+  | "completed"
+  | "cancelled"
+  | "resolved";
 
 export type Enquiry = Database['public']['Tables']['enquiries']['Row'];
 export type Testimonial = Database['public']['Tables']['testimonials']['Row'];

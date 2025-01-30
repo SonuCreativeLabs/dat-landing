@@ -48,6 +48,7 @@ import { format, subDays } from 'date-fns';
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 const SIDEBAR_ITEMS = [
   {
@@ -93,7 +94,14 @@ const SIDEBAR_ITEMS = [
 ];
 
 type TestimonialStatus = "pending" | "approved" | "rejected";
-type EnquiryStatus = "new" | "in-progress" | "completed" | "cancelled";
+type EnquiryStatus = 
+  | "new" 
+  | "in_progress"
+  | "contacted"
+  | "scheduled"
+  | "completed"
+  | "cancelled"
+  | "resolved";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -102,6 +110,47 @@ const Admin = () => {
   const [enquiries, setEnquiries] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
   const [archivedTestimonials, setArchivedTestimonials] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState<EnquiryStatus | null>(null);
+
+  // Fetch status counts
+  const { data: statusCounts = {
+    all: 0,
+    new: 0,
+    in_progress: 0,
+    contacted: 0,
+    scheduled: 0,
+    completed: 0,
+    cancelled: 0,
+    resolved: 0
+  }, isLoading: isLoadingCounts } = useQuery({
+    queryKey: ["status-counts"],
+    queryFn: async () => {
+      const { data: enquiriesData, error } = await supabase
+        .from("enquiries")
+        .select("status")
+        .eq("archived", false);
+
+      if (error) throw error;
+
+      const counts = (enquiriesData || []).reduce((acc, enquiry) => {
+        const status = enquiry.status as EnquiryStatus;
+        acc[status] = (acc[status] || 0) + 1;
+        return acc;
+      }, {} as Record<EnquiryStatus, number>);
+
+      return {
+        all: enquiriesData?.length || 0,
+        new: counts.new || 0,
+        in_progress: counts.in_progress || 0,
+        contacted: counts.contacted || 0,
+        scheduled: counts.scheduled || 0,
+        completed: counts.completed || 0,
+        cancelled: counts.cancelled || 0,
+        resolved: counts.resolved || 0
+      };
+    },
+    refetchInterval: 30000 // Refetch every 30 seconds
+  });
 
   // Check authentication
   const { data: session, isLoading: isCheckingAuth } = useQuery({
@@ -121,16 +170,15 @@ const Admin = () => {
   const { data: stats, isLoading: isLoadingStats } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: async () => {
-      const [enquiriesCount, testimonialsCount, usersCount] = await Promise.all([
+      const [enquiriesCount, testimonialsCount] = await Promise.all([
         supabase.from('enquiries').select('id', { count: 'exact' }),
-        supabase.from('testimonials').select('id', { count: 'exact' }),
-        supabase.from('profiles').select('id', { count: 'exact' })
+        supabase.from('testimonials').select('id', { count: 'exact' })
       ]);
 
       return {
         enquiries: enquiriesCount.count || 0,
         testimonials: testimonialsCount.count || 0,
-        users: usersCount.count || 0
+        activeUsers: 0 // Add a default value for activeUsers
       };
     },
     refetchInterval: 30000 // Refetch every 30 seconds
@@ -304,13 +352,19 @@ const Admin = () => {
   const renderEnquiryStatus = (status: EnquiryStatus) => {
     switch (status) {
       case 'new':
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">New</span>;
-      case 'in-progress':
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">In Progress</span>;
+        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">New</span>;
+      case 'in_progress':
+        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">In Progress</span>;
+      case 'contacted':
+        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-800">Contacted</span>;
+      case 'scheduled':
+        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-cyan-100 text-cyan-800">Scheduled</span>;
       case 'completed':
         return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Completed</span>;
       case 'cancelled':
         return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Cancelled</span>;
+      case 'resolved':
+        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800">Resolved</span>;
       default:
         return null;
     }
@@ -460,7 +514,7 @@ const Admin = () => {
                         {isLoadingStats ? (
                           <Loader2 className="w-6 h-6 animate-spin" />
                         ) : (
-                          stats?.users || 0
+                          stats?.activeUsers || 0
                         )}
                       </h3>
                     </div>
@@ -547,7 +601,174 @@ const Admin = () => {
           {activePage === 'enquiry' && (
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-gray-800">Enquiries</h2>
-              <EnquiryReview />
+              <div>
+                <h2 className="text-lg font-semibold mb-4">Status Overview</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {/* All Status */}
+                  <div
+                    className={cn(
+                      "p-4 rounded-lg flex flex-col gap-2 bg-white border border-gray-200",
+                      "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
+                      selectedStatus === null && "ring-2 ring-offset-2 ring-gray-400"
+                    )}
+                    onClick={() => setSelectedStatus(null)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-900">All Enquiries</span>
+                      <Badge variant="secondary">{statusCounts.all}</Badge>
+                    </div>
+                    <p className="text-xs text-gray-500">View all enquiries regardless of status</p>
+                  </div>
+
+                  {/* New Status */}
+                  <div
+                    className={cn(
+                      "p-4 rounded-lg flex flex-col gap-2 bg-blue-50 border border-blue-200",
+                      "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
+                      selectedStatus === 'new' && "ring-2 ring-offset-2 ring-blue-400"
+                    )}
+                    onClick={() => setSelectedStatus('new')}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-blue-500" />
+                        <span className="text-sm font-medium text-blue-900">New</span>
+                      </div>
+                      <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+                        {statusCounts.new || 0}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-blue-700">Fresh enquiries awaiting initial response</p>
+                  </div>
+
+                  {/* In Progress Status */}
+                  <div
+                    className={cn(
+                      "p-4 rounded-lg flex flex-col gap-2 bg-purple-50 border border-purple-200",
+                      "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
+                      selectedStatus === 'in_progress' && "ring-2 ring-offset-2 ring-purple-400"
+                    )}
+                    onClick={() => setSelectedStatus('in_progress')}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-purple-500" />
+                        <span className="text-sm font-medium text-purple-900">In Progress</span>
+                      </div>
+                      <Badge variant="secondary" className="bg-purple-100 text-purple-700">
+                        {statusCounts.in_progress || 0}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-purple-700">Currently being handled by the team</p>
+                  </div>
+
+                  {/* Contacted Status */}
+                  <div
+                    className={cn(
+                      "p-4 rounded-lg flex flex-col gap-2 bg-indigo-50 border border-indigo-200",
+                      "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
+                      selectedStatus === 'contacted' && "ring-2 ring-offset-2 ring-indigo-400"
+                    )}
+                    onClick={() => setSelectedStatus('contacted')}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-indigo-500" />
+                        <span className="text-sm font-medium text-indigo-900">Contacted</span>
+                      </div>
+                      <Badge variant="secondary" className="bg-indigo-100 text-indigo-700">
+                        {statusCounts.contacted || 0}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-indigo-700">Initial contact made with customer</p>
+                  </div>
+
+                  {/* Scheduled Status */}
+                  <div
+                    className={cn(
+                      "p-4 rounded-lg flex flex-col gap-2 bg-cyan-50 border border-cyan-200",
+                      "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
+                      selectedStatus === 'scheduled' && "ring-2 ring-offset-2 ring-cyan-400"
+                    )}
+                    onClick={() => setSelectedStatus('scheduled')}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-cyan-500" />
+                        <span className="text-sm font-medium text-cyan-900">Scheduled</span>
+                      </div>
+                      <Badge variant="secondary" className="bg-cyan-100 text-cyan-700">
+                        {statusCounts.scheduled || 0}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-cyan-700">Service appointment scheduled</p>
+                  </div>
+
+                  {/* Completed Status */}
+                  <div
+                    className={cn(
+                      "p-4 rounded-lg flex flex-col gap-2 bg-green-50 border border-green-200",
+                      "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
+                      selectedStatus === 'completed' && "ring-2 ring-offset-2 ring-green-400"
+                    )}
+                    onClick={() => setSelectedStatus('completed')}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-green-500" />
+                        <span className="text-sm font-medium text-green-900">Completed</span>
+                      </div>
+                      <Badge variant="secondary" className="bg-green-100 text-green-700">
+                        {statusCounts.completed || 0}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-green-700">Service successfully delivered</p>
+                  </div>
+
+                  {/* Cancelled Status */}
+                  <div
+                    className={cn(
+                      "p-4 rounded-lg flex flex-col gap-2 bg-red-50 border border-red-200",
+                      "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
+                      selectedStatus === 'cancelled' && "ring-2 ring-offset-2 ring-red-400"
+                    )}
+                    onClick={() => setSelectedStatus('cancelled')}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-red-500" />
+                        <span className="text-sm font-medium text-red-900">Cancelled</span>
+                      </div>
+                      <Badge variant="secondary" className="bg-red-100 text-red-700">
+                        {statusCounts.cancelled || 0}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-red-700">Enquiry cancelled or withdrawn</p>
+                  </div>
+
+                  {/* Resolved Status */}
+                  <div
+                    className={cn(
+                      "p-4 rounded-lg flex flex-col gap-2 bg-emerald-50 border border-emerald-200",
+                      "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
+                      selectedStatus === 'resolved' && "ring-2 ring-offset-2 ring-emerald-400"
+                    )}
+                    onClick={() => setSelectedStatus('resolved')}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                        <span className="text-sm font-medium text-emerald-900">Resolved</span>
+                      </div>
+                      <Badge variant="secondary" className="bg-emerald-100 text-emerald-700">
+                        {statusCounts.resolved || 0}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-emerald-700">Successfully resolved without service</p>
+                  </div>
+                </div>
+              </div>
+              <EnquiryReview selectedStatus={selectedStatus} />
             </div>
           )}
 
@@ -756,54 +977,88 @@ const Admin = () => {
           )}
 
           {activePage === 'archive' && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-800">Archived Testimonials</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {archivedTestimonials.map((testimonial) => (
-                  <div key={testimonial.id} className="bg-white p-6 rounded-xl shadow-sm opacity-75">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-semibold">{testimonial.name}</h3>
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                          <span>{testimonial.service_type}</span>
-                          {testimonial.location && (
-                            <>
-                              <span>•</span>
-                              <span>{testimonial.location}</span>
-                            </>
-                          )}
+            <div className="space-y-8">
+              <h2 className="text-2xl font-bold text-gray-800">Archive</h2>
+              
+              {/* Archive Type Tabs */}
+              <Tabs defaultValue="enquiries" className="space-y-6">
+                <TabsList className="grid w-full grid-cols-2 max-w-[400px] bg-gray-100 p-1 rounded-lg">
+                  <TabsTrigger 
+                    value="enquiries"
+                    className="data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm rounded-md px-8 py-2 transition-all"
+                  >
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    Enquiries
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="testimonials"
+                    className="data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm rounded-md px-8 py-2 transition-all"
+                  >
+                    <Star className="w-4 h-4 mr-2" />
+                    Testimonials
+                  </TabsTrigger>
+                </TabsList>
+
+                {/* Archived Enquiries */}
+                <TabsContent value="enquiries">
+                  <EnquiryReview archived={true} />
+                </TabsContent>
+
+                {/* Archived Testimonials */}
+                <TabsContent value="testimonials">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {archivedTestimonials.map((testimonial) => (
+                      <div key={testimonial.id} className="bg-white p-6 rounded-xl shadow-sm opacity-75">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="font-semibold">{testimonial.name}</h3>
+                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                              <span>{testimonial.service_type}</span>
+                              {testimonial.location && (
+                                <>
+                                  <span>•</span>
+                                  <span>{testimonial.location}</span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => handleTestimonialAction(testimonial.id, 'restore')}
+                            className="px-3 py-1 text-sm font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100"
+                          >
+                            Restore
+                          </button>
+                        </div>
+                        <p className="mt-4 text-gray-600">{testimonial.message}</p>
+                        <div className="mt-4 flex items-center">
+                          <div className="flex-1">
+                            <div className="flex items-center">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`w-4 h-4 ${
+                                    i < testimonial.rating
+                                      ? "text-yellow-400 fill-current"
+                                      : "text-gray-300"
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                          <span className="text-sm text-gray-500">
+                            {new Date(testimonial.created_at).toLocaleDateString()}
+                          </span>
                         </div>
                       </div>
-                      <button
-                        onClick={() => handleTestimonialAction(testimonial.id, 'restore')}
-                        className="px-3 py-1 text-sm font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100"
-                      >
-                        Restore
-                      </button>
-                    </div>
-                    <p className="mt-4 text-gray-600">{testimonial.message}</p>
-                    <div className="mt-4 flex items-center">
-                      <div className="flex-1">
-                        <div className="flex items-center">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-4 h-4 ${
-                                i < testimonial.rating
-                                  ? "text-yellow-400 fill-current"
-                                  : "text-gray-300"
-                              }`}
-                            />
-                          ))}
-                        </div>
+                    ))}
+                    {archivedTestimonials.length === 0 && (
+                      <div className="col-span-full text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
+                        No archived testimonials found
                       </div>
-                      <span className="text-sm text-gray-500">
-                        {new Date(testimonial.created_at).toLocaleDateString()}
-                      </span>
-                    </div>
+                    )}
                   </div>
-                ))}
-              </div>
+                </TabsContent>
+              </Tabs>
             </div>
           )}
 
