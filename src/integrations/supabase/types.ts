@@ -110,4 +110,8 @@ export type EnquiryStatus =
   | "resolved";
 
 export type Enquiry = Database['public']['Tables']['enquiries']['Row'];
-export type Testimonial = Database['public']['Tables']['testimonials']['Row'];
+export type Testimonial = Database['public']['Tables']['testimonials']['Row'] & {
+  service_type: ServiceType;
+};
+
+export type ServiceType = 'appliance_sales' | 'appliance_service' | 'appliance_rentals' | 'others';

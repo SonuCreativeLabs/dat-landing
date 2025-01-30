@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Star, Loader2, Calendar, Archive } from "lucide-react";
 import { toast } from "sonner";
-import type { Database, TestimonialStatus, Testimonial } from "@/integrations/supabase/types";
+import type { Database, TestimonialStatus, Testimonial, ServiceType } from "@/integrations/supabase/types";
 import {
   Select,
   SelectContent,
@@ -40,7 +40,12 @@ const TestimonialReview = ({ archived = false }: TestimonialReviewProps) => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+
+      // Ensure service_type is cast to ServiceType
+      return (data || []).map((testimonial) => ({
+        ...testimonial,
+        service_type: testimonial.service_type as ServiceType,
+      }));
     },
   });
 

@@ -104,22 +104,11 @@ export default function TestimonialForm() {
       form.reset();
 
       // Show success message using sonner toast
-      toast.success(
-        <div className="flex flex-col gap-1">
-          <span className="font-medium">Thank you for your review!</span>
-          <span className="text-sm">
-            Your testimonial has been submitted successfully. Once reviewed, it will be displayed on our website.
-          </span>
-        </div>,
-        {
-          duration: 5000,
-          className: "bg-white text-gray-900",
-          position: "top-center",
-          style: {
-            minWidth: '400px',
-          },
-        }
-      );
+      toast.success("Message sent successfully!", {
+        duration: 3000,
+        position: "top-center",
+        className: "bg-white text-gray-900",
+      });
 
     } catch (error) {
       console.error('Submission error:', error);
@@ -184,22 +173,20 @@ export default function TestimonialForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-gray-700">Service Type</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select 
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger className="bg-gray-50/50 border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                         <SelectValue placeholder="Select service type" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="bg-white shadow-md border-gray-200">
-                      {serviceTypes.map((type) => (
-                        <SelectItem 
-                          key={type.value} 
-                          value={type.value}
-                          className="hover:bg-gray-50 cursor-pointer"
-                        >
-                          {type.label}
-                        </SelectItem>
-                      ))}
+                    <SelectContent position="popper">
+                      <SelectItem value="appliance_sales" className="cursor-pointer">Appliance Sales</SelectItem>
+                      <SelectItem value="appliance_service" className="cursor-pointer">Appliance Service</SelectItem>
+                      <SelectItem value="appliance_rentals" className="cursor-pointer">Appliance Rentals</SelectItem>
+                      <SelectItem value="others" className="cursor-pointer">Others</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

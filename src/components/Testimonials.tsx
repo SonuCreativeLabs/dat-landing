@@ -11,7 +11,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { Button } from "./ui/button";
 import TestimonialForm from "./TestimonialForm";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 
 interface TestimonialProps {
   name: string;
@@ -196,7 +196,11 @@ const Testimonials = () => {
         service_type: 'appliance_rental'
       });
       setIsModalOpen(false);
-      toast.success('Thank you for sharing your experience! Your testimonial will be reviewed and published soon.');
+      toast.success("Message sent successfully!", {
+        duration: 3000,
+        position: "top-center",
+        className: "bg-white text-gray-900",
+      });
     } catch (error: any) {
       console.error('Error submitting testimonial:', {
         error,
@@ -479,6 +483,7 @@ const Testimonials = () => {
                       <option value="appliance_sales">Appliance Sales</option>
                       <option value="appliance_service">Appliance Service</option>
                       <option value="appliance_rental">Appliance Rental</option>
+                      <option value="others">Others</option>
                     </select>
                   </div>
 
