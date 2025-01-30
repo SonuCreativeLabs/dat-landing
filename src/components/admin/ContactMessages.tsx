@@ -7,20 +7,31 @@ import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import { Enquiry, EnquiryStatus } from "@/integrations/supabase/types";
 import { cn } from "@/lib/utils";
+import { toast } from "react-hot-toast";
 
-export default function ContactMessages() {
+interface ContactMessagesProps {
+  archived?: boolean;
+}
+
+const ContactMessages = ({ archived = false }: ContactMessagesProps) => {
   const queryClient = useQueryClient();
   const [editingComment, setEditingComment] = useState<{ id: string; comment: string } | null>(null);
 
   const { data: messages = [], isLoading } = useQuery<Enquiry[]>({
-    queryKey: ["contact-messages"],
+    queryKey: ["contact-messages", archived],
     queryFn: async () => {
+      console.log("Fetching messages with archived:", archived);
       const { data, error } = await supabase
         .from("enquiries")
         .select("*")
+        .eq("archived", archived)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching messages:", error);
+        throw error;
+      }
+      console.log("Fetched messages:", data);
       return data;
     },
   });
@@ -41,6 +52,21 @@ export default function ContactMessages() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contact-messages"] });
       setEditingComment(null);
+    },
+  });
+
+  const archiveEnquiry = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("enquiries")
+        .update({ archived: true })
+        .eq("id", id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contact-messages"] });
+      toast.success("Enquiry archived successfully");
     },
   });
 
@@ -243,4 +269,6 @@ export default function ContactMessages() {
       )}
     </div>
   );
-}
+};
+
+export default ContactMessages;
