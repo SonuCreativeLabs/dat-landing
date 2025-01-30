@@ -185,13 +185,13 @@ const EnquiryCard = ({
 
 interface EnquiryReviewProps {
   archived?: boolean;
+  selectedStatus?: EnquiryStatus | null;
 }
 
-const EnquiryReview = ({ archived = false }: EnquiryReviewProps) => {
+const EnquiryReview = ({ archived = false, selectedStatus = null }: EnquiryReviewProps) => {
   const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null);
   const [comment, setComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState<EnquiryStatus | null>(null);
   
   const queryClient = useQueryClient();
 
@@ -279,14 +279,20 @@ const EnquiryReview = ({ archived = false }: EnquiryReviewProps) => {
 
   // Fetch enquiries
   const { data: enquiries = [], isLoading } = useQuery<Enquiry[]>({
-    queryKey: ["enquiries", archived],
+    queryKey: ["enquiries", archived, selectedStatus],
     queryFn: async () => {
-      console.log("Fetching enquiries with archived =", archived);
-      const { data, error } = await supabase
+      console.log("Fetching enquiries with archived =", archived, "status =", selectedStatus);
+      let query = supabase
         .from("enquiries")
         .select("*")
         .eq("archived", archived)
         .order("created_at", { ascending: false });
+
+      if (selectedStatus) {
+        query = query.eq("status", selectedStatus);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       console.log("Fetched enquiries:", data);
@@ -355,58 +361,6 @@ const EnquiryReview = ({ archived = false }: EnquiryReviewProps) => {
 
   return (
     <div className="space-y-8">
-      {!archived && (
-        <div>
-          <h2 className="text-lg font-semibold mb-4">Status Overview</h2>
-          <div className="grid grid-cols-4 gap-4">
-            {/* All Status */}
-            <div
-              className={cn(
-                "p-4 rounded-lg flex flex-col gap-2 bg-white border border-gray-200",
-                "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
-                selectedStatus === null && "ring-2 ring-offset-2 ring-gray-400"
-              )}
-              onClick={() => setSelectedStatus(null)}
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-900">All</span>
-                <Badge variant="secondary">{statusCounts.all}</Badge>
-              </div>
-            </div>
-
-            {/* Status Filters */}
-            {Object.entries(statusColors).map(([status, colors]) => (
-              <div
-                key={status}
-                className={cn(
-                  "p-4 rounded-lg flex flex-col gap-2",
-                  "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
-                  colors.bg,
-                  selectedStatus === status && "ring-2 ring-offset-2",
-                  selectedStatus === status && colors.border
-                )}
-                onClick={() => setSelectedStatus(status as EnquiryStatus)}
-              >
-                <div className="flex items-center justify-between">
-                  <span className={cn("text-sm font-medium", colors.text)}>
-                    {colors.label}
-                  </span>
-                  <Badge
-                    variant="secondary"
-                    className={cn(
-                      "bg-white",
-                      selectedStatus === status ? colors.text : "text-gray-600"
-                    )}
-                  >
-                    {statusCounts[status as EnquiryStatus] || 0}
-                  </Badge>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Enquiry List */}
       <div>
         <h2 className="text-lg font-semibold mb-4">
