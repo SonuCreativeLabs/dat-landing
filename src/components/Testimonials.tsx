@@ -12,6 +12,7 @@ import 'swiper/css/pagination';
 import { Button } from "./ui/button";
 import TestimonialForm from "./TestimonialForm";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface TestimonialProps {
   name: string;
@@ -74,6 +75,73 @@ const testimonials = [
 
 type TestimonialInsert = Database['public']['Tables']['testimonials']['Insert'];
 
+const TestimonialCard = ({ testimonial }: { testimonial: TestimonialData }) => {
+  const [imageError, setImageError] = useState(false);
+
+  return (
+    <div className="bg-white rounded-xl shadow-md p-6 relative">
+      {/* JustDial Badge */}
+      {testimonial.source === 'justdial' && (
+        <div className={cn(
+          "absolute top-4 right-4 flex items-center gap-2 px-4 py-2 rounded-full",
+          imageError ? "bg-orange-100" : "bg-white shadow-md border border-orange-100"
+        )}>
+          {!imageError ? (
+            <div className="flex items-center gap-2">
+              <img 
+                src="/images/justdial-logo.png"
+                alt="JustDial"
+                className="h-5 w-auto"
+                onError={() => setImageError(true)}
+              />
+              <span className="text-xs font-medium text-orange-600">Verified Review</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className="text-orange-600 font-bold">JD</span>
+              <span className="text-xs font-medium text-orange-600">JustDial Review</span>
+            </div>
+          )}
+        </div>
+      )}
+      
+      <div className="flex flex-col gap-4 mt-8">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+              <span className="text-xl font-semibold text-blue-600">
+                {testimonial.name.charAt(0)}
+              </span>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900">{testimonial.name}</h3>
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                {testimonial.service_type && (
+                  <span>{testimonial.service_type.split('_').map(word => 
+                    word.charAt(0).toUpperCase() + word.slice(1)
+                  ).join(' ')}</span>
+                )}
+                {testimonial.location && (
+                  <>
+                    <span>•</span>
+                    <span>{testimonial.location}</span>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-1">
+            {Array.from({ length: testimonial.rating }).map((_, i) => (
+              <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+            ))}
+          </div>
+        </div>
+        <p className="text-gray-600 line-clamp-4">{testimonial.message}</p>
+      </div>
+    </div>
+  );
+};
+
 const Testimonials = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [showForm, setShowForm] = useState(false);
@@ -95,14 +163,11 @@ const Testimonials = () => {
         .select('*')
         .eq('status', 'approved')
         .eq('archived', false)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(10);
 
-      if (error) {
-        console.error('Error fetching testimonials:', error);
-        throw error;
-      }
-
-      return data || [];
+      if (error) throw error;
+      return data;
     }
   });
 
@@ -324,40 +389,7 @@ const Testimonials = () => {
           >
             {testimonials?.map((testimonial: TestimonialData) => (
               <SwiperSlide key={testimonial.id}>
-                <div className="bg-white rounded-2xl shadow-lg p-8 h-full">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
-                      <span className="text-2xl font-semibold text-gray-600">
-                        {testimonial.name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{testimonial.name}</h3>
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
-                        {testimonial.service_type && (
-                          <span>{testimonial.service_type.split('_').map(word => 
-                            word.charAt(0).toUpperCase() + word.slice(1)
-                          ).join(' ')}</span>
-                        )}
-                        {testimonial.location && (
-                          <>
-                            <span>•</span>
-                            <span>{testimonial.location}</span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-gray-600 mb-6">{testimonial.message}</p>
-                  <div className="flex gap-1">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="w-5 h-5 text-yellow-400 fill-current"
-                      />
-                    ))}
-                  </div>
-                </div>
+                <TestimonialCard testimonial={testimonial} />
               </SwiperSlide>
             ))}
           </Swiper>

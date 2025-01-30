@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { Loader2 } from "lucide-react";
+import { Loader2, Send, X } from "lucide-react";
 import { Toaster, toast } from "sonner";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import type { Database } from "@/integrations/supabase/types";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -79,44 +80,68 @@ export default function TestimonialForm() {
 
     try {
       setIsSubmitting(true);
-
-      const testimonialData = {
-        name: values.name.trim(),
-        location: values.location.trim(),
-        service_type: values.service_type,
-        message: values.message.trim(),
-        rating: parseInt(values.rating),
-        status: 'pending' as const,
-        created_at: new Date().toISOString(),
-        archived: false
-      };
-
-      const { error } = await supabase
+      
+      const { data, error } = await supabase
         .from('testimonials')
-        .insert(testimonialData);
+        .insert([
+          {
+            name: values.name.trim(),
+            location: values.location.trim(),
+            service_type: values.service_type,
+            message: values.message.trim(),
+            rating: parseInt(values.rating),
+            status: 'pending',
+            source: 'website',
+            archived: false
+          }
+        ]);
 
-      if (error) {
-        console.error('Database error:', error);
-        throw error;
-      }
+      if (error) throw error;
 
-      // Clear form
-      form.reset();
-
-      // Show success message using sonner toast
-      toast.success("Message sent successfully!", {
-        duration: 3000,
+      // Show success toast with custom styling
+      toast.custom((t) => (
+        <div className="bg-white rounded-lg shadow-lg border border-green-100 p-6 max-w-md mx-auto">
+          <div className="flex items-start gap-4">
+            <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+              <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-gray-900">Thank you for your feedback!</h3>
+              <p className="mt-1 text-sm text-gray-500">
+                Your testimonial has been submitted successfully and will be reviewed shortly.
+              </p>
+              <div className="mt-4 flex gap-2">
+                <button
+                  onClick={() => toast.dismiss(t)}
+                  className="px-4 py-2 bg-green-50 text-green-600 text-sm font-medium rounded-md hover:bg-green-100 transition-colors"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ), {
+        duration: 5000,
         position: "top-center",
-        className: "bg-white text-gray-900",
+      });
+
+      // Reset form
+      form.reset({
+        name: "",
+        location: "",
+        service_type: undefined,
+        message: "",
+        rating: "",
       });
 
     } catch (error) {
       console.error('Submission error:', error);
-      if (error instanceof Error) {
-        toast.error(`Error: ${error.message}`);
-      } else {
-        toast.error('Failed to submit testimonial. Please try again.');
-      }
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to submit testimonial'
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -244,7 +269,12 @@ export default function TestimonialForm() {
 
           <Button
             type="submit"
-            className="w-full md:w-auto px-8 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
+            className={cn(
+              "w-full md:w-auto px-8 py-2.5 font-medium rounded-lg transition-all duration-200",
+              isSubmitting 
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 text-white hover:shadow-md"
+            )}
             disabled={isSubmitting || !supabaseInitialized}
           >
             {isSubmitting ? (
@@ -253,7 +283,10 @@ export default function TestimonialForm() {
                 <span>Submitting...</span>
               </div>
             ) : (
-              "Submit Review"
+              <div className="flex items-center justify-center">
+                <Send className="mr-2 h-4 w-4" />
+                <span>Submit Review</span>
+              </div>
             )}
           </Button>
         </form>
