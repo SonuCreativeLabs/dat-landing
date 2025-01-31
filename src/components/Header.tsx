@@ -15,7 +15,7 @@ const Header = () => {
       setScrolled(isScrolled);
 
       // Update active section based on scroll position with offset
-      const sections = ["about", "services", "products", "testimonials", "contact"];
+      const sections = ["about", "services", "products", "testimonials", "blog", "faqs", "contact"];
       let currentSection = "";
       
       for (const section of sections) {
@@ -85,11 +85,13 @@ const Header = () => {
   };
 
   // Navigation items
-  const navItems = [
+  const navigation = [
     { id: "about", label: "About" },
     { id: "services", label: "Services" },
     { id: "products", label: "Products" },
     { id: "testimonials", label: "Testimonials" },
+    { id: "blog", label: "Blog" },
+    { id: "faqs", label: "FAQs" },
   ];
 
   return (
@@ -126,7 +128,7 @@ const Header = () => {
 
           {/* Desktop Navigation with enhanced text */}
           <nav className="hidden md:flex items-center space-x-8">
-            {navItems.map((item, i) => (
+            {navigation.map((item, i) => (
               <motion.button
                 key={item.id}
                 custom={i}
@@ -205,7 +207,7 @@ const Header = () => {
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="md:hidden overflow-hidden bg-white/95 backdrop-blur-xl border-t border-white/30 shadow-lg"
             >
-              {navItems.map((item, i) => (
+              {navigation.map((item, i) => (
                 <motion.button
                   key={item.id}
                   initial={{ x: -20, opacity: 0 }}
@@ -229,7 +231,7 @@ const Header = () => {
               <motion.button
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: navItems.length * 0.1 }}
+                transition={{ delay: navigation.length * 0.1 }}
                 onClick={() => scrollToSection("contact")}
                 className="w-full px-4 py-3 mt-2 mb-4 bg-gradient-to-r from-[#0EA5E9] to-[#0284C7] text-white hover:from-[#0284C7] hover:to-[#0EA5E9] transition-all mx-4 rounded-lg relative overflow-hidden shadow-lg"
                 style={{ maxWidth: "calc(100% - 2rem)" }}

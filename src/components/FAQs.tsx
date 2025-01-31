@@ -1,13 +1,14 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
-import { Plus, Minus } from 'lucide-react';
-import { Container, Section } from './Container';
+import { Plus, Minus, HelpCircle, Phone } from 'lucide-react';
+import { Container } from './Container';
+import { CONTACT_INFO } from '@/config/contact';
 
 const faqs = [
   {
     question: "What areas in Chennai do you service?",
-    answer: "We provide services across Chennai, with primary focus areas including Velachery, OMR, Adyar, Tambaram, and surrounding localities. We cover a service radius of 25km from Chennai city center."
-  },
+    answer: "We provide services across Chennai, with primary focus areas including Velachery, OMR, Adyar, Tambaram, and surrounding localities. We cover a service radius of 20km from Velachery."
+  },  
   {
     question: "What are your AC rental plans and pricing?",
     answer: "We offer flexible AC rental plans starting from ₹999/month. Our plans include installation, maintenance, and support. Contact us for customized quotes based on your requirements and duration."
@@ -47,20 +48,24 @@ const FAQItem = ({ question, answer, isOpen, onClick }: {
   return (
     <motion.div
       initial={false}
-      className="border-b border-gray-200 last:border-0"
+      className="border border-gray-200 rounded-xl overflow-hidden bg-white hover:shadow-md transition-shadow duration-200"
     >
       <button
         onClick={onClick}
-        className="flex justify-between items-center w-full py-6 text-left"
+        className="flex justify-between items-center w-full p-6 text-left group-hover:bg-blue-50/50 transition-colors duration-200"
       >
-        <span className="text-lg font-semibold text-gray-900">{question}</span>
-        <span className="ml-6 flex-shrink-0">
-          {isOpen ? (
-            <Minus className="w-6 h-6 text-blue-600" />
-          ) : (
-            <Plus className="w-6 h-6 text-gray-400" />
-          )}
-        </span>
+        <div className="flex items-center gap-4 flex-1">
+          <motion.div
+            initial={false}
+            animate={{ rotate: isOpen ? 45 : 0 }}
+            className={`flex-shrink-0 w-8 h-8 rounded-full ${isOpen ? 'bg-blue-600' : 'bg-blue-100'} flex items-center justify-center transition-colors duration-200`}
+          >
+            <Plus className={`w-5 h-5 ${isOpen ? 'text-white' : 'text-blue-600'}`} />
+          </motion.div>
+          <span className={`text-lg font-semibold ${isOpen ? 'text-blue-700' : 'text-gray-900'} transition-colors duration-200`}>
+            {question}
+          </span>
+        </div>
       </button>
       <AnimatePresence initial={false}>
         {isOpen && (
@@ -69,10 +74,10 @@ const FAQItem = ({ question, answer, isOpen, onClick }: {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="overflow-hidden"
+            className="overflow-hidden bg-blue-50/30"
           >
-            <div className="pb-6 pr-6">
-              <p className="text-gray-600">{answer}</p>
+            <div className="p-6 pl-[4.5rem] border-t border-gray-200">
+              <p className="text-gray-600 leading-relaxed">{answer}</p>
             </div>
           </motion.div>
         )}
@@ -85,7 +90,7 @@ const FAQs = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <Section id="faqs" className="bg-white">
+    <div id="faqs" className="bg-gradient-to-b from-white to-blue-50/30 py-16 sm:py-20 md:py-24 lg:py-32">
       <Container>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -93,13 +98,18 @@ const FAQs = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <span className="text-blue-600 font-semibold text-sm uppercase tracking-wider">
-            FAQs
-          </span>
-          <h2 className="mt-3 text-4xl font-bold text-gray-900">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+              <HelpCircle className="w-6 h-6 text-blue-600" />
+            </div>
+            <span className="text-blue-600 font-semibold text-sm uppercase tracking-wider">
+              FAQs
+            </span>
+          </div>
+          <h2 className="mt-3 text-4xl font-bold text-gray-900 mb-6">
             Frequently Asked Questions
           </h2>
-          <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Find answers to common questions about our services, rentals, and support
           </p>
         </motion.div>
@@ -108,7 +118,7 @@ const FAQs = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="max-w-3xl mx-auto divide-y divide-gray-200 rounded-2xl bg-white shadow-lg"
+          className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6"
         >
           {faqs.map((faq, index) => (
             <FAQItem
@@ -125,20 +135,24 @@ const FAQs = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mt-12"
+          className="text-center mt-16"
         >
-          <p className="text-gray-600">
-            Still have questions? Contact our support team
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">
+            Still have questions?
+          </h3>
+          <p className="text-gray-600 mb-8">
+            Our support team is here to help you with any queries
           </p>
           <a
-            href="tel:+919043726424"
-            className="mt-4 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+            href={`tel:${CONTACT_INFO.PHONE}`}
+            className="inline-flex items-center gap-3 px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
+            <Phone className="w-5 h-5" />
             Contact Support
           </a>
         </motion.div>
       </Container>
-    </Section>
+    </div>
   );
 };
 
