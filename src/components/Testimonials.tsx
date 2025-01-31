@@ -13,8 +13,8 @@ import { Button } from "./ui/button";
 import TestimonialForm from "./TestimonialForm";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { JustDialLogo } from "./icons/JustDialLogo";
 import { Container } from "./Container";
+import { BRAND_ASSETS } from "@/config/assets";
 
 interface TestimonialData {
   id: string;
@@ -35,6 +35,47 @@ type TestimonialInsert = Database['public']['Tables']['testimonials']['Insert'];
 const TestimonialCard = ({ testimonial }: { testimonial: TestimonialData }) => {
   const [imageError, setImageError] = useState(false);
 
+  const renderStars = (rating: number) => {
+    const fullStars = Math.floor(rating);
+    const decimal = rating - fullStars;
+    const stars = [];
+
+    // Add full stars
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(
+        <Star 
+          key={`full-${i}`} 
+          className="w-4 h-4 lg:w-5 lg:h-5 text-yellow-400 fill-yellow-400 filter drop-shadow-lg" 
+        />
+      );
+    }
+
+    // Add partial star if needed
+    if (decimal > 0) {
+      stars.push(
+        <div key="partial" className="relative w-4 h-4 lg:w-5 lg:h-5">
+          <div className="absolute inset-0 overflow-hidden" style={{ width: `${decimal * 100}%` }}>
+            <Star className="w-full h-full text-yellow-400 fill-yellow-400 filter drop-shadow-lg" />
+          </div>
+          <Star className="w-full h-full text-gray-400/30 absolute inset-0" />
+        </div>
+      );
+    }
+
+    // Add empty stars
+    const emptyStars = 5 - Math.ceil(rating);
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(
+        <Star 
+          key={`empty-${i}`} 
+          className="w-4 h-4 lg:w-5 lg:h-5 text-gray-400/30" 
+        />
+      );
+    }
+
+    return stars;
+  };
+
   return (
     <motion.div 
       whileHover={{ y: -5 }}
@@ -51,7 +92,13 @@ const TestimonialCard = ({ testimonial }: { testimonial: TestimonialData }) => {
           )}
         >
           <div className="flex items-center gap-2">
-            <JustDialLogo />
+            <div className="bg-white p-1 rounded">
+              <img 
+                src={BRAND_ASSETS.JUSTDIAL} 
+                alt="JustDial" 
+                className="w-12 h-6 object-contain"
+              />
+            </div>
             <span className="text-xs lg:text-sm font-medium text-orange-600">Verified Review</span>
           </div>
         </motion.div>
@@ -86,16 +133,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: TestimonialData }) => {
             </div>
           </div>
           <div className="flex gap-0.5 lg:gap-1">
-            {Array.from({ length: testimonial.rating }).map((_, i) => (
-              <motion.div
-                key={i}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Star className="w-4 h-4 lg:w-6 lg:h-6 text-yellow-400 fill-current drop-shadow-md" />
-              </motion.div>
-            ))}
+            {renderStars(testimonial.rating)}
           </div>
         </div>
         <div className="relative">
@@ -207,7 +245,7 @@ const Testimonials = () => {
         >
           <h2 className="text-4xl lg:text-5xl font-bold text-white">Client Testimonials</h2>
           
-          {/* Enhanced Justdial Rating Badge */}
+          {/* Rating Badge */}
           <motion.a
             href="https://www.justdial.com/Chennai/Dreams-AIR-Tech-Velacheri/044PXX44-XX44-240828150456-T6D3_BZDET"
             target="_blank"
@@ -216,16 +254,29 @@ const Testimonials = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <div className="bg-white/90 p-2 rounded-lg">
-              <JustDialLogo className="w-6 h-6" />
+            <div className="bg-white p-2 rounded-lg">
+              <img 
+                src={BRAND_ASSETS.JUSTDIAL} 
+                alt="JustDial" 
+                className="w-16 h-8 object-contain"
+              />
             </div>
             <div className="flex flex-col items-start">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl font-bold text-white">4.9</span>
-                <div className="flex">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current drop-shadow" />
+              <div className="flex items-center gap-3">
+                <span className="text-2xl font-bold text-white">4.4</span>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4].map((index) => (
+                    <Star 
+                      key={index}
+                      className="w-5 h-5 text-yellow-400 fill-yellow-400 filter drop-shadow-lg" 
+                    />
                   ))}
+                  <div className="relative w-5 h-5">
+                    <div className="absolute inset-0 overflow-hidden" style={{ width: '40%' }}>
+                      <Star className="w-5 h-5 text-yellow-400 fill-yellow-400 filter drop-shadow-lg" />
+                    </div>
+                    <Star className="w-5 h-5 text-gray-400/30 absolute inset-0" />
+                  </div>
                 </div>
               </div>
               <div className="flex items-center gap-2 text-sm text-white/80">
