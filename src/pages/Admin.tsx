@@ -18,7 +18,8 @@ import {
   Users,
   Settings2,
   HelpCircle,
-  Archive
+  Archive,
+  FileText
 } from "lucide-react";
 import TestimonialReview from "@/components/admin/TestimonialReview";
 import EnquiryReview from "@/components/admin/EnquiryReview";
@@ -51,8 +52,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import Dashboard from "@/pages/admin/Dashboard";
 import { useLocation } from 'react-router-dom';
+import BlogEditor from '@/components/admin/BlogEditor';
+import ImageUpload from '@/components/admin/ImageUpload';
 
-type ActivePage = 'dashboard' | 'enquiry' | 'testimonials' | 'archive' | 'users' | 'settings' | 'help';
+type ActivePage = 'dashboard' | 'enquiry' | 'testimonials' | 'archive' | 'users' | 'settings' | 'help' | 'blog';
 
 const SIDEBAR_ITEMS = [
   {
@@ -69,6 +72,11 @@ const SIDEBAR_ITEMS = [
     title: "Testimonials",
     icon: Star,
     href: "#testimonials"
+  },
+  {
+    title: "Blog",
+    icon: FileText,
+    href: "#blog"
   },
   {
     title: "Users",
@@ -641,6 +649,45 @@ const Admin = () => {
                       <TestimonialReview archived={true} />
                     </TabsContent>
                   </Tabs>
+                </div>
+              )}
+
+              {activePage === 'blog' && (
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-2xl font-bold text-gray-800">Blog Management</h2>
+                    <Button
+                      onClick={() => {
+                        // Handle new post creation
+                        toast.success('Creating new blog post...');
+                      }}
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      <FileText className="w-4 h-4 mr-2" />
+                      New Post
+                    </Button>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold text-gray-900">Content Editor</h3>
+                      <BlogEditor
+                        content=""
+                        onChange={(content) => {
+                          console.log('Content updated:', content);
+                        }}
+                      />
+                    </div>
+
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold text-gray-900">Featured Image</h3>
+                      <ImageUpload
+                        onUpload={(url) => {
+                          console.log('Image uploaded:', url);
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
               )}
             </>

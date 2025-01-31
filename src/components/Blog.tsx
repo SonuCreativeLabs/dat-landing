@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Calendar, Clock, ArrowRight, Loader2 } from 'lucide-react';
+import { Calendar, Clock, ArrowRight, Loader2, User } from 'lucide-react';
 import { Container, Section } from './Container';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,20 +11,23 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { Database } from '@/integrations/supabase/types';
+import { Button } from "./ui/button";
+import { format } from "date-fns";
 
 type BlogPost = Database['public']['Tables']['blog_posts']['Row'];
 
 const Blog = () => {
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
 
-  const { data: blogPosts, isLoading, error } = useQuery({
-    queryKey: ['blogPosts'],
+  const { data: posts = [], isLoading } = useQuery({
+    queryKey: ['blog-posts'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('blog_posts')
         .select('*')
         .eq('status', 'published')
-        .order('date', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(3);
 
       if (error) throw error;
       return data;
@@ -43,11 +46,6 @@ const Blog = () => {
     );
   }
 
-  if (error) {
-    console.error('Error loading blog posts:', error);
-    return null;
-  }
-
   return (
     <Section id="blog" className="bg-gray-50">
       <Container>
@@ -55,80 +53,78 @@ const Blog = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-3xl mx-auto mb-16"
         >
-          <span className="text-blue-600 font-semibold text-sm uppercase tracking-wider">
-            Our Blog
-          </span>
-          <h2 className="mt-3 text-4xl font-bold text-gray-900">
-            Expert Appliance Tips & Guides
-          </h2>
-          <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-            Stay updated with the latest trends, maintenance tips, and expert advice on home appliances
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">Latest Updates</h2>
+          <p className="text-lg text-gray-600">
+            Stay informed about the latest trends, tips, and news in home appliance care and maintenance.
           </p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {blogPosts?.map((post, index) => (
+          {posts.map((post) => (
             <motion.article
               key={post.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
+              className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
             >
-              <div className="relative">
-                <div className="aspect-w-16 aspect-h-9">
-                  <img
-                    src={post.image_url}
-                    alt={post.title}
-                    className="w-full h-48 object-cover"
-                  />
-                </div>
-                <div className="absolute top-4 left-4">
-                  <span className="inline-block bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
-                    {post.category}
-                  </span>
-                </div>
-              </div>
-
+              {post.image_url && (
+                <img
+                  src={post.image_url}
+                  alt={post.title}
+                  className="w-full h-48 object-cover"
+                />
+              )}
               <div className="p-6">
-                <div className="flex items-center text-sm text-gray-500 mb-4">
-                  <div className="flex items-center">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    {new Date(post.date).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric'
-                    })}
+                <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    <span>{format(new Date(post.created_at), 'MMM d, yyyy')}</span>
                   </div>
-                  <span className="mx-3">•</span>
-                  <div className="flex items-center">
-                    <Clock className="w-4 h-4 mr-2" />
-                    {post.read_time}
+                  <div className="flex items-center gap-2">
+                    <User className="w-4 h-4" />
+                    <span>Dreams Air Tech</span>
                   </div>
                 </div>
-
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
                   {post.title}
                 </h3>
-
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-600 mb-4 line-clamp-2">
                   {post.excerpt}
                 </p>
-
-                <button 
-                  onClick={() => setSelectedPost(post)}
-                  className="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700 transition-colors"
+                <Button
+                  variant="ghost"
+                  className="text-blue-600 hover:text-blue-700 p-0 h-auto font-semibold"
                 >
                   Read More
                   <ArrowRight className="w-4 h-4 ml-2" />
-                </button>
+                </Button>
               </div>
             </motion.article>
           ))}
         </div>
+
+        {posts.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mt-12"
+          >
+            <Button
+              variant="outline"
+              size="lg"
+              className="font-semibold"
+            >
+              View All Posts
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </motion.div>
+        )}
 
         {/* Blog Post Modal */}
         <Dialog open={!!selectedPost} onOpenChange={() => setSelectedPost(null)}>

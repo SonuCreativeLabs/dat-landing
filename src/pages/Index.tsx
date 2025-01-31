@@ -8,8 +8,9 @@ import { HERO_IMAGES } from "@/config/assets";
 import AboutUs from "@/components/AboutUs";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 import WhatsAppButton from "@/components/WhatsAppButton";
-import Contact from "@/components/Contact";
 import Products from "@/components/Products";
+import FAQs from "@/components/FAQs";
+import Blog from "@/components/Blog";
 import { motion } from "framer-motion";
 import { Phone } from "lucide-react";
 import { CONTACT_INFO } from "@/config/contact";
@@ -104,7 +105,8 @@ const Index = () => {
         <AnnouncementBanner />
         <Products />
         <Testimonials />
-        <Contact />
+        <Blog />
+        <FAQs />
         <WhatsAppButton />
       </main>
       <Footer />
