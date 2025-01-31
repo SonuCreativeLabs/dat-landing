@@ -24,8 +24,8 @@ export const SERVICE_IMAGES = {
 // Company logos and branding
 export const BRAND_ASSETS = {
   LOGO: "https://ik.imagekit.io/projectassets/Assets/DAT%20MAIN-01.png?updatedAt=1737896983874",
-  FAVICON: "https://ik.imagekit.io/projectassets/Assets/DAT-favicon.png?updatedAt=1738346982241",
   JUSTDIAL: "https://ik.imagekit.io/projectassets/Assets/Just-Dial.png?updatedAt=1738345672241",
+  FAVICON: "https://ik.imagekit.io/projectassets/Assets/DAT-favicon-new.png?tr=bg-transparent,q-100",
 } as const;
 
 export const ASSETS = {

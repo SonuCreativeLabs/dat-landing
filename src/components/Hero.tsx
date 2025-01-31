@@ -270,136 +270,84 @@ const Hero = () => {
 
       {/* Main Content */}
       <Container className="relative z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-16">
-          {/* Left Column - Text Content */}
+        <div className="flex flex-col items-center justify-center text-center max-w-4xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            className="flex-1 space-y-6 lg:space-y-10 max-w-2xl text-center lg:text-left"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="inline-block"
           >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="inline-block"
+            <motion.span 
+              className="bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm text-white px-4 lg:px-6 py-2 lg:py-3 rounded-full text-xs lg:text-sm font-medium border border-white/20 shadow-xl inline-flex items-center gap-2"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
-              <motion.span 
-                className="bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm text-white px-4 lg:px-6 py-2 lg:py-3 rounded-full text-xs lg:text-sm font-medium border border-white/20 shadow-xl inline-flex items-center gap-2"
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              >
-                <Sparkles className="w-3 h-3 lg:w-4 lg:h-4" />
-                #1 Home Appliance Solutions in Chennai
-              </motion.span>
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white leading-[1.1] tracking-tight"
-            >
-              <span className="inline-block">Expert Home</span>
-              <br />
-              <span className="text-sky-100 relative inline-block bg-gradient-to-r from-white to-sky-100 bg-clip-text text-transparent">
-                Appliance Solutions
-                <motion.div
-                  className="absolute -right-6 lg:-right-8 -top-1 text-yellow-400"
-                  animate={{ rotate: [0, 10, 0], scale: [1, 1.2, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  ✨
-                </motion.div>
-              </span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="text-base lg:text-xl text-white/90 max-w-xl leading-relaxed mx-auto lg:mx-0"
-            >
-              Chennai's trusted partner for AC, Refrigerator, Washing Machine, and Water Purifier solutions. Professional installation, maintenance, and 24/7 support at competitive prices.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="flex flex-col sm:flex-row gap-4 lg:gap-6 justify-center lg:justify-start"
-            >
-              <motion.button
-                onClick={() => scrollToSection("contact")}
-                className="group relative flex items-center justify-center gap-3 px-8 py-4 bg-white text-[#0EA5E9] rounded-xl font-semibold overflow-hidden text-lg"
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              >
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-sky-100 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                />
-                <span className="relative">Book Service Now</span>
-                <ArrowRight className="w-6 h-6 relative group-hover:translate-x-1 transition-transform" />
-              </motion.button>
-              
-              <motion.button
-                onClick={() => scrollToSection("products")}
-                className="group relative flex items-center justify-center gap-3 px-8 py-4 bg-sky-600/20 backdrop-blur-sm text-white border border-white/20 rounded-xl font-semibold overflow-hidden text-lg"
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              >
-                <motion.div
-                  className="absolute inset-0 bg-sky-600/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                />
-                <span className="relative">Explore Products</span>
-                <ArrowRight className="w-6 h-6 relative group-hover:translate-x-1 transition-transform" />
-              </motion.button>
-            </motion.div>
+              <Sparkles className="w-3 h-3 lg:w-4 lg:h-4" />
+              #1 Home Appliance Solutions in Chennai
+            </motion.span>
           </motion.div>
 
-          {/* Right Column - Logo */}
-          <div ref={containerRef} className="flex-1 relative w-full min-h-[300px] lg:min-h-[500px] flex items-center justify-center lg:justify-end">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-              style={{
-                rotateX,
-                rotateY,
-                transformStyle: "preserve-3d",
-                perspective: 1000
-              }}
-              className="relative w-full max-w-lg lg:max-w-xl"
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white leading-[1.1] tracking-tight mt-6"
+          >
+            <span className="inline-block">Expert Home</span>
+            <br />
+            <span className="text-sky-100 relative inline-block bg-gradient-to-r from-white to-sky-100 bg-clip-text text-transparent">
+              Appliance Solutions
+              <motion.div
+                className="absolute -right-6 lg:-right-8 -top-1 text-yellow-400"
+                animate={{ rotate: [0, 10, 0], scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                ✨
+              </motion.div>
+            </span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="text-base lg:text-xl text-white/90 max-w-2xl mx-auto mt-6 leading-relaxed"
+          >
+            Chennai's trusted partner for AC, Refrigerator, Washing Machine, and Water Purifier solutions. Professional installation, maintenance, and 24/7 support at competitive prices.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="flex flex-col sm:flex-row gap-4 lg:gap-6 justify-center mt-8"
+          >
+            <motion.button
+              onClick={() => scrollToSection("contact")}
+              className="group relative flex items-center justify-center gap-3 px-8 py-4 bg-white text-[#0EA5E9] rounded-xl font-semibold overflow-hidden text-lg"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
               <motion.div
-                className="relative"
-                whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              >
-                <motion.div
-                  className="absolute -inset-0.5 bg-gradient-to-r from-sky-500 to-blue-500 opacity-20 blur-2xl"
-                  animate={{
-                    scale: [1, 1.1, 1],
-                    opacity: [0.2, 0.3, 0.2]
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                />
-                <img 
-                  src="https://ik.imagekit.io/projectassets/Assets/DAT%20NEW%20LOGO-04.png?updatedAt=1737985280218" 
-                  alt="Dreams Air Tech - Best AC Service in Chennai"
-                  width={600}
-                  height={450}
-                  className="w-full h-auto select-none object-contain relative transform hover:scale-105 transition-transform duration-300 max-w-[80%] mx-auto"
-                  draggable="false"
-                  loading="eager"
-                />
-              </motion.div>
-            </motion.div>
-          </div>
+                className="absolute inset-0 bg-gradient-to-r from-sky-100 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              />
+              <span className="relative">Book Service Now</span>
+              <ArrowRight className="w-6 h-6 relative group-hover:translate-x-1 transition-transform" />
+            </motion.button>
+            
+            <motion.button
+              onClick={() => scrollToSection("products")}
+              className="group relative flex items-center justify-center gap-3 px-8 py-4 bg-sky-600/20 backdrop-blur-sm text-white border border-white/20 rounded-xl font-semibold overflow-hidden text-lg"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
+              <motion.div
+                className="absolute inset-0 bg-sky-600/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              />
+              <span className="relative">Explore Products</span>
+              <ArrowRight className="w-6 h-6 relative group-hover:translate-x-1 transition-transform" />
+            </motion.button>
+          </motion.div>
         </div>
       </Container>
     </Section>
