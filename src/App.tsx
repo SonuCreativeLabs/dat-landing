@@ -6,6 +6,9 @@ import Admin from "./pages/Admin";
 import Login from "./pages/Login";
 import Contact from "./components/Contact";
 import Testimonials from "./components/Testimonials";
+import Blog from "./components/Blog";
+import FAQs from "./components/FAQs";
+import BlogManager from "./pages/admin/BlogManager";
 import { ThemeProvider } from "./components/theme/ThemeProvider";
 import { ThemeToggle } from "./components/theme/ThemeToggle";
 
@@ -38,11 +41,17 @@ function App() {
           <Router>
             <ThemeToggle />
             <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/admin" element={<Admin />} />
+              <Route path="/" element={<>
+                <Index />
+                <Blog />
+                <FAQs />
+                <Testimonials />
+                <Contact />
+              </>} />
+              <Route path="/admin" element={<Admin />}>
+                <Route path="blog" element={<BlogManager />} />
+              </Route>
               <Route path="/login" element={<Login />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/testimonials" element={<Testimonials />} />
             </Routes>
           </Router>
         </ErrorBoundary>

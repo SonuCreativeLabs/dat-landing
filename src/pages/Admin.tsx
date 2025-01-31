@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Outlet, Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -50,6 +50,9 @@ import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import Dashboard from "@/pages/admin/Dashboard";
+import { useLocation } from 'react-router-dom';
+
+type ActivePage = 'dashboard' | 'enquiry' | 'testimonials' | 'archive' | 'users' | 'settings' | 'help';
 
 const SIDEBAR_ITEMS = [
   {
@@ -73,11 +76,6 @@ const SIDEBAR_ITEMS = [
     href: "#users"
   },
   {
-    title: "Reports",
-    icon: BarChart3,
-    href: "#reports"
-  },
-  {
     title: "Settings",
     icon: Settings2,
     href: "#settings"
@@ -92,7 +90,7 @@ const SIDEBAR_ITEMS = [
     icon: Archive,
     href: "#archive"
   }
-];
+] as const;
 
 type TestimonialStatus = "pending" | "approved" | "rejected";
 type EnquiryStatus = 
@@ -106,11 +104,10 @@ type EnquiryStatus =
 
 const Admin = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState("messages");
-  const [activePage, setActivePage] = useState("dashboard");
+  const [activePage, setActivePage] = useState<ActivePage>("dashboard");
   const [enquiries, setEnquiries] = useState([]);
-  const [testimonials, setTestimonials] = useState([]);
-  const [archivedTestimonials, setArchivedTestimonials] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState<EnquiryStatus | null>(null);
 
   // Fetch status counts
@@ -303,78 +300,22 @@ const Admin = () => {
     }
   };
 
-  const handleTestimonialAction = async (id: string, action: 'approve' | 'archive' | 'restore') => {
-    try {
-      const newStatus: TestimonialStatus = action === 'approve' ? 'approved' : action === 'archive' ? 'rejected' : 'pending';
-      
-      const { error } = await supabase
-        .from('testimonials')
-        .update({ status: newStatus })
-        .eq('id', id);
-
-      if (error) throw error;
-
-      toast.success(`Testimonial ${action}d successfully`);
-      fetchTestimonials();
-    } catch (error) {
-      console.error(`Error ${action}ing testimonial:`, error);
-      toast.error(`Failed to ${action} testimonial`);
-    }
-  };
-
-  const fetchTestimonials = async () => {
-    try {
-      // Fetch active testimonials
-      const { data: activeData, error: activeError } = await supabase
-        .from('testimonials')
-        .select('*')
-        .not('status', 'eq', 'rejected')
-        .order('created_at', { ascending: false });
-
-      if (activeError) throw activeError;
-
-      // Fetch archived testimonials
-      const { data: archivedData, error: archivedError } = await supabase
-        .from('testimonials')
-        .select('*')
-        .eq('status', 'rejected')
-        .order('created_at', { ascending: false });
-
-      if (archivedError) throw archivedError;
-
-      setTestimonials(activeData || []);
-      setArchivedTestimonials(archivedData || []);
-    } catch (error) {
-      console.error('Error fetching testimonials:', error);
-      toast.error('Failed to fetch testimonials');
-    }
-  };
-
-  const renderEnquiryStatus = (status: EnquiryStatus) => {
-    switch (status) {
-      case 'new':
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">New</span>;
-      case 'in_progress':
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">In Progress</span>;
-      case 'contacted':
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-800">Contacted</span>;
-      case 'scheduled':
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-cyan-100 text-cyan-800">Scheduled</span>;
-      case 'completed':
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Completed</span>;
-      case 'cancelled':
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Cancelled</span>;
-      case 'resolved':
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800">Resolved</span>;
-      default:
-        return null;
-    }
-  };
-
   useEffect(() => {
     fetchEnquiries();
-    fetchTestimonials();
   }, [activePage]);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/login');
+      }
+    };
+
+    checkAuth();
+  }, [navigate]);
+
+  const currentTab = location.pathname.split('/')[2] || 'dashboard';
 
   if (isCheckingAuth) {
     return (
@@ -414,7 +355,7 @@ const Admin = () => {
                     href={item.href}
                     onClick={(e) => {
                       e.preventDefault();
-                      setActivePage(item.href.replace('#', ''));
+                      setActivePage(item.href.replace('#', '') as ActivePage);
                     }}
                     className={cn(
                       "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
@@ -475,483 +416,234 @@ const Admin = () => {
 
         {/* Page Content */}
         <main className="pt-16 p-6 bg-gray-50 min-h-screen">
-          {activePage === 'dashboard' && (
-            <Dashboard session={session} />
-          )}
+          {/* Show route-based content if we're on a specific route */}
+          {currentTab !== 'dashboard' ? (
+            <Outlet />
+          ) : (
+            <>
+              {/* Show page content based on sidebar navigation */}
+              {activePage === 'dashboard' && (
+                <Dashboard session={session} />
+              )}
 
-          {activePage === 'enquiry' && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-800">Enquiries</h2>
-              <div>
-                <h2 className="text-lg font-semibold mb-4">Status Overview</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {/* All Status */}
-                  <div
-                    className={cn(
-                      "p-4 rounded-lg flex flex-col gap-2 bg-white border border-gray-200",
-                      "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
-                      selectedStatus === null && "ring-2 ring-offset-2 ring-gray-400"
-                    )}
-                    onClick={() => setSelectedStatus(null)}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-900">All Enquiries</span>
-                      <Badge variant="secondary">{statusCounts.all}</Badge>
-                    </div>
-                    <p className="text-xs text-gray-500">View all enquiries regardless of status</p>
-                  </div>
-
-                  {/* New Status */}
-                  <div
-                    className={cn(
-                      "p-4 rounded-lg flex flex-col gap-2 bg-blue-50 border border-blue-200",
-                      "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
-                      selectedStatus === 'new' && "ring-2 ring-offset-2 ring-blue-400"
-                    )}
-                    onClick={() => setSelectedStatus('new')}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-blue-500" />
-                        <span className="text-sm font-medium text-blue-900">New</span>
+              {activePage === 'enquiry' && (
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-bold text-gray-800">Enquiries</h2>
+                  <div>
+                    <h2 className="text-lg font-semibold mb-4">Status Overview</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {/* All Status */}
+                      <div
+                        className={cn(
+                          "p-4 rounded-lg flex flex-col gap-2 bg-white border border-gray-200",
+                          "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
+                          selectedStatus === null && "ring-2 ring-offset-2 ring-gray-400"
+                        )}
+                        onClick={() => setSelectedStatus(null)}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-gray-900">All Enquiries</span>
+                          <Badge variant="secondary">{statusCounts.all}</Badge>
+                        </div>
+                        <p className="text-xs text-gray-500">View all enquiries regardless of status</p>
                       </div>
-                      <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-                        {statusCounts.new || 0}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-blue-700">Fresh enquiries awaiting initial response</p>
-                  </div>
 
-                  {/* In Progress Status */}
-                  <div
-                    className={cn(
-                      "p-4 rounded-lg flex flex-col gap-2 bg-purple-50 border border-purple-200",
-                      "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
-                      selectedStatus === 'in_progress' && "ring-2 ring-offset-2 ring-purple-400"
-                    )}
-                    onClick={() => setSelectedStatus('in_progress')}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-purple-500" />
-                        <span className="text-sm font-medium text-purple-900">In Progress</span>
+                      {/* New Status */}
+                      <div
+                        className={cn(
+                          "p-4 rounded-lg flex flex-col gap-2 bg-blue-50 border border-blue-200",
+                          "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
+                          selectedStatus === 'new' && "ring-2 ring-offset-2 ring-blue-400"
+                        )}
+                        onClick={() => setSelectedStatus('new')}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-blue-500" />
+                            <span className="text-sm font-medium text-blue-900">New</span>
+                          </div>
+                          <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+                            {statusCounts.new || 0}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-blue-700">Fresh enquiries awaiting initial response</p>
                       </div>
-                      <Badge variant="secondary" className="bg-purple-100 text-purple-700">
-                        {statusCounts.in_progress || 0}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-purple-700">Currently being handled by the team</p>
-                  </div>
 
-                  {/* Contacted Status */}
-                  <div
-                    className={cn(
-                      "p-4 rounded-lg flex flex-col gap-2 bg-indigo-50 border border-indigo-200",
-                      "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
-                      selectedStatus === 'contacted' && "ring-2 ring-offset-2 ring-indigo-400"
-                    )}
-                    onClick={() => setSelectedStatus('contacted')}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-indigo-500" />
-                        <span className="text-sm font-medium text-indigo-900">Contacted</span>
+                      {/* In Progress Status */}
+                      <div
+                        className={cn(
+                          "p-4 rounded-lg flex flex-col gap-2 bg-purple-50 border border-purple-200",
+                          "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
+                          selectedStatus === 'in_progress' && "ring-2 ring-offset-2 ring-purple-400"
+                        )}
+                        onClick={() => setSelectedStatus('in_progress')}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-purple-500" />
+                            <span className="text-sm font-medium text-purple-900">In Progress</span>
+                          </div>
+                          <Badge variant="secondary" className="bg-purple-100 text-purple-700">
+                            {statusCounts.in_progress || 0}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-purple-700">Currently being handled by the team</p>
                       </div>
-                      <Badge variant="secondary" className="bg-indigo-100 text-indigo-700">
-                        {statusCounts.contacted || 0}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-indigo-700">Initial contact made with customer</p>
-                  </div>
 
-                  {/* Scheduled Status */}
-                  <div
-                    className={cn(
-                      "p-4 rounded-lg flex flex-col gap-2 bg-cyan-50 border border-cyan-200",
-                      "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
-                      selectedStatus === 'scheduled' && "ring-2 ring-offset-2 ring-cyan-400"
-                    )}
-                    onClick={() => setSelectedStatus('scheduled')}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-cyan-500" />
-                        <span className="text-sm font-medium text-cyan-900">Scheduled</span>
+                      {/* Contacted Status */}
+                      <div
+                        className={cn(
+                          "p-4 rounded-lg flex flex-col gap-2 bg-indigo-50 border border-indigo-200",
+                          "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
+                          selectedStatus === 'contacted' && "ring-2 ring-offset-2 ring-indigo-400"
+                        )}
+                        onClick={() => setSelectedStatus('contacted')}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-indigo-500" />
+                            <span className="text-sm font-medium text-indigo-900">Contacted</span>
+                          </div>
+                          <Badge variant="secondary" className="bg-indigo-100 text-indigo-700">
+                            {statusCounts.contacted || 0}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-indigo-700">Initial contact made with customer</p>
                       </div>
-                      <Badge variant="secondary" className="bg-cyan-100 text-cyan-700">
-                        {statusCounts.scheduled || 0}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-cyan-700">Service appointment scheduled</p>
-                  </div>
 
-                  {/* Completed Status */}
-                  <div
-                    className={cn(
-                      "p-4 rounded-lg flex flex-col gap-2 bg-green-50 border border-green-200",
-                      "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
-                      selectedStatus === 'completed' && "ring-2 ring-offset-2 ring-green-400"
-                    )}
-                    onClick={() => setSelectedStatus('completed')}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-green-500" />
-                        <span className="text-sm font-medium text-green-900">Completed</span>
+                      {/* Scheduled Status */}
+                      <div
+                        className={cn(
+                          "p-4 rounded-lg flex flex-col gap-2 bg-cyan-50 border border-cyan-200",
+                          "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
+                          selectedStatus === 'scheduled' && "ring-2 ring-offset-2 ring-cyan-400"
+                        )}
+                        onClick={() => setSelectedStatus('scheduled')}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-cyan-500" />
+                            <span className="text-sm font-medium text-cyan-900">Scheduled</span>
+                          </div>
+                          <Badge variant="secondary" className="bg-cyan-100 text-cyan-700">
+                            {statusCounts.scheduled || 0}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-cyan-700">Service appointment scheduled</p>
                       </div>
-                      <Badge variant="secondary" className="bg-green-100 text-green-700">
-                        {statusCounts.completed || 0}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-green-700">Service successfully delivered</p>
-                  </div>
 
-                  {/* Cancelled Status */}
-                  <div
-                    className={cn(
-                      "p-4 rounded-lg flex flex-col gap-2 bg-red-50 border border-red-200",
-                      "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
-                      selectedStatus === 'cancelled' && "ring-2 ring-offset-2 ring-red-400"
-                    )}
-                    onClick={() => setSelectedStatus('cancelled')}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-red-500" />
-                        <span className="text-sm font-medium text-red-900">Cancelled</span>
+                      {/* Completed Status */}
+                      <div
+                        className={cn(
+                          "p-4 rounded-lg flex flex-col gap-2 bg-green-50 border border-green-200",
+                          "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
+                          selectedStatus === 'completed' && "ring-2 ring-offset-2 ring-green-400"
+                        )}
+                        onClick={() => setSelectedStatus('completed')}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-green-500" />
+                            <span className="text-sm font-medium text-green-900">Completed</span>
+                          </div>
+                          <Badge variant="secondary" className="bg-green-100 text-green-700">
+                            {statusCounts.completed || 0}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-green-700">Service successfully delivered</p>
                       </div>
-                      <Badge variant="secondary" className="bg-red-100 text-red-700">
-                        {statusCounts.cancelled || 0}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-red-700">Enquiry cancelled or withdrawn</p>
-                  </div>
 
-                  {/* Resolved Status */}
-                  <div
-                    className={cn(
-                      "p-4 rounded-lg flex flex-col gap-2 bg-emerald-50 border border-emerald-200",
-                      "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
-                      selectedStatus === 'resolved' && "ring-2 ring-offset-2 ring-emerald-400"
-                    )}
-                    onClick={() => setSelectedStatus('resolved')}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                        <span className="text-sm font-medium text-emerald-900">Resolved</span>
+                      {/* Cancelled Status */}
+                      <div
+                        className={cn(
+                          "p-4 rounded-lg flex flex-col gap-2 bg-red-50 border border-red-200",
+                          "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
+                          selectedStatus === 'cancelled' && "ring-2 ring-offset-2 ring-red-400"
+                        )}
+                        onClick={() => setSelectedStatus('cancelled')}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-red-500" />
+                            <span className="text-sm font-medium text-red-900">Cancelled</span>
+                          </div>
+                          <Badge variant="secondary" className="bg-red-100 text-red-700">
+                            {statusCounts.cancelled || 0}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-red-700">Enquiry cancelled or withdrawn</p>
                       </div>
-                      <Badge variant="secondary" className="bg-emerald-100 text-emerald-700">
-                        {statusCounts.resolved || 0}
-                      </Badge>
+
+                      {/* Resolved Status */}
+                      <div
+                        className={cn(
+                          "p-4 rounded-lg flex flex-col gap-2 bg-emerald-50 border border-emerald-200",
+                          "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
+                          selectedStatus === 'resolved' && "ring-2 ring-offset-2 ring-emerald-400"
+                        )}
+                        onClick={() => setSelectedStatus('resolved')}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                            <span className="text-sm font-medium text-emerald-900">Resolved</span>
+                          </div>
+                          <Badge variant="secondary" className="bg-emerald-100 text-emerald-700">
+                            {statusCounts.resolved || 0}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-emerald-700">Successfully resolved without service</p>
+                      </div>
                     </div>
-                    <p className="text-xs text-emerald-700">Successfully resolved without service</p>
                   </div>
+                  <EnquiryReview selectedStatus={selectedStatus} />
                 </div>
-              </div>
-              <EnquiryReview selectedStatus={selectedStatus} />
-            </div>
-          )}
+              )}
 
-          {activePage === 'testimonials' && (
-            <div className="space-y-8">
-              {/* New Testimonials Section */}
-              <div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-6">New Testimonials</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {testimonials
-                    .filter(t => t.status === 'pending')
-                    .map((testimonial) => (
-                      <div key={testimonial.id} className="bg-white p-8 rounded-xl shadow-md border-l-4 border-yellow-400 hover:shadow-lg transition-shadow h-full flex flex-col">
-                        <div className="flex justify-between items-start gap-8">
-                          <div className="flex items-start gap-4 flex-1 min-w-0">
-                            <div className="w-12 h-12 rounded-full bg-yellow-50 flex items-center justify-center flex-shrink-0">
-                              <span className="text-xl font-semibold text-yellow-600">
-                                {testimonial.name.charAt(0)}
-                              </span>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-lg text-gray-900 mb-2">{testimonial.name}</h3>
-                              <div className="flex items-center gap-2 text-sm text-gray-500">
-                                <span>{testimonial.service_type.split('_').map(word => 
-                                  word.charAt(0).toUpperCase() + word.slice(1)
-                                ).join(' ')}</span>
-                                {testimonial.location && (
-                                  <>
-                                    <span>•</span>
-                                    <span>{testimonial.location}</span>
-                                  </>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex-shrink-0 pt-1">
-                            <Select
-                              defaultValue={testimonial.status}
-                              onValueChange={(value: TestimonialStatus) => {
-                                const action = value === 'approved' ? 'approve' : 
-                                             value === 'rejected' ? 'archive' : 'restore';
-                                handleTestimonialAction(testimonial.id, action);
-                              }}
-                            >
-                              <SelectTrigger className="w-[130px] bg-white shadow-lg border-gray-200 hover:bg-gray-50 transition-all duration-200">
-                                <SelectValue placeholder="Status" />
-                              </SelectTrigger>
-                              <SelectContent className="bg-white shadow-xl border border-gray-100">
-                                <SelectItem value="pending" className="hover:bg-yellow-50">
-                                  <span className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-yellow-400" />
-                                    Pending
-                                  </span>
-                                </SelectItem>
-                                <SelectItem value="approved" className="hover:bg-green-50">
-                                  <span className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-green-400" />
-                                    Approved
-                                  </span>
-                                </SelectItem>
-                                <SelectItem value="rejected" className="hover:bg-red-50">
-                                  <span className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-red-400" />
-                                    Rejected
-                                  </span>
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                        <div className="mt-6 flex-1 flex flex-col">
-                          <p className="text-gray-600 text-base leading-relaxed flex-1">{testimonial.message}</p>
-                          <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-4">
-                            <div className="flex-1">
-                              <div className="flex items-center">
-                                {[...Array(5)].map((_, i) => (
-                                  <Star
-                                    key={i}
-                                    className={`w-5 h-5 ${
-                                      i < testimonial.rating
-                                        ? "text-yellow-400 fill-current"
-                                        : "text-gray-200"
-                                    }`}
-                                  />
-                                ))}
-                              </div>
-                            </div>
-                            <span className="text-sm text-gray-500">
-                              {new Date(testimonial.created_at).toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'short',
-                                day: 'numeric'
-                              })}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-                {testimonials.filter(t => t.status === 'pending').length === 0 && (
-                  <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
-                    No new testimonials to review
+              {activePage === 'testimonials' && (
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-2xl font-bold text-gray-800">Testimonials</h2>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setActivePage('archive')}
+                      className="text-gray-600 hover:text-gray-900"
+                    >
+                      <Archive className="w-4 h-4 mr-2" />
+                      View Archive
+                    </Button>
                   </div>
-                )}
-              </div>
-
-              {/* Approved Testimonials Section */}
-              <div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-6">Approved Testimonials</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {testimonials
-                    .filter(t => t.status === 'approved')
-                    .map((testimonial) => (
-                      <div key={testimonial.id} className="bg-white p-8 rounded-xl shadow-md border-l-4 border-green-400 hover:shadow-lg transition-shadow h-full flex flex-col">
-                        <div className="flex justify-between items-start gap-8">
-                          <div className="flex items-start gap-4 flex-1 min-w-0">
-                            <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0">
-                              <span className="text-xl font-semibold text-green-600">
-                                {testimonial.name.charAt(0)}
-                              </span>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-lg text-gray-900 mb-2">{testimonial.name}</h3>
-                              <div className="flex items-center gap-2 text-sm text-gray-500">
-                                <span>{testimonial.service_type.split('_').map(word => 
-                                  word.charAt(0).toUpperCase() + word.slice(1)
-                                ).join(' ')}</span>
-                                {testimonial.location && (
-                                  <>
-                                    <span>•</span>
-                                    <span>{testimonial.location}</span>
-                                  </>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex-shrink-0 pt-1">
-                            <Select
-                              defaultValue={testimonial.status}
-                              onValueChange={(value: TestimonialStatus) => {
-                                const action = value === 'approved' ? 'approve' : 
-                                             value === 'rejected' ? 'archive' : 'restore';
-                                handleTestimonialAction(testimonial.id, action);
-                              }}
-                            >
-                              <SelectTrigger className="w-[130px] bg-white shadow-lg border-gray-200 hover:bg-gray-50 transition-all duration-200">
-                                <SelectValue placeholder="Status" />
-                              </SelectTrigger>
-                              <SelectContent className="bg-white shadow-xl border border-gray-100">
-                                <SelectItem value="pending" className="hover:bg-yellow-50">
-                                  <span className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-yellow-400" />
-                                    Pending
-                                  </span>
-                                </SelectItem>
-                                <SelectItem value="approved" className="hover:bg-green-50">
-                                  <span className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-green-400" />
-                                    Approved
-                                  </span>
-                                </SelectItem>
-                                <SelectItem value="rejected" className="hover:bg-red-50">
-                                  <span className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-red-400" />
-                                    Rejected
-                                  </span>
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                        <div className="mt-6 flex-1 flex flex-col">
-                          <p className="text-gray-600 text-base leading-relaxed flex-1">{testimonial.message}</p>
-                          <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-4">
-                            <div className="flex items-center gap-1">
-                              {[...Array(5)].map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className={`w-5 h-5 ${
-                                    i < testimonial.rating
-                                      ? "text-yellow-400 fill-current"
-                                      : "text-gray-200"
-                                  }`}
-                                />
-                              ))}
-                            </div>
-                            <span className="text-sm text-gray-500">
-                              {new Date(testimonial.created_at).toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'short',
-                                day: 'numeric'
-                              })}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                  <TestimonialReview archived={false} />
                 </div>
-                {testimonials.filter(t => t.status === 'approved').length === 0 && (
-                  <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
-                    No approved testimonials yet
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+              )}
 
-          {activePage === 'archive' && (
-            <div className="space-y-8">
-              <h2 className="text-2xl font-bold text-gray-800">Archive</h2>
-              
-              {/* Archive Type Tabs */}
-              <Tabs defaultValue="enquiries" className="space-y-6">
-                <TabsList className="grid w-full grid-cols-2 max-w-[400px] bg-gray-100 p-1 rounded-lg">
-                  <TabsTrigger 
-                    value="enquiries"
-                    className="data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm rounded-md px-8 py-2 transition-all"
-                  >
-                    <MessageSquare className="w-4 h-4 mr-2" />
-                    Enquiries
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="testimonials"
-                    className="data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm rounded-md px-8 py-2 transition-all"
-                  >
-                    <Star className="w-4 h-4 mr-2" />
-                    Testimonials
-                  </TabsTrigger>
-                </TabsList>
+              {activePage === 'archive' && (
+                <div className="space-y-8">
+                  <h2 className="text-2xl font-bold text-gray-800">Archive</h2>
+                  <Tabs defaultValue="enquiries" className="space-y-6">
+                    <TabsList className="grid w-full grid-cols-2 max-w-[400px] bg-gray-100 p-1 rounded-lg">
+                      <TabsTrigger value="enquiries">
+                        <MessageSquare className="w-4 h-4 mr-2" />
+                        Enquiries
+                      </TabsTrigger>
+                      <TabsTrigger value="testimonials">
+                        <Star className="w-4 h-4 mr-2" />
+                        Testimonials
+                      </TabsTrigger>
+                    </TabsList>
 
-                {/* Archived Enquiries */}
-                <TabsContent value="enquiries">
-                  <EnquiryReview archived={true} />
-                </TabsContent>
+                    <TabsContent value="enquiries">
+                      <EnquiryReview archived={true} />
+                    </TabsContent>
 
-                {/* Archived Testimonials */}
-                <TabsContent value="testimonials">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {archivedTestimonials.map((testimonial) => (
-                      <div key={testimonial.id} className="bg-white p-6 rounded-xl shadow-sm opacity-75">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="font-semibold">{testimonial.name}</h3>
-                            <div className="flex items-center gap-2 text-sm text-gray-500">
-                              <span>{testimonial.service_type}</span>
-                              {testimonial.location && (
-                                <>
-                                  <span>•</span>
-                                  <span>{testimonial.location}</span>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => handleTestimonialAction(testimonial.id, 'restore')}
-                            className="px-3 py-1 text-sm font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100"
-                          >
-                            Restore
-                          </button>
-                        </div>
-                        <p className="mt-4 text-gray-600">{testimonial.message}</p>
-                        <div className="mt-4 flex items-center">
-                          <div className="flex-1">
-                            <div className="flex items-center">
-                              {[...Array(5)].map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className={`w-4 h-4 ${
-                                    i < testimonial.rating
-                                      ? "text-yellow-400 fill-current"
-                                      : "text-gray-300"
-                                  }`}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                          <span className="text-sm text-gray-500">
-                            {new Date(testimonial.created_at).toLocaleDateString()}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                    {archivedTestimonials.length === 0 && (
-                      <div className="col-span-full text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
-                        No archived testimonials found
-                      </div>
-                    )}
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </div>
-          )}
-
-          {(activePage === 'users' || activePage === 'reports' || activePage === 'settings' || activePage === 'help') && (
-            <Card>
-              <CardContent className="p-6">
-                <div className="text-center text-gray-500">
-                  <h3 className="text-lg font-medium">Coming Soon</h3>
-                  <p>This feature is under development</p>
+                    <TabsContent value="testimonials">
+                      <TestimonialReview archived={true} />
+                    </TabsContent>
+                  </Tabs>
                 </div>
-              </CardContent>
-            </Card>
+              )}
+            </>
           )}
         </main>
       </div>

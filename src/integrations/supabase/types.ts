@@ -85,6 +85,51 @@ export type Database = {
         };
         Relationships: [];
       };
+      blog_posts: {
+        Row: {
+          id: string;
+          created_at: string;
+          title: string;
+          excerpt: string;
+          content: string;
+          date: string;
+          read_time: string;
+          image_url: string;
+          category: string;
+          keywords: string[];
+          slug: string;
+          status: BlogPostStatus;
+        };
+        Insert: {
+          id?: string;
+          created_at?: string;
+          title: string;
+          excerpt: string;
+          content: string;
+          date: string;
+          read_time: string;
+          image_url: string;
+          category: string;
+          keywords: string[];
+          slug: string;
+          status?: BlogPostStatus;
+        };
+        Update: {
+          id?: string;
+          created_at?: string;
+          title?: string;
+          excerpt?: string;
+          content?: string;
+          date?: string;
+          read_time?: string;
+          image_url?: string;
+          category?: string;
+          keywords?: string[];
+          slug?: string;
+          status?: BlogPostStatus;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -99,6 +144,7 @@ export type Database = {
 };
 
 export type TestimonialStatus = 'pending' | 'approved' | 'rejected';
+export type BlogPostStatus = 'draft' | 'published';
 
 export interface Enquiry {
   id: string;
