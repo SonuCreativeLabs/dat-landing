@@ -1,7 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
-import Testimonials from "@/components/Testimonials";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { HERO_IMAGES } from "@/config/assets";
@@ -9,11 +8,14 @@ import AboutUs from "@/components/AboutUs";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import Products from "@/components/Products";
-import FAQs from "@/components/FAQs";
+import Testimonials from "@/components/Testimonials";
 import Blog from "@/components/Blog";
+import FAQs from "@/components/FAQs";
+import Contact from "@/components/Contact";
 import { motion } from "framer-motion";
 import { Phone } from "lucide-react";
 import { CONTACT_INFO } from "@/config/contact";
+import { Section } from "@/components/Container";
 
 const products = [
   {
@@ -68,7 +70,7 @@ const products = [
 
 const Index = () => {
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Helmet>
         <title>Dreams Air Tech - AC, Refrigerator, Washing Machine Sales, Service & Rentals in Chennai</title>
         <meta name="description" content="Leading provider of AC, Refrigerator, Washing Machine, and Water Purifier sales, service, and rentals in Chennai. Professional installation, maintenance, and 24/7 support for all home appliances." />
@@ -97,20 +99,20 @@ const Index = () => {
         <meta name="ICBM" content="13.0827, 80.2707" />
       </Helmet>
 
-      <main className="min-h-screen">
-        <Header />
+      <Header />
+      <main className="flex-grow">
         <Hero />
         <AboutUs />
         <Services />
-        <AnnouncementBanner />
         <Products />
         <Testimonials />
         <Blog />
         <FAQs />
+        <Contact />
         <WhatsAppButton />
       </main>
       <Footer />
-    </>
+    </div>
   );
 };
 

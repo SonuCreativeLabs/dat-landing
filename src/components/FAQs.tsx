@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { Plus, Minus } from 'lucide-react';
-import { Container, Section } from './Container';
+import { Container } from './Container';
 
 const faqs = [
   {
@@ -85,7 +85,7 @@ const FAQs = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <Section id="faqs" className="bg-white">
+    <div id="faqs" className="bg-white py-16 sm:py-20 md:py-24 lg:py-32">
       <Container>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -138,7 +138,7 @@ const FAQs = () => {
           </a>
         </motion.div>
       </Container>
-    </Section>
+    </div>
   );
 };
 

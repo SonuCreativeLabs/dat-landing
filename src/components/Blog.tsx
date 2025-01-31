@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Calendar, Clock, ArrowRight, Loader2, User } from 'lucide-react';
-import { Container, Section } from './Container';
+import { Container } from './Container';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useState } from 'react';
@@ -36,18 +36,18 @@ const Blog = () => {
 
   if (isLoading) {
     return (
-      <Section id="blog" className="bg-gray-50">
+      <div id="blog" className="bg-gray-50">
         <Container>
           <div className="flex items-center justify-center min-h-[400px]">
             <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
           </div>
         </Container>
-      </Section>
+      </div>
     );
   }
 
   return (
-    <Section id="blog" className="bg-gray-50">
+    <div id="blog" className="bg-gray-50 py-16 sm:py-20 md:py-24 lg:py-32">
       <Container>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -181,7 +181,7 @@ const Blog = () => {
           </DialogContent>
         </Dialog>
       </Container>
-    </Section>
+    </div>
   );
 };
 
