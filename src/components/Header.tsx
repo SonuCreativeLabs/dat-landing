@@ -15,16 +15,17 @@ const Header = () => {
       const isScrolled = window.scrollY > 20;
       setScrolled(isScrolled);
 
-      // Update active section based on scroll position with offset
+      // Update active section based on scroll position with mobile-friendly offset
       const sections = ["about", "services", "products", "testimonials", "blog", "faqs", "contact"];
       let currentSection = "";
+      
+      const offset = window.innerWidth < 768 ? 100 : 150; // Adjusted offset for mobile
       
       for (const section of sections) {
         const element = document.getElementById(section);
         if (element) {
           const rect = element.getBoundingClientRect();
-          // Adjusted offset for better section detection on mobile
-          if (rect.top <= 150 && rect.bottom >= 150) {
+          if (rect.top <= offset && rect.bottom >= offset) {
             currentSection = section;
             break;
           }
@@ -43,15 +44,25 @@ const Header = () => {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      // Adjusted offset for mobile header height
+      // Get dynamic header height based on screen size and scroll position
       const headerHeight = window.innerWidth < 768 ? 64 : 80;
-      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      const offset = window.innerWidth < 768 ? 20 : 0; // Additional offset for mobile
+      
+      // Calculate position accounting for header height and offset
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - headerHeight - offset;
+
+      // Scroll with smooth behavior
       window.scrollTo({
-        top: elementPosition - headerHeight,
+        top: offsetPosition,
         behavior: "smooth"
       });
+
+      // Close mobile menu after a slight delay to ensure smooth transition
+      setTimeout(() => {
+        setIsMenuOpen(false);
+      }, 100);
     }
-    setIsMenuOpen(false);
   };
 
   const scrollToTop = () => {
@@ -59,6 +70,8 @@ const Header = () => {
       top: 0,
       behavior: "smooth"
     });
+    // Close mobile menu if open
+    setIsMenuOpen(false);
   };
 
   // Header animation variants
