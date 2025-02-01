@@ -11,21 +11,31 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Dreams Air Tech</h3>
             <p className="text-gray-400 text-sm leading-relaxed">
-              Your trusted partner for all home appliance needs in Chennai. Professional sales, service, and rental solutions with 24/7 support.
+              Your trusted partner for all home appliance needs in Chennai. We offer professional sales, service, and rental solutions with 24/7 support.
             </p>
-            <div className="flex items-center gap-4 pt-2">
+            <div className="flex flex-col gap-2 pt-2">
+              <h4 className="text-sm font-medium text-gray-300">Customer Rating</h4>
               <a 
                 href="https://www.justdial.com/Chennai/Dreams-AIR-Tech-Velacheri/044PXX44-XX44-240828150456-T6D3_BZDET"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sm text-gray-400 hover:text-white"
+                className="group"
               >
-                <div className="flex">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className={`w-4 h-4 ${i < 4 ? 'text-yellow-400 fill-current' : 'text-yellow-400/50'}`} />
-                  ))}
+                <div className="flex items-center gap-2">
+                  <div className="flex">
+                    {[1, 2, 3, 4].map((i) => (
+                      <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                    ))}
+                    <div className="relative w-4 h-4">
+                      <div className="absolute inset-0 overflow-hidden" style={{ width: '40%' }}>
+                        <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                      </div>
+                      <Star className="w-4 h-4 text-gray-600/20" />
+                    </div>
+                  </div>
+                  <span className="text-gray-400 group-hover:text-white transition-colors">4.4 on JustDial</span>
                 </div>
-                <span>4.4 on JustDial</span>
+                <span className="text-sm text-gray-500 mt-1 block">(Verified Reviews)</span>
               </a>
             </div>
             <div className="flex space-x-4 pt-2">
@@ -88,7 +98,7 @@ const Footer = () => {
             <h3 className="text-lg font-semibold">Contact Us</h3>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
-                <Phone className="w-5 h-5 text-blue-500 mt-1" />
+                <Phone className="w-5 h-5 text-blue-500 flex-shrink-0" />
                 <div>
                   <a href={`tel:${CONTACT_INFO.PHONE}`} className="text-gray-400 hover:text-white transition-colors">
                     {CONTACT_INFO.PHONE}
@@ -97,7 +107,7 @@ const Footer = () => {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Mail className="w-5 h-5 text-blue-500 mt-1" />
+                <Mail className="w-5 h-5 text-blue-500 flex-shrink-0" />
                 <div>
                   <a href={`mailto:${CONTACT_INFO.EMAIL}`} className="text-gray-400 hover:text-white transition-colors">
                     {CONTACT_INFO.EMAIL}
@@ -106,14 +116,25 @@ const Footer = () => {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-blue-500 mt-1" />
+                <MapPin className="w-5 h-5 text-blue-500 flex-shrink-0" />
                 <div>
                   <p className="text-gray-400">{CONTACT_INFO.ADDRESS.FULL}</p>
-                  <p className="text-sm text-gray-500 mt-2">Service Areas: Velachery, OMR, Adyar, Tambaram, and surrounding localities (20km radius from Velachery)</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Clock className="w-5 h-5 text-blue-500 mt-1" />
+                <div className="w-5 h-5 flex-shrink-0" /> {/* Spacer for alignment */}
+                <div>
+                  <p className="text-gray-400 text-sm">
+                    Service Areas: Velachery, Adyar, OMR, Tambaram, and Guindy, among others. For a complete list of locations, visit our{' '}
+                    <a href="#about" className="text-blue-400 hover:text-blue-300 transition-colors">
+                      Areas We Serve
+                    </a>{' '}
+                    page.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Clock className="w-5 h-5 text-blue-500 flex-shrink-0" />
                 <div>
                   <p className="text-gray-400">Working Hours</p>
                   <p className="text-sm text-gray-500">Mon - Sun: 9:00 AM - 9:00 PM</p>

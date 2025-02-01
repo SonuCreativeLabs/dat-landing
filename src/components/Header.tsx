@@ -15,16 +15,17 @@ const Header = () => {
       const isScrolled = window.scrollY > 20;
       setScrolled(isScrolled);
 
-      // Update active section based on scroll position with offset
+      // Update active section based on scroll position with mobile-friendly offset
       const sections = ["about", "services", "products", "testimonials", "blog", "faqs", "contact"];
       let currentSection = "";
+      
+      const offset = window.innerWidth < 768 ? 100 : 150; // Adjusted offset for mobile
       
       for (const section of sections) {
         const element = document.getElementById(section);
         if (element) {
           const rect = element.getBoundingClientRect();
-          // Adjusted offset for better section detection on mobile
-          if (rect.top <= 150 && rect.bottom >= 150) {
+          if (rect.top <= offset && rect.bottom >= offset) {
             currentSection = section;
             break;
           }
@@ -43,14 +44,33 @@ const Header = () => {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      // Adjusted offset for mobile header height
+      // Get dynamic header height based on screen size and scroll position
       const headerHeight = window.innerWidth < 768 ? 64 : 80;
-      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      const offset = window.innerWidth < 768 ? 20 : 0; // Additional offset for mobile
+      
+      // Calculate position accounting for header height and offset
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - headerHeight - offset;
+
+      // Scroll with smooth behavior
       window.scrollTo({
-        top: elementPosition - headerHeight,
+        top: offsetPosition,
         behavior: "smooth"
       });
+
+      // Close mobile menu after a slight delay to ensure smooth transition
+      setTimeout(() => {
+        setIsMenuOpen(false);
+      }, 100);
     }
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+    // Close mobile menu if open
     setIsMenuOpen(false);
   };
 
@@ -111,12 +131,13 @@ const Header = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <motion.div
+          <motion.button
+            onClick={scrollToTop}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.5 }}
-            className="w-32 md:w-40 relative p-2"
+            className="w-32 md:w-40 relative p-2 cursor-pointer"
           >
             <div className="absolute inset-0 bg-white/60 rounded-lg filter blur-md" />
             <img 
@@ -124,7 +145,7 @@ const Header = () => {
               alt="Dreams Air Tech Logo" 
               className="w-full h-full object-contain relative z-10 drop-shadow-lg"
             />
-          </motion.div>
+          </motion.button>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">

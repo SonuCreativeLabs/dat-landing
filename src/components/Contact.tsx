@@ -100,8 +100,8 @@ const Contact = () => {
           >
             {/* Title */}
             <div>
-              <h2 className="text-3xl font-bold text-white mb-2">Contact Us</h2>
-              <p className="text-gray-400">Get in touch with our team</p>
+              <h2 className="text-3xl font-bold text-white mb-2">📞 Contact Us</h2>
+              <p className="text-gray-400">We're here to assist you with all your appliance service and rental needs. Get in touch with us anytime!</p>
             </div>
 
             <div className="space-y-6">
@@ -133,11 +133,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-white">Location</h3>
-                  <p className="text-gray-400 whitespace-pre-line">
-                    {`${CONTACT_INFO.ADDRESS.STREET}
-${CONTACT_INFO.ADDRESS.AREA}
-${CONTACT_INFO.ADDRESS.CITY}, ${CONTACT_INFO.ADDRESS.STATE}
-${CONTACT_INFO.ADDRESS.PINCODE}`}
+                  <p className="text-gray-400">
+                    15, 1st Main Rd, Udayam Nagar, Velachery, Chennai, Tamil Nadu-600042
                   </p>
                   <a 
                     href={CONTACT_INFO.ADDRESS.MAPS_LINK}
@@ -173,6 +170,11 @@ ${CONTACT_INFO.ADDRESS.PINCODE}`}
             className="lg:w-2/3"
           >
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-white mb-2">💬 Send Us a Message</h3>
+                <p className="text-gray-400">Fill out the form below to reach us. We will get back to you as soon as possible.</p>
+              </div>
+
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -271,7 +273,7 @@ ${CONTACT_INFO.ADDRESS.PINCODE}`}
                     required
                     rows={4}
                     className="mt-1 block w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-                    placeholder="How can we help you?"
+                    placeholder="Example: I need to rent an AC for my home office. Looking for a 1.5 ton split AC with installation within this week."
                   />
                 </div>
 
