@@ -3,20 +3,20 @@ import { CheckCircle } from "lucide-react";
 
 const features = [
   {
-    title: "Expert Technicians",
-    description: "Our certified professionals bring years of experience in appliance service and maintenance"
+    title: "Expert AC Service Technicians",
+    description: "Our certified professionals in Chennai bring years of experience in AC repair, refrigerator service, and appliance maintenance"
   },
   {
-    title: "Quality Service",
-    description: "We use genuine parts and follow manufacturer guidelines for all repairs and installations"
+    title: "Quality Appliance Service",
+    description: "We provide genuine parts and follow manufacturer guidelines for all AC repairs, installations, and water purifier services in Chennai"
   },
   {
-    title: "Customer First",
-    description: "24/7 support and flexible scheduling to ensure your comfort and convenience"
+    title: "24/7 Customer Support",
+    description: "Round-the-clock emergency AC repair and appliance service in Velachery, OMR, Adyar, and Tambaram with flexible scheduling"
   },
   {
-    title: "Affordable Solutions",
-    description: "Competitive pricing with transparent billing and no hidden charges"
+    title: "Affordable Service Solutions",
+    description: "Best AC service rates in Chennai with transparent billing, affordable AC rentals, and cost-effective maintenance packages"
   }
 ];
 
@@ -39,7 +39,7 @@ const AboutUs = () => {
                 className="text-4xl font-bold text-gray-900 mb-4"
               >
                 Chennai's Most Trusted <br />
-                <span className="text-blue-600">Appliance Service Partner</span>
+                <span className="text-blue-600">AC & Appliance Service Expert</span>
               </motion.h2>
               <motion.p
                 initial={{ opacity: 0 }}
@@ -47,9 +47,10 @@ const AboutUs = () => {
                 transition={{ delay: 0.2 }}
                 className="text-lg text-gray-600"
               >
-                With over a decade of experience, Dreams Air Tech has been providing top-notch appliance sales, 
-                service, and rental solutions to homes and businesses across Chennai. Our commitment to quality 
-                and customer satisfaction has made us the preferred choice for all appliance needs.
+                Looking for reliable AC service in Chennai? Dreams Air Tech has been providing top-rated 
+                AC repair, refrigerator service, and washing machine repair solutions across Chennai for over a decade. 
+                From emergency AC repairs to regular maintenance and affordable AC rentals, we're your one-stop solution 
+                for all home appliance needs in Velachery, OMR, Adyar, and Tambaram regions.
               </motion.p>
             </div>
 
@@ -80,10 +81,10 @@ const AboutUs = () => {
             className="grid grid-cols-2 gap-8"
           >
             {[
-              { number: "10+", label: "Years Experience" },
-              { number: "5000+", label: "Happy Customers" },
-              { number: "24/7", label: "Customer Support" },
-              { number: "100%", label: "Satisfaction Rate" }
+              { number: "8+", label: "Years of AC Service Excellence" },
+              { number: "5000+", label: "Satisfied Customers in Chennai" },
+              { number: "24/7", label: "Emergency AC Repair Support" },
+              { number: "100%", label: "Service Satisfaction Rate" }
             ].map((stat, index) => (
               <motion.div
                 key={stat.label}
