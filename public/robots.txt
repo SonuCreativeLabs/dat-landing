@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://www.dreamsairtech.in/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 10
+
+# Disallow paths
+Disallow: /admin
+Disallow: /private
+Disallow: /api/
+Disallow: /temp/
+Disallow: /*.json$
+Disallow: /*.xml$
+
+# Allow specific paths explicitly
+Allow: /sitemap.xml
+Allow: /manifest.json 

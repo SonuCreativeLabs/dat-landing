@@ -72,8 +72,8 @@ const Index = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Helmet>
-        <title>Dreams Air Tech - AC, Refrigerator, Washing Machine Sales, Service & Rentals in Chennai</title>
-        <meta name="description" content="Leading provider of AC, Refrigerator, Washing Machine, and Water Purifier sales, service, and rentals in Chennai. Professional installation, maintenance, and 24/7 support for all home appliances." />
+        <title>Dreams Air Tech - #1 AC Service & Home Appliance Solutions in Chennai | Sales, Service & Rentals</title>
+        <meta name="description" content="Dreams Air Tech - Chennai's trusted AC service experts. Professional AC repair, maintenance, and rental services. Expert solutions for refrigerators, washing machines, and water purifiers. 24/7 support in Velachery, OMR, Adyar & Tambaram." />
         <meta name="keywords" content="AC sales Chennai, AC service Chennai, AC rental Chennai, Refrigerator sales Chennai, Fridge service Chennai, Washing Machine rental Chennai, Water Purifier service Chennai, home appliance rental Chennai, appliance maintenance Chennai, AC repair Chennai, Washing Machine repair Chennai, Fridge repair Chennai, Water Purifier maintenance Chennai, home appliance service Chennai" />
         
         {/* Open Graph / Facebook */}

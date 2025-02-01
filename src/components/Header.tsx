@@ -54,6 +54,13 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  };
+
   // Header animation variants
   const headerVariants = {
     initial: { 
@@ -111,12 +118,13 @@ const Header = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <motion.div
+          <motion.button
+            onClick={scrollToTop}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.5 }}
-            className="w-32 md:w-40 relative p-2"
+            className="w-32 md:w-40 relative p-2 cursor-pointer"
           >
             <div className="absolute inset-0 bg-white/60 rounded-lg filter blur-md" />
             <img 
@@ -124,7 +132,7 @@ const Header = () => {
               alt="Dreams Air Tech Logo" 
               className="w-full h-full object-contain relative z-10 drop-shadow-lg"
             />
-          </motion.div>
+          </motion.button>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">

@@ -243,7 +243,12 @@ const Testimonials = () => {
           transition={{ duration: 0.5 }}
           className="text-center max-w-3xl mx-auto mb-16 space-y-6"
         >
-          <h2 className="text-4xl lg:text-5xl font-bold text-white">Client Testimonials</h2>
+          <h2 className="text-4xl lg:text-5xl font-bold text-white">
+            🌟 Client Testimonials
+          </h2>
+          <p className="text-lg text-white/90">
+            We take pride in providing top-notch appliance services that leave our customers satisfied. Here's what some of them have to say:
+          </p>
           
           {/* Rating Badge */}
           <motion.a
@@ -329,10 +334,13 @@ const Testimonials = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mt-16"
+          className="text-center mt-16 space-y-4"
         >
+          <h3 className="text-2xl font-semibold text-white mb-4">
+            Join Our Growing Family of Satisfied Customers
+          </h3>
           <p className="text-white/90 text-lg mb-6">
-            Join our growing family of satisfied customers today!
+            We're committed to delivering exceptional service and building lasting relationships with our clients.
           </p>
           <Button
             onClick={() => setIsModalOpen(true)}
@@ -340,6 +348,9 @@ const Testimonials = () => {
           >
             Share Your Experience
           </Button>
+          <p className="text-white/80 text-sm mt-4">
+            Your feedback helps us grow!
+          </p>
         </motion.div>
 
         {/* Share Experience Modal */}

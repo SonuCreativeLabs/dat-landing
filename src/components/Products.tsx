@@ -7,51 +7,55 @@ import { CONTACT_INFO } from '@/config/contact';
 
 const products = [
   {
-    title: "Air Conditioners",
-    description: "Premium ACs with advanced cooling technology. Available in Split AC (1-2 Ton), Window AC (1-1.5 Ton), and Cassette AC. Features include smart climate control and energy-efficient operation. Perfect for homes and offices with professional installation and maintenance.",
+    id: 'ac',
+    title: <span>❄ <span className="text-blue-600">Air Conditioners</span> – Cool Your Space with Efficiency</span>,
+    description: "Premium air conditioners with advanced cooling technology for ultimate comfort at home or the office. Available in Split AC, Window AC, and Cassette AC models with features like smart climate control and energy-efficient operation.",
     features: [
-      "5-star energy rating",
-      "Smart temperature control",
-      "Anti-bacterial filters",
-      "Professional installation"
+      "5-star energy rating for maximum efficiency",
+      "Smart temperature control with WiFi",
+      "Anti-bacterial filters for clean air",
+      "Professional installation included"
     ],
-    price: "₹999",
+    price: "₹999/month",
     imageUrl: HERO_IMAGES.AC
   },
   {
-    title: "Refrigerators",
-    description: "Modern refrigerators with superior cooling performance. Choose from Single Door (180-250L), Double Door (250-500L), and Side-by-Side (500L+) models. Features digital inverter technology and convertible storage options.",
+    id: 'fridge',
+    title: <span>❄ <span className="text-blue-600">Refrigerators</span> – Keep Your Food Fresh with Superior Cooling</span>,
+    description: "Choose from a wide range of modern refrigerators with superior cooling performance. Our collection includes Single Door, Double Door, and Side-by-Side models, all featuring digital inverter technology and convertible storage options.",
     features: [
-      "Digital inverter technology",
-      "Convertible storage modes",
-      "Frost-free operation",
-      "10-year warranty"
+      "Digital inverter technology for efficiency",
+      "Convertible storage modes for flexibility",
+      "Frost-free operation for convenience",
+      "10-year compressor warranty"
     ],
-    price: "₹599",
+    price: "₹599/month",
     imageUrl: HERO_IMAGES.FRIDGE
   },
   {
-    title: "Washing Machines",
-    description: "High-performance washing machines for every household. Available in Front Load (6-9kg), Top Load (6-11kg), and Semi-Automatic variants. Includes steam wash and quick wash programs for efficient cleaning.",
+    id: 'washing',
+    title: <span>🧺 <span className="text-blue-600">Washing Machines</span> – Efficient Cleaning with Every Wash</span>,
+    description: "Our high-performance washing machines are available in Front Load, Top Load, and Semi-Automatic variants, designed to provide you with the perfect wash. Features like steam wash technology and quick wash programs make cleaning efficient and easy.",
     features: [
-      "Multiple wash programs",
-      "Steam wash technology",
-      "Energy efficient motor",
-      "5-year warranty"
+      "Multiple wash programs for all fabrics",
+      "Steam wash technology for deep clean",
+      "Energy-efficient inverter motor",
+      "5-year motor warranty"
     ],
-    price: "₹399",
+    price: "₹399/month",
     imageUrl: HERO_IMAGES.WASHING_MACHINE
   },
   {
-    title: "Water Purifiers",
-    description: "Advanced water purifiers with multi-stage filtration. Features RO+UV+UF technology for safe drinking water. Includes TDS controller and mineral enrichment for better taste and health benefits.",
+    id: 'water',
+    title: <span>💧 <span className="text-blue-600">Water Purifiers</span> – Safe & Pure Drinking Water for Your Family</span>,
+    description: "Advanced water purifiers with multi-stage filtration to provide you with safe drinking water. Our purifiers use RO+UV+UF technology, a TDS controller, and mineral enrichment to enhance taste and health benefits.",
     features: [
-      "RO+UV+UF purification",
-      "TDS controller",
-      "Mineral enrichment",
-      "Annual maintenance"
+      "RO+UV+UF purification for safety",
+      "TDS controller for optimal minerals",
+      "Mineral enrichment for better taste",
+      "Annual maintenance included"
     ],
-    price: "₹499",
+    price: "₹499/month",
     imageUrl: HERO_IMAGES.WATER_PURIFIER
   }
 ];
@@ -71,11 +75,10 @@ const Products = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-4">
-            Our Products
+            Premium Home Appliances for Sale & Rent
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Discover our premium range of home appliances.
-            Available for both sale and rental with professional maintenance.
+            Discover our wide range of high-quality home appliances, available for sale or rental with professional maintenance. We offer affordable and flexible solutions for all your appliance needs.
           </p>
         </motion.div>
 

@@ -293,10 +293,10 @@ const Hero = () => {
             transition={{ delay: 0.3 }}
             className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white leading-[1.1] tracking-tight mt-6"
           >
-            <span className="inline-block">Expert Home</span>
+            <span className="inline-block">Dreams Air Tech</span>
             <br />
             <span className="text-sky-100 relative inline-block bg-gradient-to-r from-white to-sky-100 bg-clip-text text-transparent">
-              Appliance Solutions
+              AC & Appliance Repair
               <motion.div
                 className="absolute -right-6 lg:-right-8 -top-1 text-yellow-400"
                 animate={{ rotate: [0, 10, 0], scale: [1, 1.2, 1] }}
@@ -304,6 +304,10 @@ const Hero = () => {
               >
                 ✨
               </motion.div>
+            </span>
+            <br />
+            <span className="text-sky-100 relative inline-block bg-gradient-to-r from-white to-sky-100 bg-clip-text text-transparent text-3xl sm:text-4xl lg:text-5xl">
+              and Rentals in Chennai
             </span>
           </motion.h1>
 
@@ -313,7 +317,7 @@ const Hero = () => {
             transition={{ delay: 0.4 }}
             className="text-base lg:text-xl text-white/90 max-w-2xl mx-auto mt-6 leading-relaxed"
           >
-            Chennai's trusted partner for AC, Refrigerator, Washing Machine, and Water Purifier solutions. Professional installation, maintenance, and 24/7 support at competitive prices.
+            Expert solutions for ACs, refrigerators, washing machines, and water purifiers. We offer professional installation, maintenance, and 24/7 support at competitive prices.
           </motion.p>
 
           <motion.div

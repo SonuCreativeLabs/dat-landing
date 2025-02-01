@@ -2,25 +2,28 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { ChevronDown, ChevronUp, Check, Phone } from "lucide-react";
 import { CONTACT_INFO } from "@/config/contact";
+import { ReactNode } from "react";
 
 interface ProductCardProps {
-  title: string;
+  id: string;
+  title: ReactNode;
   description: string;
   features: string[];
   price: string;
   imageUrl: string;
 }
 
-const ProductCard = ({ title, description, features, price, imageUrl }: ProductCardProps) => {
+const ProductCard = ({ id, title, description, features, price, imageUrl }: ProductCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const shortDescription = description.split('.')[0] + '.';
 
   return (
     <motion.div
+      key={id}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="group bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 border border-gray-100"
+      className="group bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 border border-gray-100 h-full flex flex-col"
     >
       {/* Image Container with Overlay */}
       <div className="relative overflow-hidden">
@@ -31,7 +34,7 @@ const ProductCard = ({ title, description, features, price, imageUrl }: ProductC
         >
           <img
             src={imageUrl}
-            alt={title}
+            alt={typeof title === 'string' ? title : 'Product Image'}
             className="w-full h-48 object-cover"
           />
         </motion.div>
@@ -41,19 +44,19 @@ const ProductCard = ({ title, description, features, price, imageUrl }: ProductC
         <div className="absolute top-4 right-4">
           <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-lg">
             <span className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-              From {price}/mo
+              {price}
             </span>
           </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-6">
-        <h3 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-3">
+      <div className="p-6 flex-grow flex flex-col">
+        <h3 className="text-xl font-bold mb-3 min-h-[3.5rem]">
           {title}
         </h3>
 
-        <div className={`transition-all duration-500 ease-in-out ${isExpanded ? 'h-auto' : 'h-20 overflow-hidden'}`}>
+        <div className={`transition-all duration-500 ease-in-out flex-grow ${isExpanded ? 'h-auto' : 'h-20 overflow-hidden'}`}>
           <p className="text-gray-600 text-sm leading-relaxed mb-4">
             {isExpanded ? description : shortDescription}
           </p>
@@ -81,14 +84,14 @@ const ProductCard = ({ title, description, features, price, imageUrl }: ProductC
 
               <div className="space-y-2 pt-2 border-t border-gray-100">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Rental Price</span>
-                  <span className="font-semibold text-blue-600">{price}/month</span>
+                  <span className="text-sm font-medium text-gray-600">Rental Price</span>
+                  <span className="text-sm font-medium text-blue-600">Starts from {price}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Sale Price</span>
+                  <span className="text-sm font-medium text-gray-600">Sale Price</span>
                   <a 
                     href={`tel:${CONTACT_INFO.PHONE}`}
-                    className="text-sm text-blue-600 font-medium hover:text-blue-700 flex items-center gap-1"
+                    className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1"
                   >
                     <Phone className="w-3 h-3" />
                     Call for Quote

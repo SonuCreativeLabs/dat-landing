@@ -333,7 +333,7 @@ const Blog = () => {
             whileInView={{ opacity: 1, y: 0 }}
             className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4"
           >
-            Latest from Our Blog
+            📝 Latest from Our Blog
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -341,7 +341,7 @@ const Blog = () => {
             transition={{ delay: 0.1 }}
             className="text-gray-600 max-w-2xl mx-auto"
           >
-            Expert tips, guides, and insights about AC maintenance, appliance care, and smart rental solutions
+            Stay informed with expert tips, guides, and insights on AC maintenance, appliance care, and smart rental solutions. Discover how to get the most out of your appliances and keep them running smoothly for years to come.
           </motion.p>
         </div>
 
@@ -491,17 +491,17 @@ const Blog = () => {
           className="mt-16 text-center"
         >
           <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-            Ready to Experience Our Professional Services?
+            🚀 Ready to Experience Our Professional Services?
           </h3>
           <p className="text-gray-600 text-lg mb-8">
-            Book your service now and get expert assistance for all your appliance needs
+            Need expert appliance assistance? Book your service now and get reliable, fast, and affordable solutions for all your appliance needs.
           </p>
           <a
             href={`tel:${CONTACT_INFO.PHONE}`}
             className="inline-flex items-center gap-3 px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl text-lg"
           >
             <Phone className="w-6 h-6" />
-            Book Your Service
+            🔧 Book Your Service Now
           </a>
         </motion.div>
       </Container>

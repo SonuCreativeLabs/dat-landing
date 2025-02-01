@@ -14,15 +14,15 @@ import {
 const services = [
   {
     title: 'Appliance Sales',
-    description: 'Purchase high-quality new and pre-owned home appliances from top brands. We offer competitive prices and reliable after-sales support.',
+    description: 'Purchase brand-new or pre-owned home appliances from leading manufacturers at the best prices, backed by reliable after-sales support.',
     icon: ShoppingBag,
     features: [
-      'Brand new appliances from top manufacturers',
+      'Brand-new appliances from top manufacturers',
       'Quality-tested pre-owned appliances',
-      'Competitive pricing with best deals',
-      'Free delivery and installation',
-      'Extended warranty options available',
-      'EMI options for new appliances'
+      'Competitive pricing with exclusive deals',
+      'Free delivery and professional installation',
+      'Extended warranty options for peace of mind',
+      'EMI options available for new appliances'
     ],
     appliances: [
       { icon: Refrigerator, name: 'Refrigerator' },
@@ -33,15 +33,15 @@ const services = [
   },
   {
     title: 'Appliance Service',
-    description: 'Expert repair and maintenance services for all major home appliances. Professional technicians and comprehensive AMC plans available.',
+    description: 'Our certified technicians provide quick, reliable, and professional appliance repair services with genuine spare parts and comprehensive maintenance plans.',
     icon: Wrench,
     features: [
-      'Professional technicians',
-      'Annual Maintenance Contracts (AMC)',
-      'Preventive maintenance services',
-      'Genuine spare parts',
-      'Same-day service available',
-      '90-day service warranty'
+      'Trained & certified technicians',
+      'Annual Maintenance Contracts (AMC) for worry-free service',
+      'Preventive maintenance to extend appliance life',
+      'Use of genuine spare parts for durability',
+      'Same-day service available for urgent repairs',
+      '90-day service warranty for all repairs'
     ],
     appliances: [
       { icon: Refrigerator, name: 'Refrigerator' },
@@ -52,13 +52,15 @@ const services = [
   },
   {
     title: 'Appliance Rental',
-    description: 'Flexible rental solutions for home appliances. Perfect for temporary needs with hassle-free delivery and maintenance.',
+    description: 'Need a temporary appliance? Our hassle-free rental service offers convenient, flexible, and cost-effective options with full maintenance coverage.',
     icon: Clock,
     features: [
-      'Flexible rental periods',
-      'Free maintenance included',
-      'Easy upgrade options',
-      'Damage protection available'
+      'Flexible rental plans – monthly & yearly options',
+      'Free maintenance included throughout rental period',
+      'Easy upgrade options for latest models',
+      'Damage protection available for added security',
+      'Professional installation and setup',
+      'Regular maintenance included'
     ],
     appliances: [
       { icon: Refrigerator, name: 'Refrigerator' },
@@ -87,13 +89,13 @@ const Services = () => {
           className="text-center max-w-3xl mx-auto mb-16"
         >
           <span className="inline-block px-4 py-1 mb-4 text-sm font-medium bg-white/10 backdrop-blur-md text-white rounded-full border border-white/10">
-            Our Services
+            🛠 Our Services
           </span>
           <h2 className="text-4xl font-bold text-white mb-4">
             Comprehensive Appliance Solutions
           </h2>
           <p className="text-lg text-white/90">
-            Your one-stop solution for all home appliance needs
+            Your One-Stop Destination for Home Appliance Sales, Service & Rentals
           </p>
         </motion.div>
 
