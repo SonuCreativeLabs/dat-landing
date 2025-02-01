@@ -222,6 +222,38 @@ interface RentalPlan {
 - Privacy policy
 - Contact protocols
 
+### Change Management Rules
+
+#### Precision in Changes
+1. **Strict Adherence to Requests**
+   - Only modify what is explicitly requested by the user
+   - Do not make additional design changes unless specifically asked
+   - Do not modify functionality unless explicitly requested
+   - Avoid "improving" or "optimizing" without user consent
+
+2. **Content vs. Design Changes**
+   - Text/content updates should not affect design or functionality
+   - Design updates should not modify existing content unless specified
+   - Functionality changes should be isolated to requested features
+
+3. **Change Scope Guidelines**
+   - When updating text: Only modify the specified text
+   - When updating design: Only modify the specified design elements
+   - When updating functionality: Only modify the specified functions
+   - Always preserve existing behavior for non-targeted elements
+
+4. **Documentation of Changes**
+   - Clearly communicate what changes are being made
+   - List only the specific modifications requested
+   - If additional changes might be beneficial, suggest them separately
+   - Wait for user approval before implementing suggested changes
+
+5. **Version Control Best Practices**
+   - Make atomic commits focused on specific changes
+   - Keep changes minimal and precise
+   - Document exact changes in commit messages
+   - Maintain separation of concerns
+
 ---
 
 **Note**: This document serves as both a technical guide and business reference. Regular updates will be made to reflect changes in business requirements and technical implementations. 
