@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { logActivity } from '@/lib/activity-logger';
+import { useState, useEffect } from "react";
 
 const statusStyles = {
   pending: { bg: "bg-yellow-100", text: "text-yellow-800", border: "border-yellow-300" },
@@ -26,6 +28,21 @@ interface TestimonialReviewProps {
 
 const TestimonialReview = ({ archived = false }: TestimonialReviewProps) => {
   const queryClient = useQueryClient();
+  const [session, setSession] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const { data: testimonials = [], isLoading } = useQuery<Testimonial[]>({
     queryKey: ["testimonials", archived],
@@ -71,11 +88,46 @@ const TestimonialReview = ({ archived = false }: TestimonialReviewProps) => {
     }
   });
 
-  const handleStatusChange = (id: string, status: TestimonialStatus) => {
-    updateTestimonial.mutate({
-      id,
-      status
-    });
+  const handleStatusChange = async (id: string, status: TestimonialStatus) => {
+    try {
+      // Get current testimonial data
+      const { data: currentTestimonial, error: fetchError } = await supabase
+        .from('testimonials')
+        .select()
+        .eq('id', id)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      const { error: updateError } = await supabase
+        .from('testimonials')
+        .update({ status })
+        .eq('id', id);
+
+      if (updateError) throw updateError;
+
+      // Log the activity
+      await logActivity({
+        adminId: session?.user?.id || '',
+        adminEmail: session?.user?.email || '',
+        actionType: status === 'approved' ? 'testimonial_approval' : 'testimonial_rejection',
+        entityType: 'testimonial',
+        entityId: id,
+        previousValues: { status: currentTestimonial.status },
+        newValues: { status },
+        actionDetails: {
+          from_status: currentTestimonial.status,
+          to_status: status,
+          timestamp: new Date().toISOString()
+        }
+      });
+
+      queryClient.invalidateQueries({ queryKey: ['testimonials'] });
+      toast.success('Testimonial updated successfully');
+    } catch (error) {
+      console.error('Error updating testimonial:', error);
+      toast.error('Failed to update testimonial');
+    }
   };
 
   const handleRestore = (id: string) => {
@@ -83,6 +135,60 @@ const TestimonialReview = ({ archived = false }: TestimonialReviewProps) => {
       id,
       status: 'pending'
     });
+  };
+
+  const handleApprove = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('testimonials')
+        .update({ status: 'approved' })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      // Log the activity
+      await logActivity({
+        adminId: session?.user?.id || '',
+        adminEmail: session?.user?.email || '',
+        actionType: 'testimonial_approval',
+        entityType: 'testimonial',
+        entityId: id,
+        actionDetails: { status: 'approved' }
+      });
+
+      toast.success('Testimonial approved successfully');
+      queryClient.invalidateQueries({ queryKey: ['testimonials'] });
+    } catch (error) {
+      console.error('Error approving testimonial:', error);
+      toast.error('Failed to approve testimonial');
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('testimonials')
+        .update({ status: 'rejected' })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      // Log the activity
+      await logActivity({
+        adminId: session?.user?.id || '',
+        adminEmail: session?.user?.email || '',
+        actionType: 'testimonial_rejection',
+        entityType: 'testimonial',
+        entityId: id,
+        actionDetails: { status: 'rejected' }
+      });
+
+      toast.success('Testimonial rejected successfully');
+      queryClient.invalidateQueries({ queryKey: ['testimonials'] });
+    } catch (error) {
+      console.error('Error rejecting testimonial:', error);
+      toast.error('Failed to reject testimonial');
+    }
   };
 
   const formatDate = (dateString: string) => {

@@ -1,30 +1,32 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, Upload, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { Image, Upload, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ImageUploadProps {
   onUpload: (url: string) => void;
+  value?: string;
   className?: string;
 }
 
-const ImageUpload = ({ onUpload, className }: ImageUploadProps) => {
-  const [isUploading, setIsUploading] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
+const ImageUpload = ({ onUpload, value, className }: ImageUploadProps) => {
+  const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState<string>(value || '');
 
   const uploadImage = async (file: File) => {
     try {
-      setIsUploading(true);
+      setUploading(true);
 
-      // Create a unique file name
+      // Generate a unique file name
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
-      const filePath = `blog/${fileName}`;
+      const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+      const filePath = `blog-images/${fileName}`;
 
-      // Upload to Supabase storage
+      // Upload the file to Supabase storage
       const { error: uploadError } = await supabase.storage
         .from('public')
         .upload(filePath, file);
@@ -33,89 +35,59 @@ const ImageUpload = ({ onUpload, className }: ImageUploadProps) => {
         throw uploadError;
       }
 
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
+      // Get the public URL
+      const { data } = supabase.storage
         .from('public')
         .getPublicUrl(filePath);
 
-      // Set preview and call onUpload
-      setPreview(publicUrl);
-      onUpload(publicUrl);
-      toast.success('Image uploaded successfully');
-    } catch (error: any) {
+      if (data) {
+        setPreview(data.publicUrl);
+        onUpload(data.publicUrl);
+        toast.success('Image uploaded successfully');
+      }
+    } catch (error) {
       console.error('Error uploading image:', error);
-      toast.error(error.message || 'Error uploading image');
+      toast.error('Failed to upload image');
     } finally {
-      setIsUploading(false);
+      setUploading(false);
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) {
-      return;
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    if (acceptedFiles?.[0]) {
+      uploadImage(acceptedFiles[0]);
     }
+  }, []);
 
-    const file = e.target.files[0];
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please upload an image file');
-      return;
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.webp']
+    },
+    maxSize: 5 * 1024 * 1024, // 5MB
+    multiple: false
+  });
+
+  const handleUrlInput = (url: string) => {
+    if (url) {
+      setPreview(url);
+      onUpload(url);
     }
-
-    // Create preview
-    const objectUrl = URL.createObjectURL(file);
-    setPreview(objectUrl);
-
-    // Upload file
-    uploadImage(file);
-
-    // Clean up
-    return () => URL.revokeObjectURL(objectUrl);
   };
 
   const handleRemove = () => {
-    setPreview(null);
+    setPreview('');
     onUpload('');
   };
 
   return (
-    <div className={cn("space-y-4", className)}>
-      <div className="flex items-center gap-4">
-        <Input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          disabled={isUploading}
-          className="hidden"
-          id="image-upload"
-        />
-        <label
-          htmlFor="image-upload"
-          className={cn(
-            "flex items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer",
-            "hover:bg-gray-50 transition-colors",
-            isUploading && "opacity-50 cursor-not-allowed"
-          )}
-        >
-          {isUploading ? (
-            <div className="flex items-center gap-2 text-gray-600">
-              <Loader2 className="w-5 h-5 animate-spin" />
-              <span>Uploading...</span>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center gap-2 text-gray-600">
-              <Upload className="w-6 h-6" />
-              <span>Click to upload image</span>
-            </div>
-          )}
-        </label>
-      </div>
-
-      {preview && (
-        <div className="relative">
+    <div className={cn('space-y-4', className)}>
+      {preview ? (
+        <div className="relative rounded-lg overflow-hidden border">
           <img
             src={preview}
             alt="Preview"
-            className="w-full h-48 object-cover rounded-lg"
+            className="w-full aspect-video object-cover"
           />
           <Button
             variant="destructive"
@@ -123,10 +95,54 @@ const ImageUpload = ({ onUpload, className }: ImageUploadProps) => {
             className="absolute top-2 right-2"
             onClick={handleRemove}
           >
-            <X className="w-4 h-4" />
+            <X className="h-4 w-4" />
           </Button>
         </div>
+      ) : (
+        <div
+          {...getRootProps()}
+          className={cn(
+            'border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors',
+            isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400',
+            uploading && 'opacity-50 cursor-not-allowed'
+          )}
+        >
+          <input {...getInputProps()} />
+          <div className="space-y-4">
+            <div className="mx-auto w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center">
+              <Upload className="h-6 w-6 text-blue-500" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-medium">
+                {isDragActive ? 'Drop the image here' : 'Drag & drop an image here'}
+              </p>
+              <p className="text-xs text-gray-500">
+                PNG, JPG, GIF up to 5MB
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={uploading}
+              className="mx-auto"
+            >
+              {uploading ? 'Uploading...' : 'Select Image'}
+            </Button>
+          </div>
+        </div>
       )}
+
+      <div className="space-y-2">
+        <p className="text-sm font-medium">Or enter image URL</p>
+        <div className="flex gap-2">
+          <Input
+            type="url"
+            placeholder="https://example.com/image.jpg"
+            value={preview}
+            onChange={(e) => handleUrlInput(e.target.value)}
+          />
+        </div>
+      </div>
     </div>
   );
 };
