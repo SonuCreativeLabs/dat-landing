@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import { useState, useMemo, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { logActivity } from '@/lib/activity-logger';
 
 // Status colors and labels
 const statusColors = {
@@ -192,8 +193,23 @@ const EnquiryReview = ({ archived = false, selectedStatus = null }: EnquiryRevie
   const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null);
   const [comment, setComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [session, setSession] = useState<any>(null);
   
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Update enquiry mutation
   const updateEnquiry = useMutation({
@@ -223,7 +239,20 @@ const EnquiryReview = ({ archived = false, selectedStatus = null }: EnquiryRevie
   const archiveEnquiry = useMutation({
     mutationFn: async (id: string) => {
       console.log("Archiving enquiry:", id);
-      const { error } = await supabase
+      
+      // Get current enquiry data
+      const { data: currentEnquiry, error: fetchError } = await supabase
+        .from("enquiries")
+        .select()
+        .eq("id", id)
+        .single();
+
+      if (fetchError) {
+        console.error("Fetch error:", fetchError);
+        throw fetchError;
+      }
+
+      const { error: updateError } = await supabase
         .from("enquiries")
         .update({ 
           archived: true,
@@ -231,10 +260,27 @@ const EnquiryReview = ({ archived = false, selectedStatus = null }: EnquiryRevie
         })
         .eq("id", id);
 
-      if (error) {
-        console.error("Archive error:", error);
-        throw error;
+      if (updateError) {
+        console.error("Archive error:", updateError);
+        throw updateError;
       }
+
+      // Log the activity
+      await logActivity({
+        adminId: session?.user?.id || '',
+        adminEmail: session?.user?.email || '',
+        actionType: 'enquiry_status_change',
+        entityType: 'enquiry',
+        entityId: id,
+        previousValues: { status: currentEnquiry.status, archived: false },
+        newValues: { status: 'cancelled', archived: true },
+        actionDetails: {
+          operation: 'archive',
+          from_status: currentEnquiry.status,
+          to_status: 'cancelled',
+          timestamp: new Date().toISOString()
+        }
+      });
     },
     onSuccess: () => {
       // Invalidate both active and archived queries
@@ -252,7 +298,20 @@ const EnquiryReview = ({ archived = false, selectedStatus = null }: EnquiryRevie
   const unarchiveEnquiry = useMutation({
     mutationFn: async (id: string) => {
       console.log("Unarchiving enquiry:", id);
-      const { error } = await supabase
+      
+      // Get current enquiry data
+      const { data: currentEnquiry, error: fetchError } = await supabase
+        .from("enquiries")
+        .select()
+        .eq("id", id)
+        .single();
+
+      if (fetchError) {
+        console.error("Fetch error:", fetchError);
+        throw fetchError;
+      }
+
+      const { error: updateError } = await supabase
         .from("enquiries")
         .update({ 
           archived: false,
@@ -260,10 +319,27 @@ const EnquiryReview = ({ archived = false, selectedStatus = null }: EnquiryRevie
         })
         .eq("id", id);
 
-      if (error) {
-        console.error("Unarchive error:", error);
-        throw error;
+      if (updateError) {
+        console.error("Unarchive error:", updateError);
+        throw updateError;
       }
+
+      // Log the activity
+      await logActivity({
+        adminId: session?.user?.id || '',
+        adminEmail: session?.user?.email || '',
+        actionType: 'enquiry_status_change',
+        entityType: 'enquiry',
+        entityId: id,
+        previousValues: { status: currentEnquiry.status, archived: true },
+        newValues: { status: 'new', archived: false },
+        actionDetails: {
+          operation: 'unarchive',
+          from_status: currentEnquiry.status,
+          to_status: 'new',
+          timestamp: new Date().toISOString()
+        }
+      });
     },
     onSuccess: () => {
       // Invalidate both active and archived queries
@@ -359,6 +435,47 @@ const EnquiryReview = ({ archived = false, selectedStatus = null }: EnquiryRevie
     };
   }, [enquiries]);
 
+  const handleStatusChange = async (id: string, newStatus: EnquiryStatus) => {
+    try {
+      const { data: enquiry, error: fetchError } = await supabase
+        .from('enquiries')
+        .select('status')
+        .eq('id', id)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      const { error: updateError } = await supabase
+        .from('enquiries')
+        .update({ status: newStatus })
+        .eq('id', id);
+
+      if (updateError) throw updateError;
+
+      // Log the activity
+      await logActivity({
+        adminId: session?.user?.id || '',
+        adminEmail: session?.user?.email || '',
+        actionType: 'enquiry_status_change',
+        entityType: 'enquiry',
+        entityId: id,
+        previousValues: { status: enquiry.status },
+        newValues: { status: newStatus },
+        actionDetails: {
+          from_status: enquiry.status,
+          to_status: newStatus,
+          timestamp: new Date().toISOString()
+        }
+      });
+
+      toast.success('Enquiry status updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['enquiries'] });
+    } catch (error) {
+      console.error('Error updating enquiry status:', error);
+      toast.error('Failed to update enquiry status');
+    }
+  };
+
   return (
     <div className="space-y-8">
       {/* Enquiry List */}
@@ -386,7 +503,7 @@ const EnquiryReview = ({ archived = false, selectedStatus = null }: EnquiryRevie
                 key={enquiry.id}
                 enquiry={enquiry}
                 onClick={() => setSelectedEnquiry(enquiry)}
-                onStatusChange={(status) => updateEnquiry.mutate({ id: enquiry.id, status })}
+                onStatusChange={(status) => handleStatusChange(enquiry.id, status as EnquiryStatus)}
                 onArchive={(id) => archiveEnquiry.mutate(id)}
                 onUnarchive={(id) => unarchiveEnquiry.mutate(id)}
                 archived={archived}
@@ -431,7 +548,7 @@ const EnquiryReview = ({ archived = false, selectedStatus = null }: EnquiryRevie
                       newStatus: status,
                       enquiryId: selectedEnquiry.id 
                     });
-                    updateEnquiry.mutate({ id: selectedEnquiry.id, status });
+                    handleStatusChange(selectedEnquiry.id, status);
                   }}
                 >
                   <SelectTrigger

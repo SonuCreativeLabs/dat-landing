@@ -19,7 +19,8 @@ import {
   Settings2,
   HelpCircle,
   Archive,
-  FileText
+  FileText,
+  Filter
 } from "lucide-react";
 import TestimonialReview from "@/components/admin/TestimonialReview";
 import EnquiryReview from "@/components/admin/EnquiryReview";
@@ -54,8 +55,10 @@ import Dashboard from "@/pages/admin/Dashboard";
 import { useLocation } from 'react-router-dom';
 import BlogEditor from '@/components/admin/BlogEditor';
 import ImageUpload from '@/components/admin/ImageUpload';
+import { logActivity } from '@/lib/activity-logger';
+import ActivityLogs from '@/components/admin/ActivityLogs';
 
-type ActivePage = 'dashboard' | 'enquiry' | 'testimonials' | 'archive' | 'users' | 'settings' | 'help' | 'blog';
+type ActivePage = 'dashboard' | 'enquiry' | 'testimonials' | 'archive' | 'users' | 'settings' | 'help' | 'blog' | 'activity';
 
 const SIDEBAR_ITEMS = [
   {
@@ -97,6 +100,11 @@ const SIDEBAR_ITEMS = [
     title: "Archive",
     icon: Archive,
     href: "#archive"
+  },
+  {
+    title: "Activity",
+    icon: Activity,
+    href: "#activity"
   }
 ] as const;
 
@@ -269,12 +277,61 @@ const Admin = () => {
 
   const handleLogout = async () => {
     try {
+      // Log the logout activity before signing out
+      await logActivity({
+        adminId: session?.user?.id || '',
+        adminEmail: session?.user?.email || '',
+        actionType: 'logout',
+        entityType: 'system',
+        actionDetails: {
+          timestamp: new Date().toISOString()
+        }
+      });
+
       await supabase.auth.signOut();
       navigate("/login");
     } catch (error) {
       console.error("Logout error:", error);
     }
   };
+
+  // Add login activity logging
+  useEffect(() => {
+    const logLoginActivity = async () => {
+      if (session?.user) {
+        // Get the last login activity for this user
+        const { data: lastLogin } = await supabase
+          .from('admin_activity_logs')
+          .select('created_at')
+          .eq('admin_id', session.user.id)
+          .eq('action_type', 'login')
+          .order('created_at', { ascending: false })
+          .limit(1);
+
+        // Only log if there's no previous login or if the last login was more than 1 hour ago
+        const shouldLogLogin = !lastLogin?.length || 
+          (new Date().getTime() - new Date(lastLogin[0].created_at).getTime() > 60 * 60 * 1000);
+
+        if (shouldLogLogin) {
+          try {
+            await logActivity({
+              adminId: session.user.id,
+              adminEmail: session.user.email || '',
+              actionType: 'login',
+              entityType: 'system',
+              actionDetails: {
+                timestamp: new Date().toISOString()
+              }
+            });
+          } catch (error) {
+            console.error('Error logging login activity:', error);
+          }
+        }
+      }
+    };
+
+    logLoginActivity();
+  }, [session?.user?.id]); // Only depend on the user ID, not the entire session
 
   const fetchEnquiries = async () => {
     try {
@@ -293,12 +350,37 @@ const Admin = () => {
 
   const handleEnquiryStatusUpdate = async (id: string, status: EnquiryStatus) => {
     try {
-      const { error } = await supabase
+      // Get the current status before updating
+      const { data: currentEnquiry, error: fetchError } = await supabase
+        .from('enquiries')
+        .select('status')
+        .eq('id', id)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      const { error: updateError } = await supabase
         .from('enquiries')
         .update({ status })
         .eq('id', id);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
+
+      // Log the activity
+      await logActivity({
+        adminId: session?.user?.id || '',
+        adminEmail: session?.user?.email || '',
+        actionType: 'enquiry_status_change',
+        entityType: 'enquiry',
+        entityId: id,
+        previousValues: { status: currentEnquiry.status },
+        newValues: { status },
+        actionDetails: {
+          from_status: currentEnquiry.status,
+          to_status: status,
+          timestamp: new Date().toISOString()
+        }
+      });
 
       toast.success('Enquiry status updated successfully');
       fetchEnquiries();
@@ -688,6 +770,21 @@ const Admin = () => {
                       />
                     </div>
                   </div>
+                </div>
+              )}
+
+              {activePage === 'activity' && (
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-2xl font-bold text-gray-800">Activity Logs</h2>
+                    <div className="flex items-center gap-4">
+                      <Button variant="outline" size="sm">
+                        <Filter className="w-4 h-4 mr-2" />
+                        Filter
+                      </Button>
+                    </div>
+                  </div>
+                  <ActivityLogs />
                 </div>
               )}
             </>

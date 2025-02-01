@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Plus, Pencil, Trash2, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
+import { logActivity } from '@/lib/activity-logger';
+import BlogEditor from '@/components/admin/BlogEditor';
+import ImageUpload from '@/components/admin/ImageUpload';
 
 type BlogPostStatus = 'draft' | 'published';
 
@@ -53,8 +56,22 @@ const BlogManager = () => {
     keywords: '',
     status: 'draft'
   });
-
   const queryClient = useQueryClient();
+  const [session, setSession] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Fetch blog posts
   const { data: posts, isLoading } = useQuery({
@@ -152,14 +169,41 @@ const BlogManager = () => {
   // Toggle post status
   const toggleStatusMutation = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: BlogPostStatus }) => {
-      const { data, error } = await supabase
+      // Get the current post data first
+      const { data: currentPost, error: fetchError } = await supabase
+        .from('blog_posts')
+        .select()
+        .eq('id', id)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      const { data, error: updateError } = await supabase
         .from('blog_posts')
         .update({ status })
         .eq('id', id)
         .select()
         .single();
 
-      if (error) throw error;
+      if (updateError) throw updateError;
+
+      // Log the activity
+      await logActivity({
+        adminId: session?.user?.id || '',
+        adminEmail: session?.user?.email || '',
+        actionType: 'content_modification',
+        entityType: 'blog_post',
+        entityId: id,
+        previousValues: { status: currentPost.status },
+        newValues: { status },
+        actionDetails: {
+          operation: 'status_change',
+          from_status: currentPost.status,
+          to_status: status,
+          timestamp: new Date().toISOString()
+        }
+      });
+
       return data;
     },
     onSuccess: () => {
@@ -216,6 +260,84 @@ const BlogManager = () => {
     toggleStatusMutation.mutate({ id, status: newStatus });
   };
 
+  const handleSavePost = async (post: BlogPost) => {
+    try {
+      const isNewPost = !post.id;
+      const { data: savedPost, error } = await supabase
+        .from('blog_posts')
+        .upsert({
+          ...post,
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Log the activity
+      await logActivity({
+        adminId: session?.user?.id || '',
+        adminEmail: session?.user?.email || '',
+        actionType: 'content_modification',
+        entityType: 'blog_post',
+        entityId: savedPost.id,
+        previousValues: isNewPost ? undefined : { ...post },
+        newValues: { ...savedPost },
+        actionDetails: {
+          operation: isNewPost ? 'create' : 'update',
+          timestamp: new Date().toISOString()
+        }
+      });
+
+      toast.success(isNewPost ? 'Blog post created successfully' : 'Blog post updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['blog-posts'] });
+      return savedPost;
+    } catch (error) {
+      console.error('Error saving blog post:', error);
+      toast.error('Failed to save blog post');
+      throw error;
+    }
+  };
+
+  const handleDeletePost = async (id: string) => {
+    try {
+      const { data: post, error: fetchError } = await supabase
+        .from('blog_posts')
+        .select()
+        .eq('id', id)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      const { error: deleteError } = await supabase
+        .from('blog_posts')
+        .delete()
+        .eq('id', id);
+
+      if (deleteError) throw deleteError;
+
+      // Log the activity
+      await logActivity({
+        adminId: session?.user?.id || '',
+        adminEmail: session?.user?.email || '',
+        actionType: 'content_modification',
+        entityType: 'blog_post',
+        entityId: id,
+        previousValues: { ...post },
+        actionDetails: {
+          operation: 'delete',
+          timestamp: new Date().toISOString()
+        }
+      });
+
+      toast.success('Blog post deleted successfully');
+      queryClient.invalidateQueries({ queryKey: ['blog-posts'] });
+    } catch (error) {
+      console.error('Error deleting blog post:', error);
+      toast.error('Failed to delete blog post');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -239,7 +361,7 @@ const BlogManager = () => {
             <DialogHeader>
               <DialogTitle>{selectedPost ? 'Edit Blog Post' : 'Create New Blog Post'}</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Title</label>
                 <Input
@@ -260,12 +382,10 @@ const BlogManager = () => {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Content</label>
-                <Textarea
-                  value={formData.content}
-                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  placeholder="Enter post content"
-                  className="min-h-[200px]"
-                  required
+                <BlogEditor
+                  content={formData.content}
+                  onChange={(content) => setFormData({ ...formData, content })}
+                  placeholder="Write your blog post content here..."
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -289,12 +409,10 @@ const BlogManager = () => {
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Image URL</label>
-                <Input
+                <label className="text-sm font-medium">Featured Image</label>
+                <ImageUpload
                   value={formData.image_url}
-                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                  placeholder="Enter image URL"
-                  required
+                  onUpload={(url) => setFormData({ ...formData, image_url: url })}
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -375,7 +493,7 @@ const BlogManager = () => {
                       variant="outline"
                       size="icon"
                       className="text-red-600 hover:text-red-700"
-                      onClick={() => handleDelete(post.id)}
+                      onClick={() => handleDeletePost(post.id)}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
