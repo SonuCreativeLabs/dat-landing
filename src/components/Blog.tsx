@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Calendar, Clock, ArrowRight, Loader2, User, Phone, MapPin, Tag } from 'lucide-react';
-import { Container } from './Container';
+import { Container, Section } from './Container';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useState } from 'react';
@@ -14,6 +14,7 @@ import type { Database } from '@/integrations/supabase/types';
 import { Button } from "./ui/button";
 import { format } from "date-fns";
 import { CONTACT_INFO } from '@/config/contact';
+import { BLOG_IMAGES } from '@/config/assets';
 
 type BlogPost = Database['public']['Tables']['blog_posts']['Row'];
 
@@ -21,73 +22,158 @@ type BlogPost = Database['public']['Tables']['blog_posts']['Row'];
 const defaultPosts = [
   {
     id: '1',
-    title: "Top 5 Signs Your AC Needs Repair – Don't Ignore These Warnings!",
-    excerpt: 'Learn about the critical warning signs that indicate your AC needs immediate repair. From weak cooling to strange noises, discover when to call a professional.',
-    content: `Air conditioners are essential, especially in Chennai's hot and humid weather. However, if your AC is not working efficiently, it might be time for a repair. Here are the top 5 signs that your AC needs servicing before it completely stops working:
+    title: "Top 5 Signs Your AC Needs Professional Repair",
+    description: "Learn the warning signs that indicate your air conditioner needs immediate professional attention to avoid costly breakdowns.",
+    image: BLOG_IMAGES.AC_REPAIR,
+    imageAlt: "Broken air conditioner showing signs of repair needs",
+    category: "AC Maintenance",
+    readTime: "5 min read",
+    content: `Is your air conditioner not performing as well as it used to? Here are 5 warning signs that indicate your AC needs professional repair:
 
-1. Weak or No Cooling
-• If your AC is running but not cooling the room properly, there could be a gas leak, a dirty filter, or a faulty compressor.
-• Solution: Call a professional technician to check and refill the refrigerant gas or clean the clogged filters.
+1. Unusual Noises
+• Grinding, squealing, or banging sounds indicate mechanical problems
+• Clicking noises might mean electrical component issues
+• Any new or strange sound should be checked immediately
 
-2. Strange Noises Coming from the AC
-• A well-functioning AC runs quietly. If you hear grinding, buzzing, or rattling sounds, it could be due to loose parts or a motor issue.
-• Solution: Stop using the AC and contact a technician immediately to prevent further damage.
+2. Weak or Warm Air Flow
+• Reduced cooling performance
+• Air coming out isn't as cold as it should be
+• Some rooms are colder than others
 
-3. High Electricity Bills
-• If your electricity bill suddenly spikes without any change in usage, your AC might be overworking due to a clogged filter, leaking gas, or a malfunctioning compressor.
-• Solution: Regular AC maintenance and servicing can help reduce power consumption and keep bills low.
+3. High Energy Bills
+• Sudden spike in electricity consumption
+• AC running longer than usual
+• Poor efficiency due to potential internal issues
 
-4. Unpleasant Smell or Mold Growth
-• A musty or burning smell from your AC could indicate mold, bacteria, or burnt wiring.
-• Solution: Clean or replace the air filters, and schedule professional AC cleaning to prevent health issues.
+4. Water Leaks
+• Water pooling around your indoor unit
+• Excessive condensation
+• Ice formation on coils
 
-5. AC Keeps Turning On and Off
-• Frequent on-off cycles (short cycling) can be caused by thermostat issues, dirty condenser coils, or an electrical fault.
-• Solution: Get an AC expert to diagnose the issue and prevent long-term damage to the unit.`,
+5. Strange Odors
+• Musty smell indicating mold growth
+• Burning smell suggesting electrical issues
+• Any unusual odor requires immediate attention
+
+Don't wait until your AC completely breaks down. Regular maintenance and timely repairs can extend your unit's life and save money in the long run.`,
     date: new Date().toISOString(),
-    read_time: '5 min read',
-    image_url: '/blog/ac-repair-signs.jpg',
-    category: 'AC Maintenance',
-    keywords: ['AC repair', 'AC maintenance', 'AC problems', 'AC service Chennai'],
-    slug: 'top-5-signs-ac-needs-repair',
+    keywords: ['AC repair', 'AC maintenance', 'air conditioner service', 'AC problems'],
     status: 'published' as const,
-    created_at: new Date().toISOString(),
+    created_at: new Date().toISOString()
   },
   {
     id: '2',
-    title: 'Why Renting an AC is a Smart Choice for Chennai Summers',
-    excerpt: 'Discover why renting an AC could be more beneficial than buying one, especially in Chennai\'s climate. Learn about cost savings, maintenance benefits, and flexible rental plans.',
-    content: `Are you thinking about buying an AC but worried about the high cost? Renting an AC is an excellent option, especially in Chennai, where summers can be unbearable. Here's why renting an AC from Dreams Air Tech makes more sense:
+    title: "The Ultimate Guide to Renting an AC in Chennai",
+    description: "Everything you need to know about renting an air conditioner in Chennai - from choosing the right model to maintenance tips.",
+    image: BLOG_IMAGES.AC_RENTAL,
+    imageAlt: "Modern air conditioner rental service",
+    category: "AC Rental",
+    readTime: "7 min read",
+    content: `Looking to rent an AC in Chennai? Here's your comprehensive guide to making the right choice:
 
-1. Cost-Effective & Affordable
-• Buying an AC can be expensive, with costs going up to ₹40,000 or more. Renting lets you enjoy cooling comfort without high upfront costs.
-• Rental plans start at affordable monthly rates, making it budget-friendly.
+1. Choosing the Right AC Type
+• Window AC: Perfect for single rooms
+• Split AC: Ideal for larger spaces
+• Portable AC: Great for temporary cooling needs
 
-2. No Maintenance Hassles
-• Owning an AC means dealing with servicing, gas refills, and repairs.
-• With a rental, we take care of all maintenance & repairs, so you enjoy hassle-free cooling.
+2. Determining the Right Capacity
+• Up to 150 sq ft: 1 ton AC
+• 150-250 sq ft: 1.5 ton AC
+• Above 250 sq ft: 2 ton or higher
 
-3. Flexible Plans
-• Whether you need an AC for a month, six months, or a full year, we offer customized rental plans based on your needs.
+3. Rental Terms & Benefits
+• Flexible rental periods
+• Free installation and maintenance
+• No long-term commitments
+• Cost-effective cooling solution
 
-4. Ideal for Tenants & Temporary Stays
-• If you are staying in a rented house or PG, buying an AC might not be the best investment. Renting ensures you stay comfortable without any long-term commitment.
+4. Maintenance & Support
+• Regular servicing included
+• 24/7 technical support
+• Quick replacement if needed
+• Professional cleaning services
 
-5. Quick Installation & Delivery
-• When you rent from Dreams Air Tech, we offer fast installation & doorstep delivery in Chennai. No waiting, no extra charges!`,
+5. Cost Considerations
+• Monthly rental fees
+• Security deposit
+• Electricity consumption
+• Installation charges (if any)
+
+6. Why Choose Dreams Air Tech?
+• Premium AC brands
+• Expert installation
+• Regular maintenance
+• Reliable customer support
+• Competitive pricing
+
+Contact us today to find the perfect AC rental solution for your needs!`,
     date: new Date().toISOString(),
-    read_time: '4 min read',
-    image_url: '/blog/ac-rental-benefits.jpg',
-    category: 'AC Rental',
-    keywords: ['AC rental', 'AC rent Chennai', 'summer cooling', 'cost savings'],
-    slug: 'why-renting-ac-smart-choice-chennai-summers',
+    keywords: ['AC rental', 'air conditioner rent', 'AC services Chennai', 'cooling solutions'],
     status: 'published' as const,
     created_at: new Date().toISOString()
   },
   {
     id: '3',
+    title: "Why Renting Appliances Makes Sense for Modern Homes",
+    description: "Discover the benefits of renting home appliances and how it can be a smart financial decision for your household.",
+    image: BLOG_IMAGES.APPLIANCE_RENTAL,
+    imageAlt: "Modern household appliances for rent",
+    category: "Appliance Rental",
+    readTime: "6 min read",
+    content: `Thinking about renting appliances instead of buying? Here's why it might be the smart choice for your home:
+
+1. Financial Benefits
+• No large upfront costs
+• Predictable monthly expenses
+• No maintenance or repair costs
+• Tax benefits for businesses
+
+2. Latest Technology Access
+• Regular upgrades available
+• Try before you buy
+• Access to premium brands
+• Stay up-to-date with technology
+
+3. Maintenance & Support
+• Professional servicing included
+• Quick repairs or replacements
+• Regular maintenance checks
+• Extended warranty coverage
+
+4. Flexibility
+• Short-term commitments
+• Easy upgrades
+• Relocation support
+• Seasonal usage options
+
+5. Available Appliances
+• Air Conditioners
+• Refrigerators
+• Washing Machines
+• Water Purifiers
+• Microwave Ovens
+
+6. Perfect For
+• Temporary residents
+• Students
+• Young professionals
+• Small businesses
+• Home offices
+
+Contact Dreams Air Tech today to explore our appliance rental options!`,
+    date: new Date().toISOString(),
+    keywords: ['appliance rental', 'home appliances', 'rental services', 'modern living'],
+    status: 'published' as const,
+    created_at: new Date().toISOString()
+  },
+  {
+    id: '4',
     title: 'Refrigerator Not Cooling? Common Problems & Quick Fixes',
-    excerpt: 'Experiencing issues with your refrigerator\'s cooling? Learn about common problems and their solutions, from dirty condenser coils to faulty thermostats.',
+    description: 'Experiencing issues with your refrigerator\'s cooling? Learn about common problems and their solutions, from dirty condenser coils to faulty thermostats.',
+    image: BLOG_IMAGES.REFRIGERATOR_REPAIR,
+    imageAlt: "Refrigerator repair and maintenance guide",
+    category: 'Refrigerator Maintenance',
+    readTime: '6 min read',
     content: `Is your refrigerator not cooling properly? A non-functional fridge can spoil food, waste money, and cause inconvenience. Here are some common reasons why your fridge isn't cooling and how you can fix it:
 
 1. Dirty or Blocked Condenser Coils
@@ -112,16 +198,19 @@ const defaultPosts = [
     date: new Date().toISOString(),
     read_time: '6 min read',
     image_url: '/blog/fridge-repair-guide.jpg',
-    category: 'Refrigerator Maintenance',
     keywords: ['refrigerator repair', 'fridge maintenance', 'cooling problems', 'appliance service'],
     slug: 'refrigerator-not-cooling-common-problems-quick-fixes',
     status: 'published' as const,
     created_at: new Date().toISOString()
   },
   {
-    id: '4',
+    id: '5',
     title: 'Washing Machine Not Working? Common Problems & Quick Fixes!',
-    excerpt: 'Discover solutions to common washing machine problems, from startup issues to drainage problems. Learn when to DIY and when to call a professional.',
+    description: 'Discover solutions to common washing machine problems, from startup issues to drainage problems. Learn when to DIY and when to call a professional.',
+    image: BLOG_IMAGES.WASHING_MACHINE_REPAIR,
+    imageAlt: "Professional washing machine repair service",
+    category: 'Washing Machine Maintenance',
+    readTime: '5 min read',
     content: `A washing machine breakdown can be frustrating, especially when you have a pile of laundry waiting. If your washing machine isn't working properly, don't worry! Here are some common washing machine problems and how you can fix them.
 
 1. Washing Machine Won't Start
@@ -161,56 +250,11 @@ const defaultPosts = [
     date: new Date().toISOString(),
     read_time: '5 min read',
     image_url: '/blog/washing-machine-repair.jpg',
-    category: 'Washing Machine Maintenance',
     keywords: ['washing machine repair', 'washing machine problems', 'appliance service', 'washing machine maintenance'],
     slug: 'washing-machine-not-working-common-problems-quick-fixes',
     status: 'published' as const,
     created_at: new Date().toISOString(),
   },
-  {
-    id: '5',
-    title: 'Why Renting Appliances is a Smart Choice for Homes & Offices',
-    excerpt: 'Explore the benefits of renting home appliances instead of buying. From cost savings to maintenance-free convenience, discover why appliance rental is gaining popularity.',
-    content: `Buying home appliances like ACs, refrigerators, washing machines, and water purifiers can be expensive. If you are looking for an affordable, hassle-free alternative, renting appliances is the perfect solution!
-
-Here's why appliance rentals from Dreams Air Tech make sense:
-
-1. Save Money – No Big Upfront Cost!
-• Buying an appliance can cost thousands of rupees. When you rent, you only pay a small monthly fee, making it more budget-friendly.
-• Perfect for students, working professionals, and short-term tenants.
-
-2. No Maintenance Hassles
-• Owning an appliance means spending on servicing, repairs, and gas refills.
-• With rented appliances, you don't have to worry about maintenance—we take care of everything!
-
-3. Flexible Rental Plans
-• Need an appliance for a few months, a year, or longer? We offer customized rental plans to suit your needs.
-• Pay monthly, quarterly, or yearly as per your convenience.
-
-4. Ideal for Temporary Stays
-• If you are in Chennai for work or studies, renting is the best choice.
-• Avoid the hassle of buying, installing, and reselling appliances when you leave.
-
-5. Quick Installation & Doorstep Delivery
-• Get your AC, fridge, washing machine, or water purifier delivered and installed at your doorstep.
-• Our fast delivery and hassle-free setup ensure you can start using your appliance immediately.
-
-6. Wide Range of High-Quality Appliances
-
-We offer top brands and models for rent:
-✔ Air Conditioners (ACs) – Beat the Chennai heat with our energy-efficient ACs.
-✔ Refrigerators – Keep your food fresh with our fridge rentals.
-✔ Washing Machines – Say goodbye to laundry stress with our washing machine rental service.
-✔ Water Purifiers – Get clean, safe drinking water with our purifier rentals.`,
-    date: new Date().toISOString(),
-    read_time: '4 min read',
-    image_url: '/blog/appliance-rental-benefits.jpg',
-    category: 'Appliance Rental',
-    keywords: ['appliance rental', 'home appliances', 'rental benefits', 'cost savings', 'maintenance free'],
-    slug: 'why-renting-appliances-smart-choice-homes-offices',
-    status: 'published' as const,
-    created_at: new Date().toISOString(),
-  }
 ];
 
 const getCTAContent = (category: string) => {
@@ -281,86 +325,75 @@ const Blog = () => {
   }
 
   return (
-    <div id="blog" className="bg-gray-50 py-16 sm:py-20 md:py-24 lg:py-32">
+    <Section className="bg-gray-50" id="blog">
       <Container>
-        {/* Blog Tag */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex items-center justify-center gap-2 mb-8"
-        >
-          <Tag className="w-5 h-5 text-blue-600" />
-          <span className="text-sm font-medium text-blue-600 uppercase tracking-wider">Blog</span>
-        </motion.div>
+        <div className="text-center mb-12">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4"
+          >
+            Latest from Our Blog
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-gray-600 max-w-2xl mx-auto"
+          >
+            Expert tips, guides, and insights about AC maintenance, appliance care, and smart rental solutions
+          </motion.p>
+        </div>
 
-        {/* Title Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-16"
-        >
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Latest Updates</h2>
-          <p className="text-lg text-gray-600">
-            Stay informed about the latest trends, tips, and news in home appliance care and maintenance.
-          </p>
-        </motion.div>
-
-        {/* Blog Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {posts.map((post) => (
-            <motion.article
-              key={post.id}
+          {posts.map((post, index) => (
+            <motion.div
+              key={post.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+              transition={{ delay: index * 0.1 }}
+              className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col cursor-pointer"
               onClick={() => setSelectedPost(post)}
             >
-              <div className="relative h-48">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-4xl text-white/20">{post.category.charAt(0)}</span>
-                </div>
+              <div className="relative h-56 overflow-hidden">
+                <div className="absolute inset-0 bg-[#f8f9fa]" />
+                <img
+                  src={post.image}
+                  alt={post.imageAlt}
+                  className="w-full h-full transform hover:scale-105 transition-transform duration-300"
+                  style={{
+                    objectFit: post.category === 'AC Rental' ? 'cover' : 
+                             post.category === 'Washing Machine Maintenance' ? 'contain' : 'cover',
+                    objectPosition: post.category === 'Washing Machine Maintenance' ? 'center' : 'center',
+                    padding: post.category === 'Washing Machine Maintenance' ? '0.5rem' : '0',
+                    backgroundColor: post.category === 'Refrigerator Maintenance' ? '#ffffff' :
+                                   post.category === 'Washing Machine Maintenance' ? '#ffffff' :
+                                   post.category === 'AC Maintenance' ? '#e9ecef' :
+                                   post.category === 'Appliance Rental' ? '#f8f9fa' : '#ffffff'
+                  }}
+                  loading="lazy"
+                />
               </div>
-              <div className="p-6">
-                <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    <span>{post.read_time}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
-                    <span>{format(new Date(post.date), 'MMM d, yyyy')}</span>
-                  </div>
+              <div className="p-6 flex-1 flex flex-col">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                    {post.category}
+                  </span>
+                  <span className="text-sm text-gray-500">{post.readTime}</span>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">
-                  {post.title}
-                </h3>
-                <p className="text-gray-600 mb-4 line-clamp-3">
-                  {post.excerpt}
-                </p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {post.keywords.slice(0, 3).map((keyword, index) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-                    >
-                      {keyword}
-                    </span>
-                  ))}
-                </div>
-                <Button
-                  variant="ghost"
-                  className="text-blue-600 hover:text-blue-700 p-0 h-auto font-semibold"
+                <h3 className="text-xl font-bold text-gray-900 mb-2 hover:text-blue-600 transition-colors">{post.title}</h3>
+                <p className="text-gray-600 mb-4 line-clamp-2 flex-1">{post.description}</p>
+                <button 
+                  className="inline-flex items-center text-blue-600 font-medium hover:text-blue-700 transition-colors mt-auto group"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedPost(post);
+                  }}
                 >
-                  Read More
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
+                  Read More <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </button>
               </div>
-            </motion.article>
+            </motion.div>
           ))}
         </div>
 
@@ -378,7 +411,15 @@ const Blog = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4" />
-                      <span>{format(new Date(selectedPost.date), 'MMM d, yyyy')}</span>
+                      <span>
+                        {(() => {
+                          try {
+                            return format(new Date(selectedPost.date), 'MMM d, yyyy');
+                          } catch (error) {
+                            return 'Date not available';
+                          }
+                        })()}
+                      </span>
                     </div>
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                       {selectedPost.category}
@@ -387,7 +428,7 @@ const Blog = () => {
                 </DialogHeader>
 
                 <div className="prose prose-blue max-w-none">
-                  {selectedPost.content.split('\n\n').map((paragraph, index) => (
+                  {(selectedPost.content || '').split('\n\n').map((paragraph, index) => (
                     <p key={index} className="mb-4">
                       {paragraph}
                     </p>
@@ -464,7 +505,7 @@ const Blog = () => {
           </a>
         </motion.div>
       </Container>
-    </div>
+    </Section>
   );
 };
 

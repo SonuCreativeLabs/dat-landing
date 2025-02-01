@@ -28,6 +28,14 @@ export const BRAND_ASSETS = {
   FAVICON: "https://ik.imagekit.io/projectassets/Assets/DAT-favicon-new.png?tr=bg-transparent,q-100",
 } as const;
 
+export const BLOG_IMAGES = {
+  AC_REPAIR: "https://ik.imagekit.io/projectassets/Assets/2207.q803.003.S.m012.c10.broken%20air%20conditioner%20realistic.jpg?updatedAt=1737964369960",
+  AC_RENTAL: "https://ik.imagekit.io/projectassets/Assets/8496226.jpg?updatedAt=1737964369861",
+  APPLIANCE_RENTAL: "https://ik.imagekit.io/projectassets/Assets/2106.q703.019.S.m004.c10.household%20appliance%20realistic.jpg?updatedAt=1738402191318",
+  WASHING_MACHINE_REPAIR: "https://ik.imagekit.io/projectassets/Assets/front-view-musing-repairman-sitting-near-washer-tools-bag-white-wall.jpg?updatedAt=1738403941953",
+  REFRIGERATOR_REPAIR: "https://ik.imagekit.io/projectassets/Assets/2008.i511.012_nutrition_set_flat-14.jpg?updatedAt=1738402212886"
+} as const;
+
 export const ASSETS = {
   LOGO: {
     MAIN: 'https://ik.imagekit.io/projectassets/Assets/DAT%20MAIN-01.png?updatedAt=1737896983644',
