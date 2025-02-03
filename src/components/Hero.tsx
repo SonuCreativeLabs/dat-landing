@@ -297,13 +297,6 @@ const Hero = () => {
             <br />
             <span className="text-sky-100 relative inline-block bg-gradient-to-r from-white to-sky-100 bg-clip-text text-transparent">
               AC & Appliance Repair
-              <motion.div
-                className="absolute -right-6 lg:-right-8 -top-1 text-yellow-400"
-                animate={{ rotate: [0, 10, 0], scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                ✨
-              </motion.div>
             </span>
             <br />
             <span className="text-sky-100 relative inline-block bg-gradient-to-r from-white to-sky-100 bg-clip-text text-transparent text-3xl sm:text-4xl lg:text-5xl">

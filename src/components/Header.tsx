@@ -58,10 +58,8 @@ const Header = () => {
         behavior: "smooth"
       });
 
-      // Close mobile menu after a slight delay to ensure smooth transition
-      setTimeout(() => {
-        setIsMenuOpen(false);
-      }, 100);
+      // Close mobile menu after scrolling
+      setIsMenuOpen(false);
     }
   };
 
