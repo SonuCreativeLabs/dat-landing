@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>Dreams Air Tech</ShortName>
+  <Description>Search Dreams Air Tech services and products</Description>
+  <Tags>ac service chennai appliance repair</Tags>
+  <Contact>support@dreamsairtech.in</Contact>
+  <Url type="text/html" template="https://dreamsairtech.in/search?q={searchTerms}"/>
+  <Image height="16" width="16" type="image/x-icon">https://dreamsairtech.in/favicon.ico</Image>
+  <InputEncoding>UTF-8</InputEncoding>
+  <OutputEncoding>UTF-8</OutputEncoding>
+</OpenSearchDescription> 

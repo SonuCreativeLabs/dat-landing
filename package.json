@@ -99,7 +99,7 @@
     "lovable-tagger": "^1.0.19",
     "node-fetch": "^3.3.2",
     "postcss": "^8.4.47",
-    "sharp": "^0.33.2",
+    "sharp": "^0.33.5",
     "tailwindcss": "^3.4.11",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
