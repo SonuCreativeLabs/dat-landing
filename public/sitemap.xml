@@ -1,33 +1,220 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Main Landing Page -->
   <url>
     <loc>https://dreamsairtech.in/</loc>
     <lastmod>2024-03-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
+
+  <!-- Main Sections -->
   <url>
-    <loc>https://dreamsairtech.in/services</loc>
+    <loc>https://dreamsairtech.in/#about</loc>
     <lastmod>2024-03-21</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://dreamsairtech.in/products</loc>
+    <loc>https://dreamsairtech.in/#services</loc>
     <lastmod>2024-03-21</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://dreamsairtech.in/blog</loc>
+    <loc>https://dreamsairtech.in/#products</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/#testimonials</loc>
     <lastmod>2024-03-21</lastmod>
     <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/#blog</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/#faqs</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://dreamsairtech.in/contact</loc>
+    <loc>https://dreamsairtech.in/#contact</loc>
     <lastmod>2024-03-21</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Service Areas -->
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/velachery</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/adambakkam</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/madipakkam</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/pallikaranai</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/perungudi</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/tharamani</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/guindy</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/saidapet</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/nanganallur</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/alandur</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/tambaram</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/medavakkam</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/sholinganallur</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/pallavaram</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/chromepet</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/thiruvanmiyur</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/anna-nagar</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/mylapore</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/t-nagar</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/mount-road</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/ramapuram</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/manapakkam</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/porur</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/kodambakkam</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/service-areas/vadapalani</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Admin and Authentication -->
+  <url>
+    <loc>https://dreamsairtech.in/login</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://dreamsairtech.in/admin</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
   </url>
 </urlset> 
