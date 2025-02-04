@@ -36,8 +36,10 @@ async function generateIcons() {
       await sharp(logoBuffer)
         .resize(size, size, {
           fit: 'contain',
-          background: { r: 255, g: 255, b: 255, alpha: 0 }
+          background: { r: 255, g: 255, b: 255, alpha: 1 }
         })
+        .flatten({ background: { r: 255, g: 255, b: 255 } })
+        .png({ quality: 90, compressionLevel: 9 })
         .toFile(join(ICONS_DIR, `icon-${size}x${size}.png`));
       console.log(`Generated ${size}x${size} icon`);
     }
@@ -49,45 +51,48 @@ async function generateIcons() {
       await sharp(logoBuffer)
         .resize(size, size, {
           fit: 'contain',
-          background: { r: 255, g: 255, b: 255, alpha: 0 }
+          background: { r: 255, g: 255, b: 255, alpha: 1 }
         })
+        .flatten({ background: { r: 255, g: 255, b: 255 } })
+        .png({ quality: 90, compressionLevel: 9 })
         .toFile(join(ICONS_DIR, `ms-icon-${size}x${size}.png`));
       console.log(`Generated ${size}x${size} Microsoft tile icon`);
     }
 
-    // Generate favicon.ico with multiple sizes
+    // Generate favicon.ico
     console.log('Generating favicon.ico...');
-    const faviconSizes = [16, 24, 32, 64];
-    const faviconBuffers = await Promise.all(
-      faviconSizes.map(size =>
-        sharp(logoBuffer)
-          .resize(size, size, {
-            fit: 'contain',
-            background: { r: 255, g: 255, b: 255, alpha: 1 }
-          })
-          .toBuffer()
-      )
-    );
-
-    await sharp(faviconBuffers[0])
-      .toFile(join(__dirname, '../public/favicon.ico'));
-
-    // Generate apple touch icon
-    console.log('Generating apple touch icon...');
-    await sharp(logoBuffer)
-      .resize(160, 160, {  // Slightly smaller size to add padding
+    const faviconBuffer = await sharp(logoBuffer)
+      .resize(32, 32, {
         fit: 'contain',
-        background: { r: 255, g: 255, b: 255, alpha: 0 }
-      })
-      .extend({
-        top: 10,
-        bottom: 10,
-        left: 10,
-        right: 10,
         background: { r: 255, g: 255, b: 255, alpha: 1 }
       })
-      .toFormat('png')
+      .flatten({ background: { r: 255, g: 255, b: 255 } })
+      .png({ quality: 100, compressionLevel: 9 })
+      .toBuffer();
+
+    await fs.writeFile(join(__dirname, '../public/favicon.ico'), faviconBuffer);
+
+    // Generate apple touch icon with special optimization
+    console.log('Generating apple touch icon...');
+    await sharp(logoBuffer)
+      .resize(180, 180, {
+        fit: 'contain',
+        background: { r: 255, g: 255, b: 255, alpha: 1 }
+      })
+      .flatten({ background: { r: 255, g: 255, b: 255 } })
+      .png({ quality: 100, compressionLevel: 9 })
       .toFile(join(ICONS_DIR, 'apple-touch-icon.png'));
+
+    // Generate special search engine optimized logo
+    console.log('Generating search engine optimized logo...');
+    await sharp(logoBuffer)
+      .resize(1200, 630, {
+        fit: 'contain',
+        background: { r: 255, g: 255, b: 255, alpha: 1 }
+      })
+      .flatten({ background: { r: 255, g: 255, b: 255 } })
+      .png({ quality: 90, compressionLevel: 9 })
+      .toFile(join(ICONS_DIR, 'og-image.png'));
 
     console.log('All icons generated successfully!');
   } catch (error) {
