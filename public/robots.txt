@@ -1,5 +1,13 @@
 User-agent: *
 Allow: /
+Allow: /about
+Allow: /service
+Allow: /products
+Allow: /contact
+Allow: /blog
+Allow: /testimonials
+Allow: /faqs
+Allow: /service-areas/
 
 # Sitemap
 Sitemap: https://www.dreamsairtech.in/sitemap.xml

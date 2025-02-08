@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!api/.*).*)",
       "destination": "/index.html"
     }
   ],
@@ -39,6 +39,40 @@
           "value": "public, max-age=31536000, immutable"
         }
       ]
+    }
+  ],
+  "routes": [
+    {
+      "src": "/service",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/about",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/products",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/contact",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/blog",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/testimonials",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/faqs",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/service-areas/(.*)",
+      "dest": "/index.html"
     }
   ]
 } 
