@@ -1,9 +1,14 @@
 {
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/service", "destination": "/index.html" },
+    { "source": "/about", "destination": "/index.html" },
+    { "source": "/products", "destination": "/index.html" },
+    { "source": "/contact", "destination": "/index.html" },
+    { "source": "/blog", "destination": "/index.html" },
+    { "source": "/testimonials", "destination": "/index.html" },
+    { "source": "/faqs", "destination": "/index.html" },
+    { "source": "/service-areas/:path*", "destination": "/index.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
     {
