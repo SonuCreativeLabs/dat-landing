@@ -11,33 +11,40 @@ const Header = () => {
 
   // Handle scroll effect
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      const isScrolled = window.scrollY > 20;
-      setScrolled(isScrolled);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const isScrolled = window.scrollY > 20;
+          setScrolled(isScrolled);
 
-      // Update active section based on scroll position with mobile-friendly offset
-      const sections = ["about", "services", "products", "testimonials", "blog", "faqs", "contact"];
-      let currentSection = "";
-      
-      const offset = window.innerWidth < 768 ? 100 : 150; // Adjusted offset for mobile
-      
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          if (rect.top <= offset && rect.bottom >= offset) {
-            currentSection = section;
-            break;
+          // Update active section based on scroll position with mobile-friendly offset
+          const sections = ["about", "services", "products", "testimonials", "blog", "faqs", "contact"];
+          let currentSection = "";
+          
+          const offset = window.innerWidth < 768 ? 100 : 150;
+          
+          for (const section of sections) {
+            const element = document.getElementById(section);
+            if (element) {
+              const rect = element.getBoundingClientRect();
+              if (rect.top <= offset && rect.bottom >= offset) {
+                currentSection = section;
+                break;
+              }
+            }
           }
-        }
-      }
-      
-      if (currentSection !== activeSection) {
-        setActiveSection(currentSection);
+          
+          if (currentSection !== activeSection) {
+            setActiveSection(currentSection);
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [activeSection]);
 
@@ -55,13 +62,13 @@ const Header = () => {
       const elementPosition = element.getBoundingClientRect().top + window.scrollY;
       const offsetPosition = elementPosition - headerHeight - mobileOffset;
 
-      // Add a small delay to ensure menu is closed before scrolling
-      setTimeout(() => {
+      // Use requestAnimationFrame for smoother scrolling
+      requestAnimationFrame(() => {
         window.scrollTo({
           top: offsetPosition,
-          behavior: "smooth"
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
         });
-      }, 50);
+      });
     }
   };
 

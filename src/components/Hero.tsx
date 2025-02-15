@@ -9,8 +9,13 @@ const Hero = () => {
         <div 
           className="absolute inset-0 w-full h-full bg-cover bg-center rounded-[2.5rem]"
           style={{
-            backgroundImage: 'url("https://ik.imagekit.io/projectassets/Background%20PNGs/2BG.png?updatedAt=1739620681478")'
+            backgroundImage: 'url("https://ik.imagekit.io/projectassets/Background%20PNGs/2BG.png?updatedAt=1739620681478&tr=w-1400,h-800,f-auto")',
+            willChange: 'transform',
+            transform: 'translateZ(0)',
+            backfaceVisibility: 'hidden'
           }}
+          role="img"
+          aria-label="Background pattern"
         />
         
         {/* Content Container */}
@@ -27,9 +32,12 @@ const Hero = () => {
               You Cool and Clean
             </span>
           </h1>
-          <h2 className="text-3xl font-black mb-12 text-white tracking-wide font-poppins
-                       bg-gradient-to-r from-[#38BDF8] to-[#0EA5E9] bg-clip-text text-transparent
-                       drop-shadow-[0_2px_15px_rgba(14,165,233,0.6)]">
+          <h2 className="text-4xl font-black mb-12 text-white tracking-wide font-poppins
+                       px-6 py-3 rounded-xl
+                       drop-shadow-[0_4px_15px_rgba(0,0,0,0.6)]
+                       [text-shadow:_2px_2px_8px_rgba(14,165,233,0.8),_0_4px_12px_rgba(0,0,0,0.8)]
+                       hover:[text-shadow:_2px_2px_12px_rgba(14,165,233,0.9),_0_4px_16px_rgba(0,0,0,0.9)]
+                       transition-all duration-300">
             AC & Appliance Repair and Rentals in Chennai
           </h2>
 
