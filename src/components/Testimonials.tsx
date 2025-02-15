@@ -216,24 +216,23 @@ const Testimonials = () => {
 
   if (isLoading) {
     return (
-      <div className="bg-gradient-to-b from-[#0EA5E9] to-[#0284C7]">
-        <Container>
+      <section id="testimonials" className="w-full py-24 bg-gradient-to-b from-[#003366] via-[#003366] to-[#004B8F] relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+        <Container className="relative z-10">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="loader"></div>
           </div>
         </Container>
-      </div>
+      </section>
     );
   }
 
   return (
-    <div id="testimonials" className="bg-[#0891B2] py-16 sm:py-20 md:py-24 lg:py-32 relative">
-      {/* Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center" />
-      </div>
+    <section id="testimonials" className="w-full py-24 bg-gradient-to-b from-[#003366] via-[#003366] to-[#004B8F] relative overflow-hidden">
+      {/* Background Overlay */}
+      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
 
-      <Container className="relative">
+      <Container className="relative z-10">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -472,7 +471,7 @@ const Testimonials = () => {
           )}
         </AnimatePresence>
       </Container>
-    </div>
+    </section>
   );
 };
 

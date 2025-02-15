@@ -64,9 +64,12 @@ const Products = () => {
   return (
     <section
       id="products"
-      className="py-24 bg-gradient-to-b from-gray-50 via-white to-gray-50"
+      className="w-full py-24 bg-gradient-to-b from-[#004B8F] via-[#003366] to-[#003366] relative overflow-hidden"
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Background Overlay */}
+      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+      
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -74,10 +77,10 @@ const Products = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-4">
+          <h2 className="text-4xl font-bold text-white mb-4">
             Premium Home Appliances for Sale & Rent
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
             Discover our wide range of high-quality home appliances, available for sale or rental with professional maintenance. We offer affordable and flexible solutions for all your appliance needs.
           </p>
         </motion.div>
@@ -107,20 +110,17 @@ const Products = () => {
             <a
               href={`tel:${CONTACT_INFO.PHONE}`}
               className="group relative inline-flex items-center gap-2 px-8 py-4 
-                       bg-gradient-to-br from-[#0EA5E9] to-[#0284C7]
-                       hover:from-[#0284C7] hover:to-[#0EA5E9]
-                       text-white rounded-xl font-semibold 
+                       bg-white text-[#003366] rounded-xl font-semibold 
                        transition-all duration-300 shadow-lg 
-                       hover:shadow-[0_8px_30px_rgba(14,165,233,0.3)]
+                       hover:shadow-[0_8px_30px_rgba(255,255,255,0.2)]
                        hover:-translate-y-0.5
-                       backdrop-blur-sm"
+                       hover:bg-white/90"
             >
               <Phone className="w-5 h-5" />
               <span>Call Now: {CONTACT_INFO.PHONE_DISPLAY}</span>
-              <div className="absolute inset-0 rounded-xl bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </a>
           </div>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-white/60">
             Contact us for detailed pricing and availability
           </p>
         </motion.div>
