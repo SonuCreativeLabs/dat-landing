@@ -247,11 +247,11 @@ export default function ActivityLogs({ className }: ActivityLogsProps) {
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex-1 min-w-[200px]">
               <Select
-                value={filters.actionType === undefined ? '' : filters.actionType}
+                value={filters.actionType === undefined ? 'all' : filters.actionType}
                 onValueChange={(value: string) => 
                   setFilters(prev => ({
                     ...prev,
-                    actionType: value === '' ? undefined : value as ActivityType
+                    actionType: value === 'all' ? undefined : value as ActivityType
                   }))
                 }
               >
@@ -259,7 +259,7 @@ export default function ActivityLogs({ className }: ActivityLogsProps) {
                   <SelectValue placeholder="Action Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Actions</SelectItem>
+                  <SelectItem value="all">All Actions</SelectItem>
                   {Object.keys(activityTypeColors).map((type) => (
                     <SelectItem key={type} value={type}>
                       <span className="flex items-center gap-2">
@@ -278,11 +278,11 @@ export default function ActivityLogs({ className }: ActivityLogsProps) {
 
             <div className="flex-1 min-w-[200px]">
               <Select
-                value={filters.entityType === undefined ? '' : filters.entityType}
+                value={filters.entityType === undefined ? 'all' : filters.entityType}
                 onValueChange={(value: string) =>
                   setFilters(prev => ({
                     ...prev,
-                    entityType: value === '' ? undefined : value as EntityType
+                    entityType: value === 'all' ? undefined : value as EntityType
                   }))
                 }
               >
@@ -290,7 +290,7 @@ export default function ActivityLogs({ className }: ActivityLogsProps) {
                   <SelectValue placeholder="Entity Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Entities</SelectItem>
+                  <SelectItem value="all">All Entities</SelectItem>
                   {Object.entries(entityTypeIcons).map(([type, icon]) => (
                     <SelectItem key={type} value={type}>
                       <span className="flex items-center gap-2">
