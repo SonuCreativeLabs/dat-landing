@@ -97,13 +97,13 @@ const AboutUs = () => {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
-            className="bg-white/10 backdrop-blur-md p-6 rounded-xl shadow-lg border border-white/20"
+            className="bg-white rounded-xl shadow-lg p-6"
           >
             <div className="flex items-center gap-2 mb-4">
-              <MapPin className="w-6 h-6 text-white" />
-              <h3 className="text-2xl font-semibold text-white">Areas We Serve</h3>
+              <MapPin className="w-6 h-6 text-[#003366]" />
+              <h3 className="text-2xl font-semibold text-[#003366]">Areas We Serve</h3>
             </div>
-            <p className="text-white/80 mb-6">
+            <p className="text-gray-600 mb-6">
               We provide AC and appliance repair, maintenance, and rental services across Chennai, covering:
             </p>
             <div className="grid grid-cols-2 gap-2">
@@ -115,13 +115,13 @@ const AboutUs = () => {
                   transition={{ delay: index * 0.05 }}
                   className="flex items-center gap-2"
                 >
-                  <CheckCircle className="w-4 h-4 text-white flex-shrink-0" />
-                  <span className="text-white/80 text-sm">{area}</span>
+                  <CheckCircle className="w-4 h-4 text-[#003366] flex-shrink-0" />
+                  <span className="text-gray-600 text-sm">{area}</span>
                 </motion.div>
               ))}
             </div>
-            <div className="mt-6 text-center bg-white/5 p-4 rounded-lg border border-white/10">
-              <p className="text-white font-medium">
+            <div className="mt-6 text-center bg-[#003366]/5 p-4 rounded-lg">
+              <p className="text-[#003366] font-medium">
                 💡 Need professional AC or appliance service in your area? Contact us today!
               </p>
             </div>

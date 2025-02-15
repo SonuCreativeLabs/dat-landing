@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 
 const Hero = () => {
   return (
-    <section className="relative w-full min-h-[85vh] flex items-center justify-center px-4 py-4 mt-20">
-      <div className="container max-w-[1400px] relative rounded-[2.5rem] overflow-hidden bg-transparent">
+    <section className="relative w-full min-h-[85vh] flex items-center justify-center px-4 py-4 mt-20 bg-gradient-to-b from-[#001B3B] via-[#001B3B] to-[#001B3B]">
+      <div className="container max-w-[1400px] relative rounded-[2.5rem] overflow-hidden">
         {/* Background Image */}
         <div 
           className="absolute inset-0 w-full h-full bg-cover bg-center rounded-[2.5rem]"
