@@ -81,11 +81,10 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="relative py-20 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
+    <section id="contact" className="relative py-20 bg-gray-900 overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[url('/patterns/dots.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/10 via-gray-900/50 to-gray-900/90" />
+        <div className="absolute inset-0 bg-[url('/patterns/dots.svg')] bg-center" />
       </div>
 
       <div className="relative container mx-auto px-4">
@@ -106,7 +105,7 @@ const Contact = () => {
 
             <div className="space-y-6">
               <div className="flex items-start gap-4">
-                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-3">
+                <div className="bg-blue-600 rounded-xl p-3">
                   <Phone className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -117,7 +116,7 @@ const Contact = () => {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-3">
+                <div className="bg-blue-600 rounded-xl p-3">
                   <Mail className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -128,7 +127,7 @@ const Contact = () => {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-3">
+                <div className="bg-blue-600 rounded-xl p-3">
                   <MapPin className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -149,7 +148,7 @@ const Contact = () => {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-3">
+                <div className="bg-blue-600 rounded-xl p-3">
                   <Clock className="w-6 h-6 text-white" />
                 </div>
                 <div>

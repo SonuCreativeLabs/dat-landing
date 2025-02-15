@@ -106,19 +106,20 @@ const FAQs = () => {
   };
 
   return (
-    <div id="faqs" className="bg-[#004B8F] py-16 sm:py-20 md:py-24 lg:py-32">
-      {/* Background Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#001B3B] via-[#003366] to-[#004B8F]" />
-
-      <Container>
+    <section id="faqs" className="w-full py-24 bg-gradient-to-b from-[#003366] via-[#002B5B] to-[#001B3B] relative overflow-hidden">
+      {/* Background Overlay */}
+      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+      
+      <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16 relative z-10"
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-3xl mx-auto mb-16"
         >
           <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20">
+            <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
               <HelpCircle className="w-6 h-6 text-white" />
             </div>
             <span className="text-white/80 font-semibold text-sm uppercase tracking-wider">
@@ -170,8 +171,8 @@ const FAQs = () => {
             Contact Support
           </a>
         </motion.div>
-      </Container>
-    </div>
+      </div>
+    </section>
   );
 };
 

@@ -33,8 +33,11 @@ const features = [
 
 const AboutUs = () => {
   return (
-    <section className="w-full py-20 bg-gradient-to-b from-[#001B3B] via-[#003366] to-[#004B8F]" id="about">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+    <section className="w-full py-24 bg-gradient-to-b from-[#001B3B] via-[#002B5B] to-[#003366] relative overflow-hidden" id="about">
+      {/* Background Overlay */}
+      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+      
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Left Column - Content */}
           <motion.div

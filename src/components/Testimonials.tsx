@@ -227,11 +227,10 @@ const Testimonials = () => {
   }
 
   return (
-    <div id="testimonials" className="bg-gradient-to-b from-[#0EA5E9] to-[#0284C7] py-16 sm:py-20 md:py-24 lg:py-32 relative">
+    <div id="testimonials" className="bg-[#0891B2] py-16 sm:py-20 md:py-24 lg:py-32 relative">
       {/* Background Elements */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0EA5E9]/10 via-[#0284C7]/30 to-[#0EA5E9]/80" />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center" />
       </div>
 
       <Container className="relative">

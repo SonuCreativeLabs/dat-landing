@@ -10,14 +10,6 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  /* Custom clip paths for hero section */
-  .clip-path-left {
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 100% 50%);
-  }
-
-  .clip-path-right {
-    clip-path: polygon(0 0, 100% 0, 0 50%, 100% 100%, 0 100%);
-  }
 }
 
 /* Container styles */
@@ -26,12 +18,6 @@
   margin-left: auto;
   margin-right: auto;
   position: relative;
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(2px);
-  border-radius: 2rem;
-  overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  min-height: 80vh;
 }
 
 @media (min-width: 1280px) {
@@ -46,7 +32,7 @@
   width: 100%;
   min-height: 85vh;
   overflow: hidden;
-  isolation: isolate;
+  background: transparent;
 }
 
 .hero-content {
@@ -57,19 +43,14 @@
 
 /* Modern box styles */
 .modern-box {
-  background-color: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
+  background-color: white;
   border-radius: 2rem;
-  box-shadow: 
-    0 10px 30px -5px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
 }
 
 .modern-box:hover {
-  box-shadow: 
-    0 20px 40px -5px rgba(0, 0, 0, 0.15),
-    0 8px 12px -2px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
 /* Title styles */
@@ -85,31 +66,6 @@
   font-size: clamp(1.125rem, 2vw, 1.5rem);
   line-height: 1.5;
   color: #1B4332;
-}
-
-/* Text box styles */
-.text-box {
-  background-color: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  transition: all 0.3s ease;
-}
-
-.text-box-cutout {
-  position: relative;
-  overflow: hidden;
-}
-
-.text-box-cutout::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2rem;
-  background: inherit;
-  transform: translateY(-100%);
-  border-top-left-radius: 2rem;
-  border-top-right-radius: 2rem;
 }
 
 /* Button styles */
@@ -163,16 +119,16 @@
   }
 }
 
-/* Remove unused styles */
-.animate-fade-in,
-.cutout-shadow,
-.text-shadow,
-.rounded-cutout,
-.marquee-container,
-.marquee-content,
-.animate-blob,
-.clip-hero {
-  display: none;
+/* Card styles */
+.card {
+  border-radius: 24px;
+  background: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
 /* Animation keyframes */
@@ -189,130 +145,4 @@
 
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out forwards;
-}
-
-/* Cutout effect styles */
-.cutout-shadow {
-  box-shadow: 
-    0 10px 30px -5px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05),
-    inset 0 2px 4px rgba(255, 255, 255, 0.5);
-}
-
-.text-shadow {
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Image cutout styles */
-.rounded-cutout {
-  border-radius: 2.5rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.rounded-cutout::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom right,
-    rgba(255, 255, 255, 0.1),
-    rgba(255, 255, 255, 0.05)
-  );
-  border-radius: inherit;
-}
-
-/* Marquee animation */
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.marquee-container {
-  width: 100%;
-  overflow: hidden;
-  position: relative;
-  line-height: 1.5;
-}
-
-.marquee-content {
-  display: inline-flex;
-  position: relative;
-  white-space: nowrap;
-  animation: marquee 20s linear infinite;
-  will-change: transform;
-}
-
-/* Optional: Pause on hover */
-.marquee-content:hover {
-  animation-play-state: paused;
-}
-
-@keyframes twinkle {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 1; }
-}
-
-@keyframes blob {
-  0% {
-    transform: translate(0px, 0px) scale(1);
-  }
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-  100% {
-    transform: translate(0px, 0px) scale(1);
-  }
-}
-
-.animate-blob {
-  animation: blob 7s infinite;
-}
-
-.animation-delay-2000 {
-  animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-  animation-delay: 4s;
-}
-
-.clip-hero {
-  clip-path: polygon(0 0, 100% 0, 100% 80%, 50% 100%, 0 80%);
-}
-
-/* Modern card styles */
-.modern-card {
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  box-shadow: 
-    0 10px 30px -5px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-}
-
-.modern-card-cutout {
-  position: relative;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  box-shadow: 
-    0 10px 30px -5px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-  clip-path: polygon(
-    0 0,
-    calc(100% - 800px) 0,
-    100% 800px,
-    100% 100%,
-    0 100%
-  );
 }

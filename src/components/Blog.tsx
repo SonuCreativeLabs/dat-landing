@@ -314,10 +314,10 @@ const Blog = () => {
 
   if (isLoading) {
     return (
-      <div id="blog" className="bg-gray-50">
+      <div id="blog" className="w-full py-24 bg-gradient-to-b from-[#004B8F] via-[#003D7A] to-[#003366] relative overflow-hidden">
         <Container>
           <div className="flex items-center justify-center min-h-[400px]">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-white" />
           </div>
         </Container>
       </div>
@@ -325,8 +325,11 @@ const Blog = () => {
   }
 
   return (
-    <Section className="bg-gradient-to-b from-[#001B3B] via-[#003366] to-[#004B8F]" id="blog">
-      <Container>
+    <Section className="w-full py-24 bg-gradient-to-b from-[#004B8F] via-[#003D7A] to-[#003366] relative overflow-hidden" id="blog">
+      {/* Background Overlay */}
+      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+      
+      <Container className="relative z-10">
         <div className="text-center mb-12">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}

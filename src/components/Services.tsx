@@ -73,11 +73,11 @@ const services = [
 
 const Services = () => {
   return (
-    <section id="services" className="relative py-20 bg-[#004B8F] overflow-hidden">
-      {/* Background Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#001B3B] via-[#003366] to-[#004B8F]" />
-
-      <div className="relative container mx-auto px-4">
+    <section id="services" className="w-full py-24 bg-gradient-to-b from-[#003366] via-[#003D7A] to-[#004B8F] relative overflow-hidden">
+      {/* Background Overlay */}
+      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+      
+      <div className="relative container mx-auto px-4 z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -85,7 +85,7 @@ const Services = () => {
           transition={{ duration: 0.5 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <span className="inline-block px-4 py-1 mb-4 text-sm font-medium bg-white/10 backdrop-blur-md text-white rounded-full border border-white/20">
+          <span className="inline-block px-4 py-1 mb-4 text-sm font-medium bg-white/10 text-white rounded-full border border-white/20">
             🛠 Our Services
           </span>
           <h2 className="text-4xl font-bold text-white mb-4">
