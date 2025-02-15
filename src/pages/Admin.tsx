@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEffect, useState } from "react";
 import { useNavigate, Outlet, Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -57,8 +58,17 @@ import BlogEditor from '@/components/admin/BlogEditor';
 import ImageUpload from '@/components/admin/ImageUpload';
 import { logActivity } from '@/lib/activity-logger';
 import ActivityLogs from '@/components/admin/ActivityLogs';
+import JustDialLeads from "@/components/admin/JustDialLeads";
 
-type ActivePage = 'dashboard' | 'enquiry' | 'testimonials' | 'archive' | 'users' | 'settings' | 'help' | 'blog' | 'activity';
+interface Enquiry {
+  id: string;
+  status: EnquiryStatus;
+  email: string;
+  created_at: string;
+  archived: boolean;
+}
+
+type ActivePage = 'dashboard' | 'enquiry' | 'testimonials' | 'archive' | 'users' | 'settings' | 'help' | 'blog' | 'activity' | 'justdial';
 
 const SIDEBAR_ITEMS = [
   {
@@ -105,6 +115,11 @@ const SIDEBAR_ITEMS = [
     title: "Activity",
     icon: Activity,
     href: "#activity"
+  },
+  {
+    title: "JustDial Leads",
+    icon: MessageSquare,
+    href: "#justdial"
   }
 ] as const;
 
@@ -123,7 +138,7 @@ const Admin = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("messages");
   const [activePage, setActivePage] = useState<ActivePage>("dashboard");
-  const [enquiries, setEnquiries] = useState([]);
+  const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<EnquiryStatus | null>(null);
 
   // Fetch status counts
@@ -785,6 +800,13 @@ const Admin = () => {
                     </div>
                   </div>
                   <ActivityLogs />
+                </div>
+              )}
+
+              {activePage === 'justdial' && (
+                <div>
+                  <h1 className="text-2xl font-semibold mb-6">JustDial Lead Management</h1>
+                  <JustDialLeads />
                 </div>
               )}
             </>
