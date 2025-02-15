@@ -6,6 +6,48 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+const htmlResponse = `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dreams Air Tech - JustDial Integration</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.5;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #0284C7; }
+        .status { 
+            padding: 1rem;
+            background: #e6f3ff;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dreams Air Tech - JustDial Integration</h1>
+        <div class="status">
+            ✅ Integration endpoint is active and ready to receive leads
+        </div>
+        <p>This endpoint is configured to receive leads from JustDial's lead forwarding system.</p>
+        <p>For technical support, please contact the Dreams Air Tech development team.</p>
+    </div>
+</body>
+</html>
+`
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -14,6 +56,17 @@ serve(async (req) => {
 
   try {
     console.log('Received request:', req.method)
+
+    // Check if it's a browser request (looking for HTML)
+    const acceptHeader = req.headers.get('accept') || '';
+    if (acceptHeader.includes('text/html')) {
+      return new Response(htmlResponse, { 
+        headers: { 
+          ...corsHeaders,
+          'Content-Type': 'text/html'
+        }
+      });
+    }
 
     // Only allow GET requests since JustDial sends data via URL parameters
     if (req.method !== 'GET') {
