@@ -59,16 +59,11 @@ import ImageUpload from '@/components/admin/ImageUpload';
 import { logActivity } from '@/lib/activity-logger';
 import ActivityLogs from '@/components/admin/ActivityLogs';
 import JustDialLeads from "@/components/admin/JustDialLeads";
-
-interface Enquiry {
-  id: string;
-  status: EnquiryStatus;
-  email: string;
-  created_at: string;
-  archived: boolean;
-}
+import type { EnquiryStatus, Enquiry } from "@/integrations/supabase/types";
 
 type ActivePage = 'dashboard' | 'enquiry' | 'testimonials' | 'archive' | 'users' | 'settings' | 'help' | 'blog' | 'activity' | 'justdial';
+
+type TestimonialStatus = "pending" | "approved" | "rejected";
 
 const SIDEBAR_ITEMS = [
   {
@@ -123,23 +118,20 @@ const SIDEBAR_ITEMS = [
   }
 ] as const;
 
-type TestimonialStatus = "pending" | "approved" | "rejected";
-type EnquiryStatus = 
-  | "new" 
-  | "in_progress"
-  | "contacted"
-  | "scheduled"
-  | "completed"
-  | "cancelled"
-  | "resolved";
-
 const Admin = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("messages");
   const [activePage, setActivePage] = useState<ActivePage>("dashboard");
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
-  const [selectedStatus, setSelectedStatus] = useState<EnquiryStatus | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<EnquiryStatus | undefined>(undefined);
+  const [filters, setFilters] = useState({
+    actionType: undefined,
+    entityType: undefined,
+    startDate: undefined,
+    endDate: undefined,
+    searchTerm: ''
+  });
 
   // Fetch status counts
   const { data: statusCounts = {
@@ -304,6 +296,7 @@ const Admin = () => {
       });
 
       await supabase.auth.signOut();
+      setSelectedStatus(undefined);
       navigate("/login");
     } catch (error) {
       console.error("Logout error:", error);
@@ -421,6 +414,17 @@ const Admin = () => {
   }, [navigate]);
 
   const currentTab = location.pathname.split('/')[2] || 'dashboard';
+
+  const clearFilters = () => {
+    setSelectedStatus(undefined);
+    setFilters({
+      actionType: undefined,
+      entityType: undefined,
+      startDate: undefined,
+      endDate: undefined,
+      searchTerm: ''
+    });
+  };
 
   if (isCheckingAuth) {
     return (
@@ -542,9 +546,9 @@ const Admin = () => {
                         className={cn(
                           "p-4 rounded-lg flex flex-col gap-2 bg-white border border-gray-200",
                           "cursor-pointer hover:ring-2 hover:ring-offset-2 transition-all",
-                          selectedStatus === null && "ring-2 ring-offset-2 ring-gray-400"
+                          selectedStatus === undefined && "ring-2 ring-offset-2 ring-gray-400"
                         )}
-                        onClick={() => setSelectedStatus(null)}
+                        onClick={() => setSelectedStatus(undefined)}
                       >
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium text-gray-900">All Enquiries</span>

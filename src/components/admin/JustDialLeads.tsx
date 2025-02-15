@@ -34,8 +34,12 @@ export default function JustDialLeads() {
 
       if (error) throw error;
       setLeads(data || []);
-    } catch (err) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred');
+      }
     } finally {
       setLoading(false);
     }
@@ -50,8 +54,12 @@ export default function JustDialLeads() {
 
       if (error) throw error;
       fetchLeads();
-    } catch (err) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred');
+      }
     }
   };
 
