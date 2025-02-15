@@ -206,149 +206,161 @@ export default function TestimonialForm() {
   }
 
   return (
-    <div className="w-full max-w-xl mx-auto bg-white rounded-2xl shadow-lg p-8">
-      <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Share Your Experience</h3>
-      <Toaster richColors />
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700">Name</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="Your name" 
-                      className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="location"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700">Location</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="Your location" 
-                      className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="service_type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700">Service Type</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="bg-gray-50/50 border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                        <SelectValue placeholder="Select service type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent position="popper">
-                      <SelectItem value="appliance_sales" className="cursor-pointer">Appliance Sales</SelectItem>
-                      <SelectItem value="appliance_service" className="cursor-pointer">Appliance Service</SelectItem>
-                      <SelectItem value="appliance_rentals" className="cursor-pointer">Appliance Rentals</SelectItem>
-                      <SelectItem value="others" className="cursor-pointer">Others</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="rating"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700">Rating</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-gray-50/50 border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                        <SelectValue placeholder="Select rating" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="bg-white shadow-md border-gray-200">
-                      {ratings.map((rating) => (
-                        <SelectItem 
-                          key={rating.value} 
-                          value={rating.value}
-                          className="hover:bg-gray-50 cursor-pointer"
-                        >
-                          {rating.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <FormField
-            control={form.control}
-            name="message"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-gray-700">Your Message</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Share your experience with our service..."
-                    className="min-h-[120px] resize-none bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-[100] p-4">
+      <div className="w-full max-w-xl mx-auto bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 max-h-[85vh] md:max-h-[90vh] overflow-y-auto relative">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-900">Share Your Experience</h3>
           <Button
-            type="submit"
-            className={cn(
-              "w-full md:w-auto px-8 py-2.5 font-medium rounded-lg transition-all duration-200",
-              isSubmitting 
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 text-white hover:shadow-md"
-            )}
-            disabled={isSubmitting || !supabaseInitialized}
+            onClick={() => window.close()}
+            variant="ghost"
+            size="icon"
+            className="hover:bg-gray-100 rounded-full -mr-2 -mt-2"
           >
-            {isSubmitting ? (
-              <div className="flex items-center justify-center">
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                <span>Submitting...</span>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center">
-                <Send className="mr-2 h-4 w-4" />
-                <span>Submit Review</span>
-              </div>
-            )}
+            <X className="w-5 h-5 text-gray-500" />
           </Button>
-        </form>
-      </Form>
+        </div>
+        <Toaster richColors />
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 text-sm sm:text-base">Name</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Your name" 
+                        className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="location"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 text-sm sm:text-base">Location</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Your location" 
+                        className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+              <FormField
+                control={form.control}
+                name="service_type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 text-sm sm:text-base">Service Type</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="bg-gray-50/50 border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                          <SelectValue placeholder="Select service type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent position="popper" className="max-h-[200px]">
+                        <SelectItem value="appliance_sales" className="cursor-pointer">Appliance Sales</SelectItem>
+                        <SelectItem value="appliance_service" className="cursor-pointer">Appliance Service</SelectItem>
+                        <SelectItem value="appliance_rentals" className="cursor-pointer">Appliance Rentals</SelectItem>
+                        <SelectItem value="others" className="cursor-pointer">Others</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="rating"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 text-sm sm:text-base">Rating</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="bg-gray-50/50 border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                          <SelectValue placeholder="Select rating" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="bg-white shadow-md border-gray-200 max-h-[200px]">
+                        {ratings.map((rating) => (
+                          <SelectItem 
+                            key={rating.value} 
+                            value={rating.value}
+                            className="hover:bg-gray-50 cursor-pointer"
+                          >
+                            {rating.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="message"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700 text-sm sm:text-base">Your Message</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Share your experience with our service..."
+                      className="min-h-[80px] sm:min-h-[120px] resize-none bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button
+              type="submit"
+              className={cn(
+                "w-full md:w-auto px-6 sm:px-8 py-2 sm:py-2.5 font-medium rounded-lg transition-all duration-200",
+                isSubmitting 
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700 text-white hover:shadow-md"
+              )}
+              disabled={isSubmitting || !supabaseInitialized}
+            >
+              {isSubmitting ? (
+                <div className="flex items-center justify-center">
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <span>Submitting...</span>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center">
+                  <Send className="mr-2 h-4 w-4" />
+                  <span>Submit Review</span>
+                </div>
+              )}
+            </Button>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 }

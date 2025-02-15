@@ -504,7 +504,7 @@ const Blog = () => {
             className="inline-flex items-center gap-3 px-8 py-4 bg-white text-[#003366] rounded-xl font-semibold hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl text-lg"
           >
             <Phone className="w-6 h-6" />
-            🔧 Book Your Service Now
+            Book Your Service Now
           </a>
         </motion.div>
       </Container>
