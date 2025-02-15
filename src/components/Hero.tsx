@@ -16,17 +16,18 @@ const Hero = () => {
         {/* Content Container */}
         <div className="relative aspect-[16/10] flex flex-col items-center justify-center text-center p-8">
           {/* Top Badge */}
-          <div className="bg-[#0891B2] px-6 py-2 rounded-full mb-12">
-            <p className="text-lg font-semibold flex items-center gap-2 text-white">
+          <div className="bg-[#003366] px-6 py-2.5 rounded-full mb-12 border border-white/20 shadow-lg backdrop-blur-sm">
+            <p className="text-lg font-semibold flex items-center gap-2 text-white font-sans">
               <span className="text-xl">✨</span> #1 Home Appliance Solutions in Chennai
             </p>
           </div>
 
           {/* Main Title */}
-          <h1 className="text-7xl font-extrabold mb-8 text-white tracking-tight">
-            Experts in Tech That Keeps<br/>You Cool and Clean
+          <h1 className="text-7xl font-black mb-8 text-white tracking-tight drop-shadow-xl font-sans leading-tight">
+            Experts in Tech That Keeps<br/>
+            <span className="text-[#003366] bg-white/90 px-4 py-2 rounded-lg backdrop-blur-sm">You Cool and Clean</span>
           </h1>
-          <h2 className="text-3xl font-medium mb-12 text-white">
+          <h2 className="text-3xl font-bold mb-12 text-white drop-shadow-lg font-sans">
             AC & Appliance Repair and Rentals in Chennai
           </h2>
 
@@ -37,7 +38,10 @@ const Hero = () => {
                 const contactSection = document.getElementById('contact');
                 contactSection?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="bg-white text-[#0891B2] px-8 py-4 rounded-full text-xl font-semibold hover:bg-opacity-90 transition-all duration-300 flex items-center gap-2"
+              className="bg-[#003366] text-white px-8 py-4 rounded-full text-xl font-bold 
+                       hover:bg-[#002B5B] transition-all duration-300 flex items-center gap-2 
+                       border border-white/20 hover:border-white/40 shadow-lg hover:shadow-xl
+                       backdrop-blur-sm font-sans"
             >
               Book Service Now <span className="text-2xl">→</span>
             </button>
@@ -46,7 +50,9 @@ const Hero = () => {
                 const productsSection = document.getElementById('products');
                 productsSection?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="bg-[#0891B2] border-2 border-white text-white px-8 py-4 rounded-full text-xl font-semibold hover:bg-opacity-90 transition-all duration-300 flex items-center gap-2"
+              className="bg-white text-[#001B3B] px-8 py-4 rounded-full text-xl font-bold 
+                       hover:bg-white/90 transition-all duration-300 flex items-center gap-2 
+                       shadow-lg hover:shadow-xl backdrop-blur-sm font-sans"
             >
               Explore Products <span className="text-2xl">→</span>
             </button>

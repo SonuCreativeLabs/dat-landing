@@ -53,20 +53,20 @@ const FAQItem = ({ question, answer, isOpen, onClick }: {
     >
       <button
         onClick={onClick}
-        className={`flex justify-between items-center w-full p-6 text-left transition-colors duration-200 ${isOpen ? 'bg-white/20' : 'hover:bg-white/10'}`}
+        className={`flex justify-between items-center w-full p-6 text-left transition-colors duration-200 ${isOpen ? 'bg-white' : 'hover:bg-white/10'}`}
       >
         <div className="flex items-center gap-4 flex-1">
           <motion.div
             initial={false}
-            className={`flex-shrink-0 w-10 h-10 rounded-full ${isOpen ? 'bg-white' : 'bg-white/20'} flex items-center justify-center transition-colors duration-200`}
+            className={`flex-shrink-0 w-10 h-10 rounded-full ${isOpen ? 'bg-[#001B3B]' : 'bg-white/20'} flex items-center justify-center transition-colors duration-200`}
           >
             {isOpen ? (
-              <X className={`w-5 h-5 text-[#003366]`} />
+              <X className={`w-5 h-5 text-white`} />
             ) : (
               <Plus className={`w-5 h-5 text-white`} />
             )}
           </motion.div>
-          <span className={`text-lg font-semibold ${isOpen ? 'text-white' : 'text-white/90'} transition-colors duration-200`}>
+          <span className={`text-lg font-semibold ${isOpen ? 'text-[#001B3B]' : 'text-white/90'} transition-colors duration-200`}>
             {question}
           </span>
         </div>
@@ -80,11 +80,11 @@ const FAQItem = ({ question, answer, isOpen, onClick }: {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="p-6 pl-20 text-white/80">
+            <div className="p-6 pl-20 text-gray-600 bg-white">
               {answer.includes('[Areas We Serve]') ? (
                 <>
                   {answer.split('[Areas We Serve]')[0]}
-                  <a href="#about" className="text-white hover:text-white/90 font-medium">
+                  <a href="#about" className="text-[#001B3B] hover:text-[#003366] font-medium">
                     Areas We Serve
                   </a>
                   {answer.split(']')[1]}
