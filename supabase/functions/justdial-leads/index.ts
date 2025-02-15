@@ -4,12 +4,15 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
 }
 
 const htmlResponse = `
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dreams Air Tech - JustDial Integration</title>
     <style>
         body {
@@ -19,6 +22,7 @@ const htmlResponse = `
             max-width: 800px;
             margin: 0 auto;
             background: #f5f5f5;
+            color: #333;
         }
         .container {
             background: white;
@@ -26,12 +30,32 @@ const htmlResponse = `
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        h1 { color: #0284C7; }
+        h1 { 
+            color: #0284C7;
+            margin-bottom: 1rem;
+        }
         .status { 
             padding: 1rem;
             background: #e6f3ff;
             border-radius: 4px;
             margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .status::before {
+            content: "✅";
+        }
+        p {
+            margin: 1rem 0;
+            color: #666;
+        }
+        .footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            font-size: 0.875rem;
+            color: #666;
         }
     </style>
 </head>
@@ -39,31 +63,48 @@ const htmlResponse = `
     <div class="container">
         <h1>Dreams Air Tech - JustDial Integration</h1>
         <div class="status">
-            ✅ Integration endpoint is active and ready to receive leads
+            Integration endpoint is active and ready to receive leads
         </div>
         <p>This endpoint is configured to receive leads from JustDial's lead forwarding system.</p>
-        <p>For technical support, please contact the Dreams Air Tech development team.</p>
+        <p>The integration is working properly and all leads will be automatically processed.</p>
+        <div class="footer">
+            <p>For technical support, please contact the Dreams Air Tech development team.</p>
+            <p>Last checked: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</p>
+        </div>
     </div>
 </body>
 </html>
 `
 
 serve(async (req) => {
+  console.log('Request received:', {
+    method: req.method,
+    url: req.url,
+    headers: Object.fromEntries(req.headers.entries())
+  })
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    console.log('Received request:', req.method)
-
     // Check if it's a browser request (looking for HTML)
     const acceptHeader = req.headers.get('accept') || '';
-    if (acceptHeader.includes('text/html')) {
+    const userAgent = req.headers.get('user-agent') || '';
+    
+    console.log('Headers:', {
+      accept: acceptHeader,
+      userAgent: userAgent
+    })
+
+    if (acceptHeader.includes('text/html') || userAgent.includes('Mozilla')) {
+      console.log('Serving HTML response for browser request')
       return new Response(htmlResponse, { 
         headers: { 
           ...corsHeaders,
-          'Content-Type': 'text/html'
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'no-store, max-age=0'
         }
       });
     }

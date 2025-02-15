@@ -2,12 +2,6 @@
   "rewrites": [
     { 
       "source": "/leads",
-      "has": [
-        {
-          "type": "query",
-          "key": "leadid"
-        }
-      ],
       "destination": "https://ufywpifbqbzampiiuetc.supabase.co/functions/v1/justdial-leads"
     },
     { "source": "/service", "destination": "/index.html" },
