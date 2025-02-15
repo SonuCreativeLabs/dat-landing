@@ -81,10 +81,10 @@ const Header = () => {
   // Header animation variants
   const headerVariants = {
     initial: { 
-      backgroundColor: "#001B3B",
+      backgroundColor: "#FFFFFF",
     },
     scrolled: { 
-      backgroundColor: "#001B3B",
+      backgroundColor: "#FFFFFF",
     },
   };
 
@@ -121,7 +121,7 @@ const Header = () => {
       variants={headerVariants}
       initial="initial"
       animate={scrolled ? "scrolled" : "initial"}
-      className="fixed top-0 left-0 right-0 z-50 transition-colors duration-300 bg-[#001B3B]"
+      className="fixed top-0 left-0 right-0 z-50 transition-colors duration-300 bg-white shadow-md"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="flex items-center justify-between h-16 md:h-20">
@@ -137,7 +137,7 @@ const Header = () => {
             <img 
               src={BRAND_ASSETS.LOGO}
               alt="Dreams Air Tech Logo" 
-              className="w-full h-full object-contain relative z-10 drop-shadow-lg"
+              className="w-full h-full object-contain relative z-10"
             />
           </motion.button>
 
@@ -152,8 +152,8 @@ const Header = () => {
                 whileHover="hover"
                 custom={i}
                 onClick={() => scrollToSection(item.id)}
-                className={`text-sm font-medium transition-colors hover:text-blue-400 ${
-                  activeSection === item.id ? "text-blue-400" : "text-white"
+                className={`text-sm font-medium transition-colors hover:text-[#003366] ${
+                  activeSection === item.id ? "text-[#003366]" : "text-gray-600"
                 }`}
               >
                 {item.label}
@@ -166,7 +166,7 @@ const Header = () => {
               whileHover="hover"
               custom={navigation.length}
               href={`tel:${CONTACT_INFO.PHONE}`}
-              className="inline-flex items-center px-4 py-2 border border-white text-sm font-medium rounded-md text-white hover:bg-white hover:text-[#001B3B] transition-colors"
+              className="inline-flex items-center px-4 py-2 border border-[#003366] text-sm font-medium rounded-md text-[#003366] hover:bg-[#003366] hover:text-white transition-colors"
             >
               Contact Us
             </motion.a>
@@ -175,7 +175,7 @@ const Header = () => {
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-white hover:text-blue-400 hover:bg-white/10 focus:outline-none"
+            className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-[#003366] hover:bg-gray-100 focus:outline-none"
           >
             <span className="sr-only">Open main menu</span>
             {isMenuOpen ? (
@@ -194,7 +194,7 @@ const Header = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#001B3B]"
+            className="md:hidden bg-white border-t border-gray-100"
           >
             <div className="px-4 pt-2 pb-3 space-y-1">
               {navigation.map((item) => (
@@ -203,8 +203,8 @@ const Header = () => {
                   onClick={() => scrollToSection(item.id)}
                   className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${
                     activeSection === item.id
-                      ? "text-blue-400 bg-white/10"
-                      : "text-white hover:text-blue-400 hover:bg-white/10"
+                      ? "text-[#003366] bg-gray-50"
+                      : "text-gray-600 hover:text-[#003366] hover:bg-gray-50"
                   }`}
                 >
                   {item.label}
@@ -212,7 +212,7 @@ const Header = () => {
               ))}
               <a
                 href={`tel:${CONTACT_INFO.PHONE}`}
-                className="block w-full text-center px-3 py-2 rounded-md text-base font-medium text-[#001B3B] bg-white hover:bg-white/90 mt-4"
+                className="block w-full text-center px-3 py-2 rounded-md text-base font-medium text-white bg-[#003366] hover:bg-[#002B5B] transition-colors mt-4"
               >
                 Contact Us
               </a>

@@ -312,9 +312,13 @@ const Contact = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full flex items-center justify-center gap-2 px-8 py-4 bg-[#003366] 
-                            text-white font-semibold rounded-xl transition-all duration-300 
-                            hover:bg-[#002B5B] hover:-translate-y-0.5
+                  className={`w-full flex items-center justify-center gap-2 px-8 py-4 
+                            bg-gradient-to-r from-[#0EA5E9] to-[#38BDF8] 
+                            text-white font-semibold rounded-xl 
+                            hover:from-[#38BDF8] hover:to-[#0EA5E9]
+                            transition-all duration-300 
+                            shadow-[0_0_20px_rgba(14,165,233,0.3)] 
+                            hover:shadow-[0_0_25px_rgba(14,165,233,0.5)]
                             disabled:opacity-50 disabled:cursor-not-allowed
                             ${isSubmitting ? 'animate-pulse' : ''}`}
                 >
