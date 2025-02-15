@@ -11,33 +11,40 @@ const Header = () => {
 
   // Handle scroll effect
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      const isScrolled = window.scrollY > 20;
-      setScrolled(isScrolled);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const isScrolled = window.scrollY > 20;
+          setScrolled(isScrolled);
 
-      // Update active section based on scroll position with mobile-friendly offset
-      const sections = ["about", "services", "products", "testimonials", "blog", "faqs", "contact"];
-      let currentSection = "";
-      
-      const offset = window.innerWidth < 768 ? 100 : 150; // Adjusted offset for mobile
-      
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          if (rect.top <= offset && rect.bottom >= offset) {
-            currentSection = section;
-            break;
+          // Update active section based on scroll position with mobile-friendly offset
+          const sections = ["about", "services", "products", "testimonials", "blog", "faqs", "contact"];
+          let currentSection = "";
+          
+          const offset = window.innerWidth < 768 ? 100 : 150;
+          
+          for (const section of sections) {
+            const element = document.getElementById(section);
+            if (element) {
+              const rect = element.getBoundingClientRect();
+              if (rect.top <= offset && rect.bottom >= offset) {
+                currentSection = section;
+                break;
+              }
+            }
           }
-        }
-      }
-      
-      if (currentSection !== activeSection) {
-        setActiveSection(currentSection);
+          
+          if (currentSection !== activeSection) {
+            setActiveSection(currentSection);
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [activeSection]);
 
@@ -55,13 +62,13 @@ const Header = () => {
       const elementPosition = element.getBoundingClientRect().top + window.scrollY;
       const offsetPosition = elementPosition - headerHeight - mobileOffset;
 
-      // Add a small delay to ensure menu is closed before scrolling
-      setTimeout(() => {
+      // Use requestAnimationFrame for smoother scrolling
+      requestAnimationFrame(() => {
         window.scrollTo({
           top: offsetPosition,
-          behavior: "smooth"
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
         });
-      }, 50);
+      });
     }
   };
 
@@ -81,12 +88,10 @@ const Header = () => {
   // Header animation variants
   const headerVariants = {
     initial: { 
-      backgroundColor: "rgba(255, 255, 255, 0.8)",
-      backdropFilter: "blur(10px)",
+      backgroundColor: "#FFFFFF",
     },
     scrolled: { 
-      backgroundColor: "rgba(255, 255, 255, 0.95)",
-      backdropFilter: "blur(16px)",
+      backgroundColor: "#FFFFFF",
     },
   };
 
@@ -123,14 +128,7 @@ const Header = () => {
       variants={headerVariants}
       initial="initial"
       animate={scrolled ? "scrolled" : "initial"}
-      className="fixed top-0 left-0 right-0 z-50 border-b border-white/30"
-      style={{
-        boxShadow: scrolled 
-          ? "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)" 
-          : "0 2px 4px rgba(255, 255, 255, 0.2)",
-        WebkitBackdropFilter: scrolled ? "blur(16px)" : "blur(10px)",
-        backdropFilter: scrolled ? "blur(16px)" : "blur(10px)",
-      }}
+      className="fixed top-0 left-0 right-0 z-50 transition-colors duration-300 bg-white shadow-md"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="flex items-center justify-between h-16 md:h-20">
@@ -143,11 +141,10 @@ const Header = () => {
             transition={{ duration: 0.5 }}
             className="w-32 md:w-40 relative p-2 cursor-pointer"
           >
-            <div className="absolute inset-0 bg-white/60 rounded-lg filter blur-md" />
             <img 
               src={BRAND_ASSETS.LOGO}
               alt="Dreams Air Tech Logo" 
-              className="w-full h-full object-contain relative z-10 drop-shadow-lg"
+              className="w-full h-full object-contain relative z-10"
             />
           </motion.button>
 
@@ -162,8 +159,8 @@ const Header = () => {
                 whileHover="hover"
                 custom={i}
                 onClick={() => scrollToSection(item.id)}
-                className={`text-sm font-medium transition-colors hover:text-blue-600 ${
-                  activeSection === item.id ? "text-blue-600" : "text-gray-700"
+                className={`text-sm font-medium transition-colors hover:text-[#003366] ${
+                  activeSection === item.id ? "text-[#003366]" : "text-gray-600"
                 }`}
               >
                 {item.label}
@@ -176,7 +173,7 @@ const Header = () => {
               whileHover="hover"
               custom={navigation.length}
               href={`tel:${CONTACT_INFO.PHONE}`}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+              className="inline-flex items-center px-4 py-2 border border-[#003366] text-sm font-medium rounded-md text-[#003366] hover:bg-[#003366] hover:text-white transition-colors"
             >
               Contact Us
             </motion.a>
@@ -185,7 +182,7 @@ const Header = () => {
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50 focus:outline-none"
+            className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-[#003366] hover:bg-gray-100 focus:outline-none"
           >
             <span className="sr-only">Open main menu</span>
             {isMenuOpen ? (
@@ -204,7 +201,7 @@ const Header = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-t border-gray-200"
+            className="md:hidden bg-white border-t border-gray-100"
           >
             <div className="px-4 pt-2 pb-3 space-y-1">
               {navigation.map((item) => (
@@ -213,8 +210,8 @@ const Header = () => {
                   onClick={() => scrollToSection(item.id)}
                   className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${
                     activeSection === item.id
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+                      ? "text-[#003366] bg-gray-50"
+                      : "text-gray-600 hover:text-[#003366] hover:bg-gray-50"
                   }`}
                 >
                   {item.label}
@@ -222,7 +219,7 @@ const Header = () => {
               ))}
               <a
                 href={`tel:${CONTACT_INFO.PHONE}`}
-                className="block w-full text-center px-3 py-2 rounded-md text-base font-medium text-white bg-blue-600 hover:bg-blue-700 mt-4"
+                className="block w-full text-center px-3 py-2 rounded-md text-base font-medium text-white bg-[#003366] hover:bg-[#002B5B] transition-colors mt-4"
               >
                 Contact Us
               </a>

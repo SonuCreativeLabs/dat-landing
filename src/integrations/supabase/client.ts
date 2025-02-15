@@ -1,27 +1,36 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Validate URL and key format
-const isValidSupabaseUrl = SUPABASE_URL?.match(/^https:\/\/[a-z0-9-]+\.supabase\.co$/i);
-const isValidAnonKey = SUPABASE_ANON_KEY?.match(/^ey[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/);
+// Validate configuration
+const config = {
+  url: supabaseUrl,
+  key: supabaseKey,
+  urlValid: typeof supabaseUrl === 'string' && supabaseUrl.length > 0,
+  keyValid: typeof supabaseKey === 'string' && supabaseKey.length > 0,
+};
 
-// Debug configuration
-console.log('Supabase Configuration:', {
-  url: SUPABASE_URL,
-  key: SUPABASE_ANON_KEY?.substring(0, 10) + '...',
-  urlValid: !!isValidSupabaseUrl,
-  keyValid: !!isValidAnonKey,
-});
+console.log('Supabase Configuration:', config);
 
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  throw new Error('Missing Supabase configuration. Please check your .env file.');
-}
+// Create a singleton instance
+let supabaseInstance: ReturnType<typeof createClient<Database>> | null = null;
 
-if (!isValidSupabaseUrl || !isValidAnonKey) {
-  throw new Error('Invalid Supabase configuration. Please check your .env file.');
-}
+export const supabase = (() => {
+  if (!supabaseInstance) {
+    if (!config.urlValid || !config.keyValid) {
+      throw new Error('Invalid Supabase configuration. Please check your environment variables.');
+    }
+    supabaseInstance = createClient<Database>(supabaseUrl, supabaseKey, {
+      auth: {
+        persistSession: true,
+        storageKey: 'dreams-air-tech-auth',
+      },
+    });
+  }
+  return supabaseInstance;
+})();
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Export singleton instance
+export default supabase;

@@ -1,7 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery, UseInfiniteQueryResult, InfiniteData } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Loader2, Calendar, Phone, Mail, X, Filter, Archive } from "lucide-react";
+import { MessageSquare, Loader2, Calendar, Phone, Mail, X, Filter, Archive, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import type { Database, EnquiryStatus, Enquiry } from "@/integrations/supabase/types";
 import {
@@ -184,16 +184,32 @@ const EnquiryCard = ({
   );
 };
 
+interface EnquiryPage {
+  data: Enquiry[];
+  count: number;
+  nextPage: number | null;
+}
+
+interface QueryParams {
+  pageParam: number;
+}
+
 interface EnquiryReviewProps {
   archived?: boolean;
   selectedStatus?: EnquiryStatus;
 }
+
+const ITEMS_PER_PAGE = 12;
+
+type QueryKey = [string, boolean, EnquiryStatus | undefined, number];
 
 const EnquiryReview = ({ archived = false, selectedStatus }: EnquiryReviewProps) => {
   const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null);
   const [comment, setComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [session, setSession] = useState<any>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   
   const queryClient = useQueryClient();
 
@@ -208,10 +224,54 @@ const EnquiryReview = ({ archived = false, selectedStatus }: EnquiryReviewProps)
       setSession(session);
     });
 
-    return () => subscription.unsubscribe();
+    // Cleanup subscription
+    return () => {
+      subscription?.unsubscribe();
+    };
   }, []);
 
-  // Update enquiry mutation
+  const {
+    data: enquiriesData,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteQuery({
+    queryKey: ["enquiries", archived, selectedStatus, ITEMS_PER_PAGE] as const,
+    queryFn: async ({ pageParam }: { pageParam: number }) => {
+      let query = supabase
+        .from("enquiries")
+        .select("*", { count: "exact" })
+        .eq("archived", archived)
+        .order("created_at", { ascending: false })
+        .range(pageParam * ITEMS_PER_PAGE, (pageParam + 1) * ITEMS_PER_PAGE - 1);
+
+      if (selectedStatus) {
+        query = query.eq("status", selectedStatus);
+      }
+
+      const { data, error, count } = await query;
+
+      if (error) throw error;
+      return {
+        data: data as Enquiry[],
+        count: count || 0,
+        nextPage: data.length === ITEMS_PER_PAGE ? pageParam + 1 : null
+      };
+    },
+    getNextPageParam: (lastPage: EnquiryPage) => lastPage.nextPage,
+    initialPageParam: 0,
+    refetchInterval: 30000
+  });
+
+  const enquiries = useMemo(() => 
+    enquiriesData?.pages.flatMap(page => page.data) ?? [],
+    [enquiriesData]
+  );
+
+  const totalCount = enquiriesData?.pages[0]?.count || 0;
+
+  // Optimistic update mutation
   const updateEnquiry = useMutation({
     mutationFn: async ({ id, status, comment }: { id: string; status?: EnquiryStatus; comment?: string }) => {
       const updateData: Partial<Enquiry> = {};
@@ -225,15 +285,67 @@ const EnquiryReview = ({ archived = false, selectedStatus }: EnquiryReviewProps)
 
       if (error) throw error;
     },
+    onMutate: async ({ id, status, comment }) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ["enquiries"] });
+
+      // Snapshot the previous value
+      const previousEnquiries = queryClient.getQueryData(["enquiries"]);
+
+      // Optimistically update
+      queryClient.setQueryData(["enquiries"], (old: any) => ({
+        pages: old.pages.map((page: any) => ({
+          ...page,
+          data: page.data.map((enquiry: Enquiry) =>
+            enquiry.id === id
+              ? { ...enquiry, status: status || enquiry.status, admin_comment: comment ?? enquiry.admin_comment }
+              : enquiry
+          )
+        }))
+      }));
+
+      return { previousEnquiries };
+    },
+    onError: (err, variables, context) => {
+      queryClient.setQueryData(["enquiries"], context?.previousEnquiries);
+      toast.error("Failed to update enquiry");
+    },
     onSuccess: () => {
+      toast.success("Enquiry updated successfully");
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["enquiries"] });
       setIsSubmitting(false);
-    },
-    onError: (error: any) => {
-      console.error("Mutation error:", error);
-      toast.error(error.message || "Failed to update status");
-    },
+    }
   });
+
+  // Load more handler
+  const handleLoadMore = () => {
+    if (!isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  // Render loading skeleton
+  const renderSkeleton = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {Array.from({ length: 6 }).map((_, index) => (
+        <div key={index} className="bg-white p-4 rounded-lg shadow-sm animate-pulse">
+          <div className="flex justify-between items-start gap-3">
+            <div className="flex-1">
+              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+              <div className="h-3 bg-gray-200 rounded w-1/2 mb-4"></div>
+              <div className="space-y-2">
+                <div className="h-3 bg-gray-200 rounded w-full"></div>
+                <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+              </div>
+            </div>
+            <div className="w-24 h-8 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   // Archive enquiry mutation
   const archiveEnquiry = useMutation({
@@ -353,29 +465,6 @@ const EnquiryReview = ({ archived = false, selectedStatus }: EnquiryReviewProps)
     }
   });
 
-  // Fetch enquiries
-  const { data: enquiries = [], isLoading } = useQuery<Enquiry[]>({
-    queryKey: ["enquiries", archived, selectedStatus],
-    queryFn: async () => {
-      console.log("Fetching enquiries with archived =", archived, "status =", selectedStatus);
-      let query = supabase
-        .from("enquiries")
-        .select("*")
-        .eq("archived", archived)
-        .order("created_at", { ascending: false });
-
-      if (selectedStatus) {
-        query = query.eq("status", selectedStatus);
-      }
-
-      const { data, error } = await query;
-
-      if (error) throw error;
-      console.log("Fetched enquiries:", data);
-      return data;
-    },
-  });
-
   // Ensure UI reflects the latest status
   useEffect(() => {
     if (selectedEnquiry) {
@@ -480,36 +569,70 @@ const EnquiryReview = ({ archived = false, selectedStatus }: EnquiryReviewProps)
     <div className="space-y-8">
       {/* Enquiry List */}
       <div>
-        <h2 className="text-lg font-semibold mb-4">
-          {archived ? "Archived Enquiries" : "Active Enquiries"}
-        </h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">
+            {archived ? "Archived Enquiries" : "Active Enquiries"}
+            <span className="ml-2 text-sm text-gray-500">
+              {totalCount} total
+            </span>
+          </h2>
+          {!isLoading && enquiries.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => queryClient.invalidateQueries({ queryKey: ["enquiries"] })}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Refresh
+            </Button>
+          )}
+        </div>
+
         {isLoading ? (
-          <div className="text-center py-8">
-            <Loader2 className="w-6 h-6 animate-spin mx-auto" />
-            <p className="text-sm text-gray-500 mt-2">
-              Loading {archived ? "archived" : "active"} enquiries...
-            </p>
-          </div>
-        ) : filteredEnquiries.length === 0 ? (
+          renderSkeleton()
+        ) : enquiries.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-sm text-gray-500">
               No {archived ? "archived" : "active"} enquiries found
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredEnquiries.map((enquiry) => (
-              <EnquiryCard
-                key={enquiry.id}
-                enquiry={enquiry}
-                onClick={() => setSelectedEnquiry(enquiry)}
-                onStatusChange={(status) => handleStatusChange(enquiry.id, status as EnquiryStatus)}
-                onArchive={(id) => archiveEnquiry.mutate(id)}
-                onUnarchive={(id) => unarchiveEnquiry.mutate(id)}
-                archived={archived}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {enquiries.map((enquiry) => (
+                <EnquiryCard
+                  key={enquiry.id}
+                  enquiry={enquiry}
+                  onClick={() => setSelectedEnquiry(enquiry)}
+                  onStatusChange={(status) => handleStatusChange(enquiry.id, status)}
+                  onArchive={(id) => archiveEnquiry.mutate(id)}
+                  onUnarchive={(id) => unarchiveEnquiry.mutate(id)}
+                  archived={archived}
+                />
+              ))}
+            </div>
+            
+            {hasNextPage && (
+              <div className="mt-6 text-center">
+                <Button
+                  variant="outline"
+                  onClick={handleLoadMore}
+                  disabled={isFetchingNextPage}
+                  className="min-w-[200px]"
+                >
+                  {isFetchingNextPage ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Loading more...
+                    </>
+                  ) : (
+                    'Load more enquiries'
+                  )}
+                </Button>
+              </div>
+            )}
+          </>
         )}
       </div>
 

@@ -6,6 +6,7 @@ import Admin from "./pages/Admin";
 import Login from "./pages/Login";
 import { Toaster } from "sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Layout from './components/Layout';
 
 const queryClient = new QueryClient();
 
@@ -32,20 +33,22 @@ function ErrorFallback({ error }: { error: Error }) {
 
 function App() {
   return (
-    <HelmetProvider>
-      <QueryClientProvider client={queryClient}>
-        <ErrorBoundary FallbackComponent={ErrorFallback}>
-          <Router>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/admin/*" element={<Admin />} />
-              <Route path="/login" element={<Login />} />
-            </Routes>
-          </Router>
-          <Toaster position="top-right" />
-        </ErrorBoundary>
-      </QueryClientProvider>
-    </HelmetProvider>
+    <Layout>
+      <HelmetProvider>
+        <QueryClientProvider client={queryClient}>
+          <ErrorBoundary FallbackComponent={ErrorFallback}>
+            <Router>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/admin/*" element={<Admin />} />
+                <Route path="/login" element={<Login />} />
+              </Routes>
+              <Toaster position="top-right" />
+            </Router>
+          </ErrorBoundary>
+        </QueryClientProvider>
+      </HelmetProvider>
+    </Layout>
   );
 }
 

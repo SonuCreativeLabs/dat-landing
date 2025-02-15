@@ -81,12 +81,9 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="relative py-20 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
+    <section id="contact" className="relative py-24 bg-[#001B3B] overflow-hidden">
       {/* Background Pattern */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[url('/patterns/dots.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/10 via-gray-900/50 to-gray-900/90" />
-      </div>
+      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
 
       <div className="relative container mx-auto px-4">
         <div className="flex flex-col lg:flex-row gap-12 max-w-7xl mx-auto">
@@ -100,64 +97,82 @@ const Contact = () => {
           >
             {/* Title */}
             <div>
-              <h2 className="text-3xl font-bold text-white mb-2">📞 Contact Us</h2>
-              <p className="text-gray-400">We're here to assist you with all your appliance service and rental needs. Get in touch with us anytime!</p>
+              <h2 className="text-4xl font-bold text-white mb-4">📞 Get in Touch</h2>
+              <p className="text-white/80 text-lg">
+                We're here to assist you with all your appliance service and rental needs. Reach out to us anytime!
+              </p>
             </div>
 
             <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-3">
+              <motion.div 
+                className="flex items-start gap-4"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="bg-[#003366] rounded-xl p-3">
                   <Phone className="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-white">Phone</h3>
-                  <p className="text-gray-400">{CONTACT_INFO.PHONE}</p>
-                  <p className="text-sm text-gray-500">24/7 Support Available</p>
+                  <p className="text-white/90">{CONTACT_INFO.PHONE}</p>
+                  <p className="text-sm text-white/60">24/7 Support Available</p>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="flex items-start gap-4">
-                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-3">
+              <motion.div 
+                className="flex items-start gap-4"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="bg-[#003366] rounded-xl p-3">
                   <Mail className="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-white">Email</h3>
-                  <p className="text-gray-400">{CONTACT_INFO.EMAIL}</p>
-                  <p className="text-sm text-gray-500">Online support 24/7</p>
+                  <p className="text-white/90">{CONTACT_INFO.EMAIL}</p>
+                  <p className="text-sm text-white/60">Online support 24/7</p>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="flex items-start gap-4">
-                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-3">
+              <motion.div 
+                className="flex items-start gap-4"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="bg-[#003366] rounded-xl p-3">
                   <MapPin className="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-white">Location</h3>
-                  <p className="text-gray-400">
+                  <p className="text-white/90">
                     15, 1st Main Rd, Udayam Nagar, Velachery, Chennai, Tamil Nadu-600042
                   </p>
                   <a 
                     href={CONTACT_INFO.ADDRESS.MAPS_LINK}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1 mt-2"
+                    className="text-sm text-white/80 hover:text-white transition-colors flex items-center gap-1 mt-2"
                   >
                     <Navigation className="w-4 h-4" />
                     Get Directions
                   </a>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="flex items-start gap-4">
-                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-3">
+              <motion.div 
+                className="flex items-start gap-4"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="bg-[#003366] rounded-xl p-3">
                   <Clock className="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-white">Business Hours</h3>
-                  <p className="text-gray-400">Monday - Sunday</p>
-                  <p className="text-sm text-gray-500">24/7 Service Available</p>
+                  <p className="text-white/90">Monday - Sunday</p>
+                  <p className="text-sm text-white/60">24/7 Service Available</p>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </motion.div>
 
@@ -169,16 +184,18 @@ const Contact = () => {
             transition={{ duration: 0.5 }}
             className="lg:w-2/3"
           >
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
-              <div className="mb-6">
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+              <div className="mb-8">
                 <h3 className="text-2xl font-bold text-white mb-2">💬 Send Us a Message</h3>
-                <p className="text-gray-400">Fill out the form below to reach us. We will get back to you as soon as possible.</p>
+                <p className="text-white/80">
+                  Fill out the form below to reach us. We will get back to you as soon as possible.
+                </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-300">
+                    <label htmlFor="name" className="block text-sm font-medium text-white/90 mb-2">
                       Name
                     </label>
                     <input
@@ -188,13 +205,13 @@ const Contact = () => {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="mt-1 block w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                      className="mt-1 block w-full rounded-xl bg-white/10 border border-white/20 px-4 py-3 text-white placeholder-white/60 focus:border-[#003366] focus:ring-2 focus:ring-[#003366]/20"
                       placeholder="Your name"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-300">
+                    <label htmlFor="email" className="block text-sm font-medium text-white/90 mb-2">
                       Email
                     </label>
                     <input
@@ -204,13 +221,13 @@ const Contact = () => {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="mt-1 block w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                      className="mt-1 block w-full rounded-xl bg-white/10 border border-white/20 px-4 py-3 text-white placeholder-white/60 focus:border-[#003366] focus:ring-2 focus:ring-[#003366]/20"
                       placeholder="your@email.com"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-300">
+                    <label htmlFor="phone" className="block text-sm font-medium text-white/90 mb-2">
                       Phone
                     </label>
                     <input
@@ -220,13 +237,13 @@ const Contact = () => {
                       value={formData.phone}
                       onChange={handleChange}
                       required
-                      className="mt-1 block w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                      className="mt-1 block w-full rounded-xl bg-white/10 border border-white/20 px-4 py-3 text-white placeholder-white/60 focus:border-[#003366] focus:ring-2 focus:ring-[#003366]/20"
                       placeholder="Your phone number"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="location" className="block text-sm font-medium text-gray-300">
+                    <label htmlFor="location" className="block text-sm font-medium text-white/90 mb-2">
                       Location
                     </label>
                     <input
@@ -236,14 +253,14 @@ const Contact = () => {
                       value={formData.location}
                       onChange={handleChange}
                       required
-                      className="mt-1 block w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                      className="mt-1 block w-full rounded-xl bg-white/10 border border-white/20 px-4 py-3 text-white placeholder-white/60 focus:border-[#003366] focus:ring-2 focus:ring-[#003366]/20"
                       placeholder="Your location"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="service_type" className="block text-sm font-medium text-gray-300">
+                  <label htmlFor="service_type" className="block text-sm font-medium text-white/90 mb-2">
                     Service Type
                   </label>
                   <select
@@ -252,7 +269,7 @@ const Contact = () => {
                     value={formData.service_type}
                     onChange={handleChange}
                     required
-                    className="mt-1 block w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                    className="mt-1 block w-full rounded-xl bg-white/10 border border-white/20 px-4 py-3 text-white placeholder-white/60 focus:border-[#003366] focus:ring-2 focus:ring-[#003366]/20"
                   >
                     <option value="appliance_rental">Appliance Rental</option>
                     <option value="appliance_service">Appliance Service</option>
@@ -262,7 +279,7 @@ const Contact = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-300">
+                  <label htmlFor="message" className="block text-sm font-medium text-white/90 mb-2">
                     Message
                   </label>
                   <textarea
@@ -272,32 +289,36 @@ const Contact = () => {
                     onChange={handleChange}
                     required
                     rows={4}
-                    className="mt-1 block w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                    className="mt-1 block w-full rounded-xl bg-white/10 border border-white/20 px-4 py-3 text-white placeholder-white/60 focus:border-[#003366] focus:ring-2 focus:ring-[#003366]/20"
                     placeholder="Example: I need to rent an AC for my home office. Looking for a 1.5 ton split AC with installation within this week."
                   />
                 </div>
 
                 {error && (
-                  <div className="text-red-500 text-sm">{error}</div>
+                  <div className="text-red-400 text-sm bg-red-400/10 p-3 rounded-lg border border-red-400/20">{error}</div>
                 )}
 
                 {isSuccess && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center gap-2 text-green-500"
+                    className="flex items-center gap-2 text-green-400 bg-green-400/10 p-4 rounded-xl border border-green-400/20"
                   >
                     <CheckCircle2 className="w-5 h-5" />
-                    <span>Message sent successfully!</span>
+                    <span>Message sent successfully! We'll get back to you soon.</span>
                   </motion.div>
                 )}
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 
-                            text-white font-semibold rounded-xl transition-all duration-300 
-                            hover:shadow-[0_8px_30px_rgba(59,130,246,0.3)] hover:-translate-y-0.5
+                  className={`w-full flex items-center justify-center gap-2 px-8 py-4 
+                            bg-gradient-to-r from-[#0EA5E9] to-[#38BDF8] 
+                            text-white font-semibold rounded-xl 
+                            hover:from-[#38BDF8] hover:to-[#0EA5E9]
+                            transition-all duration-300 
+                            shadow-[0_0_20px_rgba(14,165,233,0.3)] 
+                            hover:shadow-[0_0_25px_rgba(14,165,233,0.5)]
                             disabled:opacity-50 disabled:cursor-not-allowed
                             ${isSubmitting ? 'animate-pulse' : ''}`}
                 >
