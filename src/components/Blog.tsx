@@ -325,13 +325,13 @@ const Blog = () => {
   }
 
   return (
-    <Section className="bg-gray-50" id="blog">
+    <Section className="bg-gradient-to-b from-[#001B3B] via-[#003366] to-[#004B8F]" id="blog">
       <Container>
         <div className="text-center mb-12">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4"
+            className="text-3xl lg:text-4xl font-bold text-white mb-4"
           >
             📝 Latest from Our Blog
           </motion.h2>
@@ -339,7 +339,7 @@ const Blog = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-gray-600 max-w-2xl mx-auto"
+            className="text-white/80 max-w-2xl mx-auto"
           >
             Stay informed with expert tips, guides, and insights on AC maintenance, appliance care, and smart rental solutions. Discover how to get the most out of your appliances and keep them running smoothly for years to come.
           </motion.p>
@@ -352,11 +352,11 @@ const Blog = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col cursor-pointer"
+              className="bg-white/10 backdrop-blur-md rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col cursor-pointer border border-white/20"
               onClick={() => setSelectedPost(post)}
             >
               <div className="relative h-56 overflow-hidden">
-                <div className="absolute inset-0 bg-[#f8f9fa]" />
+                <div className="absolute inset-0 bg-[#001B3B]" />
                 <img
                   src={post.image}
                   alt={post.imageAlt}
@@ -366,25 +366,25 @@ const Blog = () => {
                              post.category === 'Washing Machine Maintenance' ? 'contain' : 'cover',
                     objectPosition: post.category === 'Washing Machine Maintenance' ? 'center' : 'center',
                     padding: post.category === 'Washing Machine Maintenance' ? '0.5rem' : '0',
-                    backgroundColor: post.category === 'Refrigerator Maintenance' ? '#ffffff' :
-                                   post.category === 'Washing Machine Maintenance' ? '#ffffff' :
-                                   post.category === 'AC Maintenance' ? '#e9ecef' :
-                                   post.category === 'Appliance Rental' ? '#f8f9fa' : '#ffffff'
+                    backgroundColor: post.category === 'Refrigerator Maintenance' ? '#001B3B' :
+                                   post.category === 'Washing Machine Maintenance' ? '#001B3B' :
+                                   post.category === 'AC Maintenance' ? '#001B3B' :
+                                   post.category === 'Appliance Rental' ? '#001B3B' : '#001B3B'
                   }}
                   loading="lazy"
                 />
               </div>
               <div className="p-6 flex-1 flex flex-col">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                  <span className="text-sm font-medium text-white bg-white/20 px-3 py-1 rounded-full">
                     {post.category}
                   </span>
-                  <span className="text-sm text-gray-500">{post.readTime}</span>
+                  <span className="text-sm text-white/60">{post.readTime}</span>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2 hover:text-blue-600 transition-colors">{post.title}</h3>
-                <p className="text-gray-600 mb-4 line-clamp-2 flex-1">{post.description}</p>
+                <h3 className="text-xl font-bold text-white mb-2 hover:text-white/90 transition-colors">{post.title}</h3>
+                <p className="text-white/80 mb-4 line-clamp-2 flex-1">{post.description}</p>
                 <button 
-                  className="inline-flex items-center text-blue-600 font-medium hover:text-blue-700 transition-colors mt-auto group"
+                  className="inline-flex items-center text-white font-medium hover:text-white/90 transition-colors mt-auto group"
                   onClick={(e) => {
                     e.stopPropagation();
                     setSelectedPost(post);
@@ -490,15 +490,15 @@ const Blog = () => {
           viewport={{ once: true }}
           className="mt-16 text-center"
         >
-          <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+          <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
             🚀 Ready to Experience Our Professional Services?
           </h3>
-          <p className="text-gray-600 text-lg mb-8">
+          <p className="text-white/80 text-lg mb-8">
             Need expert appliance assistance? Book your service now and get reliable, fast, and affordable solutions for all your appliance needs.
           </p>
           <a
             href={`tel:${CONTACT_INFO.PHONE}`}
-            className="inline-flex items-center gap-3 px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl text-lg"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-white text-[#003366] rounded-xl font-semibold hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl text-lg"
           >
             <Phone className="w-6 h-6" />
             🔧 Book Your Service Now

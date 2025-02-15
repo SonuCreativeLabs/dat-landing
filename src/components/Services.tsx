@@ -73,12 +73,9 @@ const services = [
 
 const Services = () => {
   return (
-    <section id="services" className="relative py-20 bg-gradient-to-br from-[#0EA5E9] to-[#0284C7] overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[url('/appliances-pattern.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0EA5E9]/10 via-[#0284C7]/30 to-[#0EA5E9]/80" />
-      </div>
+    <section id="services" className="relative py-20 bg-[#004B8F] overflow-hidden">
+      {/* Background Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#001B3B] via-[#003366] to-[#004B8F]" />
 
       <div className="relative container mx-auto px-4">
         <motion.div
@@ -88,7 +85,7 @@ const Services = () => {
           transition={{ duration: 0.5 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <span className="inline-block px-4 py-1 mb-4 text-sm font-medium bg-white/10 backdrop-blur-md text-white rounded-full border border-white/10">
+          <span className="inline-block px-4 py-1 mb-4 text-sm font-medium bg-white/10 backdrop-blur-md text-white rounded-full border border-white/20">
             🛠 Our Services
           </span>
           <h2 className="text-4xl font-bold text-white mb-4">
@@ -109,9 +106,9 @@ const Services = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="group relative bg-gradient-to-b from-white/20 to-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 
+                className="group relative bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 
                           hover:bg-white/20 transition-all duration-300 shadow-[0_8px_30px_rgb(0,0,0,0.12)]
-                          hover:shadow-[0_8px_30px_rgba(14,165,233,0.3)] hover:-translate-y-1"
+                          hover:shadow-[0_8px_30px_rgba(255,255,255,0.1)] hover:-translate-y-1"
               >
                 {/* Appliance Icons at Top */}
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 flex gap-3">
@@ -123,12 +120,12 @@ const Services = () => {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: (index * 0.1) + (i * 0.1) }}
-                        className="bg-gradient-to-br from-white to-white/90 backdrop-blur rounded-xl p-2.5 
+                        className="bg-white backdrop-blur rounded-xl p-2.5 
                                  shadow-lg group-hover:shadow-xl transition-all duration-300
-                                 group-hover:ring-2 ring-[#0EA5E9]/20"
+                                 group-hover:ring-2 ring-white/20"
                         title={appliance.name}
                       >
-                        <ApplianceIcon className="w-5 h-5 text-[#0EA5E9]" />
+                        <ApplianceIcon className="w-5 h-5 text-[#003366]" />
                       </motion.div>
                     );
                   })}
@@ -136,8 +133,8 @@ const Services = () => {
 
                 {/* Service Icon and Title */}
                 <div className="flex items-center gap-4 mb-6 mt-6">
-                  <div className="bg-gradient-to-br from-[#0EA5E9] to-[#0284C7] rounded-xl p-3.5 shadow-lg group-hover:shadow-[#0EA5E9]/20">
-                    <Icon className="w-6 h-6 text-white" />
+                  <div className="bg-white rounded-xl p-3.5 shadow-lg group-hover:shadow-white/20">
+                    <Icon className="w-6 h-6 text-[#003366]" />
                   </div>
                   <h3 className="text-xl font-bold text-white group-hover:text-white/90 transition-colors">
                     {service.title}
@@ -153,7 +150,7 @@ const Services = () => {
                 <ul className="space-y-4">
                   {service.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-3">
-                      <div className="bg-[#0EA5E9]/20 rounded-lg p-1">
+                      <div className="bg-white/20 rounded-lg p-1">
                         <CheckCircle2 className="w-4 h-4 text-white shrink-0" />
                       </div>
                       <span className="text-white/80 text-sm leading-tight group-hover:text-white/90 transition-colors">
@@ -165,8 +162,8 @@ const Services = () => {
 
                 {/* Hover Effect Arrow */}
                 <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1">
-                  <div className="bg-[#0EA5E9] rounded-lg p-2 shadow-lg">
-                    <ArrowRight className="w-4 h-4 text-white" />
+                  <div className="bg-white rounded-lg p-2 shadow-lg">
+                    <ArrowRight className="w-4 h-4 text-[#003366]" />
                   </div>
                 </div>
               </motion.div>

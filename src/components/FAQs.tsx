@@ -48,25 +48,25 @@ const FAQItem = ({ question, answer, isOpen, onClick }: {
   return (
     <motion.div
       initial={false}
-      className="border border-gray-100 rounded-2xl overflow-hidden bg-white hover:shadow-sm transition-shadow duration-200"
+      className="border border-white/20 rounded-2xl overflow-hidden bg-white/10 backdrop-blur-sm hover:shadow-sm transition-shadow duration-200"
       style={{ minHeight: '80px' }}
     >
       <button
         onClick={onClick}
-        className={`flex justify-between items-center w-full p-6 text-left transition-colors duration-200 ${isOpen ? 'bg-blue-50' : 'hover:bg-gray-50'}`}
+        className={`flex justify-between items-center w-full p-6 text-left transition-colors duration-200 ${isOpen ? 'bg-white/20' : 'hover:bg-white/10'}`}
       >
         <div className="flex items-center gap-4 flex-1">
           <motion.div
             initial={false}
-            className={`flex-shrink-0 w-10 h-10 rounded-full ${isOpen ? 'bg-blue-600' : 'bg-blue-100'} flex items-center justify-center transition-colors duration-200`}
+            className={`flex-shrink-0 w-10 h-10 rounded-full ${isOpen ? 'bg-white' : 'bg-white/20'} flex items-center justify-center transition-colors duration-200`}
           >
             {isOpen ? (
-              <X className={`w-5 h-5 text-white`} />
+              <X className={`w-5 h-5 text-[#003366]`} />
             ) : (
-              <Plus className={`w-5 h-5 text-blue-600`} />
+              <Plus className={`w-5 h-5 text-white`} />
             )}
           </motion.div>
-          <span className={`text-lg font-semibold ${isOpen ? 'text-blue-600' : 'text-gray-900'} transition-colors duration-200`}>
+          <span className={`text-lg font-semibold ${isOpen ? 'text-white' : 'text-white/90'} transition-colors duration-200`}>
             {question}
           </span>
         </div>
@@ -80,11 +80,11 @@ const FAQItem = ({ question, answer, isOpen, onClick }: {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="p-6 pl-20 text-gray-600">
+            <div className="p-6 pl-20 text-white/80">
               {answer.includes('[Areas We Serve]') ? (
                 <>
                   {answer.split('[Areas We Serve]')[0]}
-                  <a href="#about" className="text-blue-600 hover:text-blue-700 font-medium">
+                  <a href="#about" className="text-white hover:text-white/90 font-medium">
                     Areas We Serve
                   </a>
                   {answer.split(']')[1]}
@@ -106,26 +106,29 @@ const FAQs = () => {
   };
 
   return (
-    <div id="faqs" className="bg-gradient-to-b from-white to-blue-50/30 py-16 sm:py-20 md:py-24 lg:py-32">
+    <div id="faqs" className="bg-[#004B8F] py-16 sm:py-20 md:py-24 lg:py-32">
+      {/* Background Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#001B3B] via-[#003366] to-[#004B8F]" />
+
       <Container>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-16 relative z-10"
         >
           <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-              <HelpCircle className="w-6 h-6 text-blue-600" />
+            <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20">
+              <HelpCircle className="w-6 h-6 text-white" />
             </div>
-            <span className="text-blue-600 font-semibold text-sm uppercase tracking-wider">
+            <span className="text-white/80 font-semibold text-sm uppercase tracking-wider">
               FAQs
             </span>
           </div>
-          <h2 className="mt-3 text-4xl font-bold text-gray-900 mb-6">
+          <h2 className="mt-3 text-4xl font-bold text-white mb-6">
             ❓ Frequently Asked Questions
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
             Find answers to common questions about our services, rentals, and support. If you can't find what you're looking for, don't hesitate to reach out!
           </p>
         </motion.div>
@@ -134,7 +137,7 @@ const FAQs = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6"
+          className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10"
         >
           {faqs.map((faq, index) => (
             <FAQItem
@@ -151,17 +154,17 @@ const FAQs = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mt-16"
+          className="text-center mt-16 relative z-10"
         >
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">
+          <h3 className="text-2xl font-bold text-white mb-4">
             Still have questions?
           </h3>
-          <p className="text-gray-600 mb-8">
+          <p className="text-white/80 mb-8">
             Our support team is always here to assist you! Whether it's about a service, a rental, or a product, feel free to reach out.
           </p>
           <a
             href={`tel:${CONTACT_INFO.PHONE}`}
-            className="inline-flex items-center gap-3 px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-white text-[#003366] rounded-xl font-semibold hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             <Phone className="w-5 h-5" />
             Contact Support

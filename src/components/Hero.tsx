@@ -1,22 +1,19 @@
 import React from 'react';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
   return (
-    <section className="relative w-full min-h-[85vh] flex items-center justify-center px-4 py-4 mt-20">
+    <section className="relative w-full min-h-[85vh] flex items-center justify-center px-4 py-4 mt-20 bg-transparent">
       <div className="container max-w-[1400px] relative rounded-[2.5rem] overflow-hidden">
         {/* Background Image */}
         <div 
-          className="absolute inset-0 w-full h-full bg-cover bg-center rounded-[2.5rem] bg-[#0891B2]"
+          className="absolute inset-0 w-full h-full bg-cover bg-center rounded-[2.5rem]"
           style={{
             backgroundImage: 'url("https://ik.imagekit.io/projectassets/Background%20PNGs/2BG.png?updatedAt=1739620681478")',
             objectFit: 'cover'
           }}
         />
         
-        {/* Very Light Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/5 to-black/20 rounded-[2.5rem]" />
-
         {/* Content Container */}
         <div className="relative aspect-[16/10] flex flex-col items-center justify-center text-center text-white p-8">
           {/* Top Badge */}
@@ -27,44 +24,33 @@ const Hero = () => {
           </div>
 
           {/* Main Title */}
-          <h1 className="text-6xl font-bold mb-4 [text-shadow:_0_2px_4px_rgb(0_0_0_/_60%)]">
-            Dreams Air Tech
+          <h1 className="text-7xl font-extrabold mb-8 [text-shadow:_0_2px_4px_rgb(0_0_0_/_60%)] tracking-tight">
+            Experts in Tech That Keeps<br/>You Cool and Clean
           </h1>
-          <h2 className="text-5xl font-bold mb-6 [text-shadow:_0_2px_4px_rgb(0_0_0_/_60%)]">
-            AC & Appliance Repair
+          <h2 className="text-3xl font-medium mb-12 [text-shadow:_0_2px_4px_rgb(0_0_0_/_60%)] text-white/90">
+            AC & Appliance Repair and Rentals in Chennai
           </h2>
-          <h3 className="text-4xl font-medium mb-12 [text-shadow:_0_2px_4px_rgb(0_0_0_/_60%)]">
-            and Rentals in Chennai
-          </h3>
-
-          {/* Description */}
-          <p className="text-xl max-w-[800px] mb-12 font-medium [text-shadow:_0_1px_2px_rgb(0_0_0_/_40%)]">
-            Expert solutions for ACs, refrigerators, washing machines, and water purifiers. 
-            We offer professional installation, maintenance, and 24/7 support at competitive prices.
-          </p>
 
           {/* CTA Buttons */}
           <div className="flex gap-6">
-            <Link
-              href="/contact"
-              className="bg-white text-[#0891B2] px-8 py-4 rounded-full text-xl font-semibold hover:bg-opacity-90 transition-all duration-300 flex items-center gap-2 shadow-xl hover:shadow-2xl hover:scale-105"
-              onClick={(e) => {
-                e.preventDefault();
-                window.location.href = 'https://wa.me/+919176333334';
+            <button
+              onClick={() => {
+                const contactSection = document.getElementById('contact');
+                contactSection?.scrollIntoView({ behavior: 'smooth' });
               }}
+              className="bg-white text-[#0891B2] px-8 py-4 rounded-full text-xl font-semibold hover:bg-opacity-90 transition-all duration-300 flex items-center gap-2 shadow-xl hover:shadow-2xl hover:scale-105"
             >
               Book Service Now <span className="text-2xl">→</span>
-            </Link>
-            <Link
-              href="/products"
-              className="bg-[#0891B2] border-2 border-white text-white px-8 py-4 rounded-full text-xl font-semibold hover:bg-[#0891B2]/90 transition-all duration-300 flex items-center gap-2 shadow-xl hover:shadow-2xl hover:scale-105"
-              onClick={(e) => {
-                e.preventDefault();
-                window.location.href = '/products';
+            </button>
+            <button
+              onClick={() => {
+                const productsSection = document.getElementById('products');
+                productsSection?.scrollIntoView({ behavior: 'smooth' });
               }}
+              className="bg-[#0891B2] border-2 border-white text-white px-8 py-4 rounded-full text-xl font-semibold hover:bg-[#0891B2]/90 transition-all duration-300 flex items-center gap-2 shadow-xl hover:shadow-2xl hover:scale-105"
             >
               Explore Products <span className="text-2xl">→</span>
-            </Link>
+            </button>
           </div>
         </div>
       </div>
