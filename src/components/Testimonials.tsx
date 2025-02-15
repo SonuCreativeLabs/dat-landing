@@ -320,7 +320,7 @@ const Testimonials = () => {
               {testimonial.service_type && (
                 <div className="mt-4">
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white/20 text-white">
-                    {testimonial.service_type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    {testimonial.service_type.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}
                   </span>
                 </div>
               )}

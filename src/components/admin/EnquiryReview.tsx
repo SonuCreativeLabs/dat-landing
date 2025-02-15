@@ -186,10 +186,10 @@ const EnquiryCard = ({
 
 interface EnquiryReviewProps {
   archived?: boolean;
-  selectedStatus?: EnquiryStatus | null;
+  selectedStatus?: EnquiryStatus;
 }
 
-const EnquiryReview = ({ archived = false, selectedStatus = null }: EnquiryReviewProps) => {
+const EnquiryReview = ({ archived = false, selectedStatus }: EnquiryReviewProps) => {
   const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null);
   const [comment, setComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);

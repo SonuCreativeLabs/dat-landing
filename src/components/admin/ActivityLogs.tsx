@@ -78,8 +78,8 @@ interface ActivityLogsProps {
 
 export default function ActivityLogs({ className }: ActivityLogsProps) {
   const [filters, setFilters] = useState({
-    actionType: null as ActivityType | null,
-    entityType: null as EntityType | null,
+    actionType: undefined as ActivityType | undefined,
+    entityType: undefined as EntityType | undefined,
     startDate: undefined as Date | undefined,
     endDate: undefined as Date | undefined,
     searchTerm: ''
@@ -89,8 +89,8 @@ export default function ActivityLogs({ className }: ActivityLogsProps) {
     queryKey: ['activity-logs', filters],
     queryFn: () => getActivityLogs({
       ...filters,
-      actionType: filters.actionType || undefined,
-      entityType: filters.entityType || undefined
+      actionType: filters.actionType,
+      entityType: filters.entityType
     }),
     refetchInterval: 30000 // Refetch every 30 seconds
   });
@@ -122,8 +122,8 @@ export default function ActivityLogs({ className }: ActivityLogsProps) {
 
   const clearFilters = () => {
     setFilters({
-      actionType: null,
-      entityType: null,
+      actionType: undefined,
+      entityType: undefined,
       startDate: undefined,
       endDate: undefined,
       searchTerm: ''
@@ -247,14 +247,19 @@ export default function ActivityLogs({ className }: ActivityLogsProps) {
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex-1 min-w-[200px]">
               <Select
-                value={filters.actionType}
-                onValueChange={(value) => setFilters(prev => ({ ...prev, actionType: value as ActivityType }))}
+                value={filters.actionType === undefined ? '' : filters.actionType}
+                onValueChange={(value: string) => 
+                  setFilters(prev => ({
+                    ...prev,
+                    actionType: value === '' ? undefined : value as ActivityType
+                  }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Action Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={null}>All Actions</SelectItem>
+                  <SelectItem value="">All Actions</SelectItem>
                   {Object.keys(activityTypeColors).map((type) => (
                     <SelectItem key={type} value={type}>
                       <span className="flex items-center gap-2">
@@ -273,14 +278,19 @@ export default function ActivityLogs({ className }: ActivityLogsProps) {
 
             <div className="flex-1 min-w-[200px]">
               <Select
-                value={filters.entityType}
-                onValueChange={(value) => setFilters(prev => ({ ...prev, entityType: value as EntityType }))}
+                value={filters.entityType === undefined ? '' : filters.entityType}
+                onValueChange={(value: string) =>
+                  setFilters(prev => ({
+                    ...prev,
+                    entityType: value === '' ? undefined : value as EntityType
+                  }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Entity Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={null}>All Entities</SelectItem>
+                  <SelectItem value="">All Entities</SelectItem>
                   {Object.entries(entityTypeIcons).map(([type, icon]) => (
                     <SelectItem key={type} value={type}>
                       <span className="flex items-center gap-2">

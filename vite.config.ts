@@ -14,6 +14,18 @@ export default defineConfig(({ mode }) => ({
     strictPort: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
+    },
+    proxy: {
+      '/leads': {
+        target: 'https://ufywpifbqbzampiiuetc.supabase.co/functions/v1/justdial-leads',
+        changeOrigin: true,
+        rewrite: (path) => '',
+        configure: (proxy, options) => {
+          proxy.on('proxyReq', (proxyReq, req, res) => {
+            proxyReq.setHeader('Authorization', req.headers.authorization || '');
+          });
+        }
+      }
     }
   },
   plugins: [
