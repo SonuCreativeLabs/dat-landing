@@ -7,7 +7,6 @@ import {
   Wrench,
   ShoppingBag,
   Clock,
-  ArrowRight,
   CheckCircle2
 } from 'lucide-react';
 
@@ -159,13 +158,6 @@ const Services = () => {
                     </li>
                   ))}
                 </ul>
-
-                {/* Hover Effect Arrow */}
-                <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1">
-                  <div className="bg-white rounded-lg p-2 shadow-lg">
-                    <ArrowRight className="w-4 h-4 text-[#003366]" />
-                  </div>
-                </div>
               </motion.div>
             );
           })}

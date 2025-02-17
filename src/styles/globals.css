@@ -1,3 +1,6 @@
+/* Import Inter font */
+@import url('https://rsms.me/inter/inter.css');
+
 /* Hide scrollbar */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
@@ -283,5 +286,22 @@ html {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Font Configuration */
+:root {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Apply font globally */
+html {
+  font-family: var(--font-sans);
+}
+
+/* Optimize font loading */
+@supports (font-variation-settings: normal) {
+  :root {
+    --font-sans: 'Inter var', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   }
 }
