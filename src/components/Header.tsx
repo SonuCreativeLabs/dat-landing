@@ -55,20 +55,19 @@ const Header = () => {
       setIsMenuOpen(false);
       
       // Get dynamic header height and offset
-      const headerHeight = window.innerWidth < 768 ? 64 : 80;
-      const mobileOffset = window.innerWidth < 768 ? 16 : 0;
+      const headerHeight = document.querySelector('header')?.offsetHeight || 80;
       
-      // Calculate position with improved accuracy
+      // Calculate position
       const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-      const offsetPosition = elementPosition - headerHeight - mobileOffset;
+      const offsetPosition = elementPosition - headerHeight;
 
-      // Use requestAnimationFrame for smoother scrolling
-      requestAnimationFrame(() => {
+      // Add a small delay to ensure menu is closed
+      setTimeout(() => {
         window.scrollTo({
           top: offsetPosition,
           behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
         });
-      });
+      }, 150);
     }
   };
 
@@ -149,7 +148,7 @@ const Header = () => {
           </motion.button>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-4">
             {navigation.map((item, i) => (
               <motion.button
                 key={item.id}
@@ -159,11 +158,14 @@ const Header = () => {
                 whileHover="hover"
                 custom={i}
                 onClick={() => scrollToSection(item.id)}
-                className={`text-sm font-medium transition-colors hover:text-[#003366] ${
-                  activeSection === item.id ? "text-[#003366]" : "text-gray-600"
-                }`}
+                className={`text-sm font-bold transition-all duration-300
+                  ${activeSection === item.id 
+                    ? "text-[#003366] bg-blue-50/80 px-3 py-1.5 rounded-lg shadow-sm" 
+                    : "text-gray-600 hover:text-[#003366] hover:bg-blue-50/50 px-3 py-1.5 rounded-lg"}`}
               >
-                {item.label}
+                <span className="relative tracking-wide">
+                  {item.label}
+                </span>
               </motion.button>
             ))}
             <motion.a
@@ -173,7 +175,10 @@ const Header = () => {
               whileHover="hover"
               custom={navigation.length}
               href={`tel:${CONTACT_INFO.PHONE}`}
-              className="inline-flex items-center px-4 py-2 border border-[#003366] text-sm font-medium rounded-md text-[#003366] hover:bg-[#003366] hover:text-white transition-colors"
+              className="inline-flex items-center px-4 py-2 border-2 border-[#003366] 
+                text-sm font-bold tracking-wide rounded-md text-[#003366] 
+                hover:bg-[#003366] hover:text-white transition-all duration-300 
+                shadow-sm hover:shadow-md ml-2"
             >
               Contact Us
             </motion.a>
@@ -208,18 +213,21 @@ const Header = () => {
                 <button
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${
-                    activeSection === item.id
-                      ? "text-[#003366] bg-gray-50"
-                      : "text-gray-600 hover:text-[#003366] hover:bg-gray-50"
-                  }`}
+                  className={`block w-full text-left px-4 py-3 rounded-lg text-base 
+                    font-bold tracking-wide transition-all duration-300
+                    ${activeSection === item.id
+                      ? "text-[#003366] bg-blue-50 shadow-sm"
+                      : "text-gray-600 hover:text-[#003366] hover:bg-blue-50/50"}`}
                 >
                   {item.label}
                 </button>
               ))}
               <a
                 href={`tel:${CONTACT_INFO.PHONE}`}
-                className="block w-full text-center px-3 py-2 rounded-md text-base font-medium text-white bg-[#003366] hover:bg-[#002B5B] transition-colors mt-4"
+                className="block w-full text-center px-3 py-2 rounded-md text-base 
+                  font-medium tracking-wide
+                  text-white bg-[#003366] hover:bg-[#002B5B] 
+                  transition-all duration-300 mt-4 shadow-sm hover:shadow-md"
               >
                 Contact Us
               </a>

@@ -1,9 +1,10 @@
 {
   "rewrites": [
     { 
-      "source": "/leads",
+      "source": "/justdial-webhook",
       "destination": "https://ufywpifbqbzampiiuetc.supabase.co/functions/v1/justdial-leads"
     },
+    { "source": "/leads", "destination": "/index.html" },
     { "source": "/service", "destination": "/index.html" },
     { "source": "/about", "destination": "/index.html" },
     { "source": "/products", "destination": "/index.html" },
@@ -16,7 +17,7 @@
   ],
   "headers": [
     {
-      "source": "/leads",
+      "source": "/justdial-webhook",
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",

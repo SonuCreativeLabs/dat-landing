@@ -110,11 +110,13 @@ const Products = () => {
             <a
               href={`tel:${CONTACT_INFO.PHONE}`}
               className="group relative inline-flex items-center gap-2 px-8 py-4 
-                       bg-white text-[#003366] rounded-xl font-semibold 
-                       transition-all duration-300 shadow-lg 
-                       hover:shadow-[0_8px_30px_rgba(255,255,255,0.2)]
-                       hover:-translate-y-0.5
-                       hover:bg-white/90"
+                       bg-gradient-to-r from-[#0EA5E9] to-[#38BDF8] 
+                       text-white rounded-xl font-semibold 
+                       hover:from-[#38BDF8] hover:to-[#0EA5E9]
+                       transition-all duration-300 
+                       shadow-[0_0_20px_rgba(14,165,233,0.3)] 
+                       hover:shadow-[0_0_25px_rgba(14,165,233,0.5)]
+                       hover:-translate-y-0.5"
             >
               <Phone className="w-5 h-5" />
               <span>Call Now: {CONTACT_INFO.PHONE_DISPLAY}</span>

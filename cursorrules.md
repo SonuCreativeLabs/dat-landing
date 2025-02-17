@@ -425,6 +425,131 @@ interface RentalPlan {
    - Test color contrast
    - Validate ARIA attributes
 
+## Third-Party Integration Rules
+
+### Webhook Integration Standards
+1. **Endpoint Configuration**
+   - Maintain consistent endpoint naming
+   - Document all endpoint parameters
+   - Implement proper error handling
+   - Set up monitoring for webhook health
+   - Log all webhook activities
+   - Verify endpoint accessibility
+   - Maintain backward compatibility
+   - Document rate limits
+
+2. **Integration Documentation**
+   - Maintain detailed integration specs
+   - Document all API parameters
+   - Keep configuration history
+   - Document testing procedures
+   - Store vendor communication
+   - Version control integration docs
+   - Include sample payloads
+   - Document error codes
+
+3. **Testing Requirements**
+   - Test with sample payloads
+   - Verify error scenarios
+   - Test rate limiting
+   - Monitor response times
+   - Validate data processing
+   - Test timeout scenarios
+   - Verify retry mechanisms
+   - Test concurrent requests
+
+4. **Security Measures**
+   - Implement IP whitelisting
+   - Validate request signatures
+   - Set up rate limiting
+   - Monitor for abuse
+   - Regular security audits
+   - Encrypt sensitive data
+   - Log security events
+   - Implement request validation
+
+### Lead Management Rules
+1. **Data Processing**
+   - Validate all incoming data
+   - Standardize data format
+   - Handle duplicate leads
+   - Process in real-time
+   - Maintain data integrity
+   - Handle malformed data
+   - Implement data cleanup
+   - Set processing priorities
+
+2. **Storage Requirements**
+   - Encrypt sensitive data
+   - Implement backup strategy
+   - Set retention policies
+   - Handle data updates
+   - Maintain audit logs
+   - Version control data changes
+   - Implement data recovery
+   - Monitor storage capacity
+
+3. **Notification System**
+   - Alert on lead receipt
+   - Notify on processing errors
+   - Track delivery status
+   - Monitor system health
+   - Log all notifications
+   - Set up escalation paths
+   - Configure alert thresholds
+   - Maintain notification history
+
+4. **Access Control**
+   - Role-based access
+   - Audit trail for access
+   - Time-based restrictions
+   - IP-based restrictions
+   - Session management
+   - Monitor access patterns
+   - Log unauthorized attempts
+   - Regular access review
+
+### Integration Verification Checklist
+1. **Pre-Integration**
+   - [ ] Review vendor documentation
+   - [ ] Verify API specifications
+   - [ ] Check security requirements
+   - [ ] Plan data storage
+   - [ ] Design error handling
+   - [ ] Set up monitoring
+   - [ ] Create test cases
+   - [ ] Document integration plan
+
+2. **Implementation**
+   - [ ] Configure endpoints
+   - [ ] Set up authentication
+   - [ ] Implement data validation
+   - [ ] Add error handling
+   - [ ] Set up logging
+   - [ ] Configure monitoring
+   - [ ] Add security measures
+   - [ ] Document changes
+
+3. **Testing**
+   - [ ] Test with sample data
+   - [ ] Verify error handling
+   - [ ] Check security measures
+   - [ ] Test performance
+   - [ ] Validate data processing
+   - [ ] Test notifications
+   - [ ] Check monitoring
+   - [ ] Document test results
+
+4. **Post-Implementation**
+   - [ ] Monitor live traffic
+   - [ ] Review error logs
+   - [ ] Check data integrity
+   - [ ] Verify notifications
+   - [ ] Update documentation
+   - [ ] Train team members
+   - [ ] Set up maintenance
+   - [ ] Plan regular reviews
+
 ## Admin Activity Logging Rules
 
 ### Activity Tracking

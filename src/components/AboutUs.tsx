@@ -33,7 +33,7 @@ const features = [
 
 const AboutUs = () => {
   return (
-    <section className="w-full py-24 bg-gradient-to-b from-[#001B3B] via-[#002B5B] to-[#003366] relative overflow-hidden" id="about">
+    <section className="w-full py-24 bg-gradient-to-b from-[#001B3B] via-[#002B5B] to-[#003366] relative overflow-hidden -mt-1" id="about">
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
       
@@ -53,7 +53,10 @@ const AboutUs = () => {
                 className="text-4xl font-bold text-white mb-4"
               >
                 About Us – <br />
-                <span className="text-white/90">Dreams Air Tech</span>
+                <span className="bg-gradient-to-r from-[#0EA5E9] to-[#38BDF8] text-transparent bg-clip-text 
+                  inline-block py-2">
+                  Dreams Air Tech
+                </span>
               </motion.h2>
               <motion.p
                 initial={{ opacity: 0 }}
