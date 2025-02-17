@@ -115,7 +115,7 @@ const AboutUs = () => {
                   key={area}
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
-                  transition={{ delay: index * 0.05 }}
+                  transition={{ delay: Math.floor(index / 4) * 0.08 }}
                   className="flex items-center gap-2"
                 >
                   <CheckCircle className="w-4 h-4 text-[#003366] flex-shrink-0" />

@@ -451,17 +451,24 @@ const Blog = () => {
                           </p>
                           <div className="flex flex-col sm:flex-row items-center gap-4">
                             <div className="flex items-center gap-3 text-blue-600">
-                              <Phone className="w-5 h-5 text-blue-500" />
+                              <Phone className="w-7 h-7 sm:w-7 sm:h-7 text-blue-500" />
                               <a
                                 href={`tel:${CONTACT_INFO.PHONE}`}
-                                className="font-semibold hover:text-blue-700"
+                                className="inline-flex items-center gap-2 px-4 py-2 
+                                  bg-gradient-to-r from-[#0EA5E9] to-[#38BDF8] 
+                                  text-white rounded-lg text-sm font-semibold 
+                                  hover:from-[#38BDF8] hover:to-[#0EA5E9] 
+                                  transition-all duration-300 
+                                  shadow-[0_0_20px_rgba(14,165,233,0.3)] 
+                                  hover:shadow-[0_0_25px_rgba(14,165,233,0.5)]
+                                  hover:-translate-y-0.5"
                               >
                                 Call Us Now: {CONTACT_INFO.PHONE}
                               </a>
                             </div>
                             <span className="text-gray-400">•</span>
                             <div className="flex items-center gap-2 text-gray-600 text-sm">
-                              <MapPin className="w-5 h-5 text-blue-500" />
+                              <MapPin className="w-7 h-7 sm:w-7 sm:h-7 text-blue-500" />
                               <span>Serving: Velachery, OMR, Adyar, Tambaram, and surrounding localities. We cover a service radius of 20km from Velachery.</span>
                             </div>
                           </div>

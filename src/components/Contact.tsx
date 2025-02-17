@@ -110,7 +110,7 @@ const Contact = () => {
                 transition={{ duration: 0.2 }}
               >
                 <div className="bg-[#003366] rounded-xl p-3">
-                  <Phone className="w-6 h-6 text-white" />
+                  <Phone className="w-7 h-7 text-white" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-white">Phone</h3>
@@ -125,7 +125,7 @@ const Contact = () => {
                 transition={{ duration: 0.2 }}
               >
                 <div className="bg-[#003366] rounded-xl p-3">
-                  <Mail className="w-6 h-6 text-white" />
+                  <Mail className="w-7 h-7 text-white" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-white">Email</h3>
@@ -140,7 +140,7 @@ const Contact = () => {
                 transition={{ duration: 0.2 }}
               >
                 <div className="bg-[#003366] rounded-xl p-3">
-                  <MapPin className="w-6 h-6 text-white" />
+                  <MapPin className="w-8 h-8 text-white" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-white">Location</h3>
@@ -165,7 +165,7 @@ const Contact = () => {
                 transition={{ duration: 0.2 }}
               >
                 <div className="bg-[#003366] rounded-xl p-3">
-                  <Clock className="w-6 h-6 text-white" />
+                  <Clock className="w-7 h-7 text-white" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-white">Business Hours</h3>
