@@ -39,19 +39,17 @@ const Hero = () => {
           </div>
           
           {/* Main Title */}
-          <h1 className="text-4xl md:text-7xl font-black mb-8 text-white tracking-tight drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)] font-poppins leading-tight">
-            Experts in Tech That Keeps<br/>
-            <span className="bg-white/10 backdrop-blur-md text-white px-4 md:px-6 py-2 rounded-xl inline-block mt-2 border border-white/20 drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
-              You Cool and Clean
-            </span>
+          <h1 className="text-3xl sm:text-4xl md:text-7xl font-black mb-4 sm:mb-8 text-white tracking-tight drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)] font-poppins leading-tight max-w-[90%] sm:max-w-full mx-auto whitespace-normal">
+            Experts in Tech That Keeps You{' '}<br className="hidden sm:block"/>
+            Cool and Clean
           </h1>
-          <h2 className="text-2xl md:text-4xl font-black mb-12 text-white tracking-wide font-poppins
-                       px-4 md:px-6 py-3 rounded-xl
-                       drop-shadow-[0_4px_15px_rgba(0,0,0,0.6)]
-                       [text-shadow:_2px_2px_8px_rgba(14,165,233,0.8),_0_4px_12px_rgba(0,0,0,0.8)]
-                       hover:[text-shadow:_2px_2px_12px_rgba(14,165,233,0.9),_0_4px_16px_rgba(0,0,0,0.9)]
-                       transition-all duration-300">
-            AC & Appliance Repair and Rentals in Chennai
+          
+          <h2 className="text-xl sm:text-2xl md:text-4xl font-black mb-8 sm:mb-12 text-white tracking-wide font-poppins
+                       bg-white/10 px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-xl
+                       border border-white/20 drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]
+                       transition-all duration-300
+                       max-w-[90%] sm:max-w-full mx-auto whitespace-normal">
+            AC & Appliance Repair and Rentals{' '}<br className="sm:hidden"/>in Chennai
           </h2>
 
           {/* CTA Buttons */}
