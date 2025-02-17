@@ -329,7 +329,7 @@ const Blog = () => {
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
       
-      <Container className="relative z-10">
+      <Container className="relative z-[5]">
         <div className="text-center mb-12">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}

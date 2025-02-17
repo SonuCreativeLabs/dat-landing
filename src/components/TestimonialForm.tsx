@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import type { Database } from "@/integrations/supabase/types";
 import { cn } from "@/lib/utils";
 import { JustDialLogo } from "@/components/icons/JustDialLogo";
@@ -93,9 +93,71 @@ const ratings = [
   ) },
 ] as const;
 
-export default function TestimonialForm() {
+function useScrollLock() {
+  const lockScroll = useCallback(() => {
+    // Save current scroll position
+    const scrollPosition = window.pageYOffset;
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollPosition}px`;
+    document.body.style.width = '100%';
+  }, []);
+
+  const unlockScroll = useCallback(() => {
+    // Restore scroll position
+    const scrollPosition = document.body.style.top;
+    document.body.style.removeProperty('overflow');
+    document.body.style.removeProperty('position');
+    document.body.style.removeProperty('top');
+    document.body.style.removeProperty('width');
+    window.scrollTo(0, parseInt(scrollPosition || '0') * -1);
+  }, []);
+
+  return { lockScroll, unlockScroll };
+}
+
+export default function TestimonialForm({ onClose }: { onClose: () => void }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [supabaseInitialized, setSupabaseInitialized] = useState(false);
+
+  // Lock scroll when component mounts
+  useEffect(() => {
+    // Save current scroll position
+    const scrollPosition = window.pageYOffset;
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollPosition}px`;
+    document.body.style.width = '100%';
+
+    // Cleanup function to restore scroll when component unmounts
+    return () => {
+      const scrollPosition = document.body.style.top;
+      document.body.style.removeProperty('overflow');
+      document.body.style.removeProperty('position');
+      document.body.style.removeProperty('top');
+      document.body.style.removeProperty('width');
+      window.scrollTo(0, parseInt(scrollPosition || '0') * -1);
+    };
+  }, []);
+
+  // Handle escape key to close modal
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
+
+  // Handle click outside to close modal
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -206,19 +268,46 @@ export default function TestimonialForm() {
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-[100] p-4">
-      <div className="w-full max-w-xl mx-auto bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 max-h-[85vh] md:max-h-[90vh] overflow-y-auto relative">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-900">Share Your Experience</h3>
-          <Button
-            onClick={() => window.close()}
-            variant="ghost"
-            size="icon"
-            className="hover:bg-gray-100 rounded-full -mr-2 -mt-2"
-          >
-            <X className="w-5 h-5 text-gray-500" />
-          </Button>
+    <div 
+      className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      onClick={handleBackdropClick}
+      style={{ 
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 99999999,
+        isolation: 'isolate'
+      }}
+    >
+      <div 
+        className="w-full max-w-xl mx-auto bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 overflow-y-auto relative m-4"
+        style={{
+          maxHeight: 'calc(100vh - 40px)',
+          position: 'relative',
+          transform: 'translateZ(0)',
+          zIndex: 99999999
+        }}
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="sticky top-0 z-10 bg-white pt-2 pb-4 mb-2">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl sm:text-2xl font-bold text-gray-900">Share Your Experience</h3>
+            <Button
+              onClick={onClose}
+              variant="ghost"
+              size="icon"
+              className="hover:bg-gray-100 rounded-full -mr-2 -mt-2"
+            >
+              <X className="w-5 h-5 text-gray-500" />
+            </Button>
+          </div>
         </div>
+
         <Toaster richColors />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">

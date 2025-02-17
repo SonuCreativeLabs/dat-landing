@@ -110,7 +110,7 @@ const FAQs = () => {
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
       
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-4 relative z-[5]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -138,7 +138,7 @@ const FAQs = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10"
+          className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 relative z-[5]"
         >
           {faqs.map((faq, index) => (
             <FAQItem
@@ -155,7 +155,7 @@ const FAQs = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mt-16 relative z-10"
+          className="text-center mt-16 relative z-[5]"
         >
           <h3 className="text-2xl font-bold text-white mb-4">
             Still have questions?
