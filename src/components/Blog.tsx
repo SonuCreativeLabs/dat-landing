@@ -325,7 +325,7 @@ const Blog = () => {
   }
 
   return (
-    <Section className="w-full py-24 bg-gradient-to-b from-[#004B8F] via-[#003D7A] to-[#003366] relative overflow-hidden" id="blog">
+    <Section className="w-full py-12 sm:py-12 bg-gradient-to-b from-[#003366] via-[#003D7A] to-[#004b8f] relative overflow-hidden z-[6] -mt-1" id="blog">
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
       
@@ -503,7 +503,7 @@ const Blog = () => {
           <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
             🚀 Ready to Experience Our Professional Services?
           </h3>
-          <p className="text-white/80 text-lg mb-8">
+          <p className="text-white/80 text-lg mb-4">
             Need expert appliance assistance? Book your service now and get reliable, fast, and affordable solutions for all your appliance needs.
           </p>
           <a

@@ -106,7 +106,7 @@ const FAQs = () => {
   };
 
   return (
-    <section id="faqs" className="w-full py-24 bg-gradient-to-b from-[#003366] via-[#002B5B] to-[#001B3B] relative overflow-hidden">
+    <section id="faqs" className="w-full py-12 sm:py-12 bg-gradient-to-b from-[#004b8f] via-[#003D7A] to-[#003366] relative overflow-hidden z-[7] -mt-1">
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
       
@@ -116,7 +116,7 @@ const FAQs = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-16"
+          className="text-center max-w-3xl mx-auto mb-12"
         >
           <div className="flex items-center justify-center gap-2 mb-4">
             <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center border border-white/20">

@@ -33,7 +33,7 @@ const features = [
 
 const AboutUs = () => {
   return (
-    <section className="w-full py-24 bg-gradient-to-b from-[#001B3B] via-[#002B5B] to-[#003366] relative overflow-hidden -mt-1" id="about">
+    <section className="w-full py-12 sm:py-12 bg-gradient-to-b from-[#003366] via-[#003D7A] to-[#004b8f] relative overflow-hidden z-[2] -mt-1" id="about">
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
       
