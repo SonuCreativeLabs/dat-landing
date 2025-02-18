@@ -37,8 +37,8 @@ const Hero = () => {
         <div 
           className="absolute inset-0 rounded-[2.5rem]"
           style={{
-            background: 'linear-gradient(to bottom, rgba(0,27,59,0.25) 0%, rgba(0,27,59,0.45) 100%)',
-            backdropFilter: 'blur(0.5px)'
+            background: 'linear-gradient(to bottom, rgba(0,27,59,0.1) 0%, rgba(0,27,59,0.2) 100%)',
+            backdropFilter: 'blur(0px)'
           }}
         />
         
