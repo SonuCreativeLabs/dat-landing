@@ -53,7 +53,7 @@ const FAQItem = ({ question, answer, isOpen, onClick }: {
     >
       <button
         onClick={onClick}
-        className={`flex justify-between items-center w-full p-6 text-left transition-colors duration-200 ${isOpen ? 'bg-white' : 'hover:bg-white/10'}`}
+        className={`flex justify-between items-center w-full p-6 text-left transition-all duration-200 ${isOpen ? 'bg-white' : 'hover:bg-white/10'} transform hover:scale-[1.01]`}
       >
         <div className="flex items-center gap-4 flex-1">
           <motion.div
@@ -165,7 +165,7 @@ const FAQs = () => {
           </p>
           <a
             href={`tel:${CONTACT_INFO.PHONE}`}
-            className="inline-flex items-center gap-3 px-8 py-4 bg-white text-[#003366] rounded-xl font-semibold hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-white text-[#003366] rounded-xl font-semibold hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-1"
           >
             <Phone className="w-5 h-5" />
             Contact Support

@@ -461,7 +461,8 @@ const Blog = () => {
                                   transition-all duration-300 
                                   shadow-[0_0_20px_rgba(14,165,233,0.3)] 
                                   hover:shadow-[0_0_25px_rgba(14,165,233,0.5)]
-                                  hover:-translate-y-0.5"
+                                  hover:-translate-y-0.5
+                                  transform hover:scale-105"
                               >
                                 Call Us Now: {CONTACT_INFO.PHONE}
                               </a>
@@ -508,7 +509,7 @@ const Blog = () => {
           </p>
           <a
             href={`tel:${CONTACT_INFO.PHONE}`}
-            className="inline-flex items-center gap-3 px-8 py-4 bg-white text-[#003366] rounded-xl font-semibold hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl text-lg"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-white text-[#003366] rounded-xl font-semibold hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl text-lg transform hover:scale-105 hover:-translate-y-1"
           >
             <Phone className="w-6 h-6" />
             Book Your Service Now
