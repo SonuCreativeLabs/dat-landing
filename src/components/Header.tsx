@@ -160,8 +160,8 @@ const Header = () => {
                 onClick={() => scrollToSection(item.id)}
                 className={`text-sm font-bold transition-all duration-300
                   ${activeSection === item.id 
-                    ? "text-[#003366] bg-blue-50/80 px-3 py-1.5 rounded-lg shadow-sm" 
-                    : "text-gray-600 hover:text-[#003366] hover:bg-blue-50/50 px-3 py-1.5 rounded-lg"}`}
+                    ? "text-[#004a8f] bg-blue-50/80 px-3 py-1.5 rounded-lg shadow-sm" 
+                    : "text-gray-600 hover:text-[#004a8f] hover:bg-blue-50/50 px-3 py-1.5 rounded-lg"}`}
               >
                 <span className="relative tracking-wide">
                   {item.label}
@@ -175,9 +175,9 @@ const Header = () => {
               whileHover="hover"
               custom={navigation.length}
               href={`tel:${CONTACT_INFO.PHONE}`}
-              className="inline-flex items-center px-4 py-2 border-2 border-[#003366] 
-                text-sm font-bold tracking-wide rounded-md text-[#003366] 
-                hover:bg-[#003366] hover:text-white transition-all duration-300 
+              className="inline-flex items-center px-4 py-2 border-2 border-[#004a8f] 
+                text-sm font-bold tracking-wide rounded-md text-[#004a8f] 
+                hover:bg-[#004a8f] hover:text-white transition-all duration-300 
                 shadow-sm hover:shadow-md ml-2"
             >
               Contact Us
@@ -187,7 +187,7 @@ const Header = () => {
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-[#003366] hover:bg-gray-100 focus:outline-none"
+            className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-[#004a8f] hover:bg-gray-100 focus:outline-none"
           >
             <span className="sr-only">Open main menu</span>
             {isMenuOpen ? (
@@ -216,8 +216,8 @@ const Header = () => {
                   className={`block w-full text-left px-4 py-3 rounded-lg text-base 
                     font-bold tracking-wide transition-all duration-300
                     ${activeSection === item.id
-                      ? "text-[#003366] bg-blue-50 shadow-sm"
-                      : "text-gray-600 hover:text-[#003366] hover:bg-blue-50/50"}`}
+                      ? "text-[#004a8f] bg-blue-50 shadow-sm"
+                      : "text-gray-600 hover:text-[#004a8f] hover:bg-blue-50/50"}`}
                 >
                   {item.label}
                 </button>
@@ -226,7 +226,7 @@ const Header = () => {
                 href={`tel:${CONTACT_INFO.PHONE}`}
                 className="block w-full text-center px-3 py-2 rounded-md text-base 
                   font-medium tracking-wide
-                  text-white bg-[#003366] hover:bg-[#002B5B] 
+                  text-white bg-[#004a8f] hover:bg-[#004a8f]/90
                   transition-all duration-300 mt-4 shadow-sm hover:shadow-md"
               >
                 Contact Us

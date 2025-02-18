@@ -81,7 +81,7 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="relative py-24 bg-[#001B3B] overflow-hidden">
+    <section id="contact" className="w-full py-12 sm:py-12 bg-gradient-to-b from-[#003366] via-[#003D7A] to-[#004b8f] relative overflow-hidden z-[8] -mt-1">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
 

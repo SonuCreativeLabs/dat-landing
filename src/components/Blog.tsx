@@ -325,7 +325,7 @@ const Blog = () => {
   }
 
   return (
-    <Section className="w-full py-24 bg-gradient-to-b from-[#004B8F] via-[#003D7A] to-[#003366] relative overflow-hidden" id="blog">
+    <Section className="w-full py-12 sm:py-12 bg-gradient-to-b from-[#003366] via-[#003D7A] to-[#004b8f] relative overflow-hidden z-[6] -mt-1" id="blog">
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
       
@@ -461,7 +461,8 @@ const Blog = () => {
                                   transition-all duration-300 
                                   shadow-[0_0_20px_rgba(14,165,233,0.3)] 
                                   hover:shadow-[0_0_25px_rgba(14,165,233,0.5)]
-                                  hover:-translate-y-0.5"
+                                  hover:-translate-y-0.5
+                                  transform hover:scale-105"
                               >
                                 Call Us Now: {CONTACT_INFO.PHONE}
                               </a>
@@ -503,12 +504,12 @@ const Blog = () => {
           <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
             🚀 Ready to Experience Our Professional Services?
           </h3>
-          <p className="text-white/80 text-lg mb-8">
+          <p className="text-white/80 text-lg mb-4">
             Need expert appliance assistance? Book your service now and get reliable, fast, and affordable solutions for all your appliance needs.
           </p>
           <a
             href={`tel:${CONTACT_INFO.PHONE}`}
-            className="inline-flex items-center gap-3 px-8 py-4 bg-white text-[#003366] rounded-xl font-semibold hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl text-lg"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-white text-[#003366] rounded-xl font-semibold hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl text-lg transform hover:scale-105 hover:-translate-y-1"
           >
             <Phone className="w-6 h-6" />
             Book Your Service Now

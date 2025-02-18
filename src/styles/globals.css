@@ -194,7 +194,7 @@
 
 /* Background Gradient */
 .bg-gradient-blue {
-  background: linear-gradient(to bottom, #003366, #002B5B, #001B3B);
+  background: linear-gradient(to bottom, #004a8f, #003366, #001B3B);
   will-change: transform;
   transform: translateZ(0);
 }

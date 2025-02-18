@@ -64,7 +64,7 @@ const Products = () => {
   return (
     <section
       id="products"
-      className="w-full py-24 bg-gradient-to-b from-[#004B8F] via-[#003366] to-[#003366] relative overflow-hidden"
+      className="w-full py-12 sm:py-12 bg-gradient-to-b from-[#003366] via-[#003D7A] to-[#004b8f] relative overflow-hidden z-[4] -mt-1"
     >
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />

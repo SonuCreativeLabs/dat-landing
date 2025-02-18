@@ -216,7 +216,7 @@ const Testimonials = () => {
 
   if (isLoading) {
     return (
-      <section id="testimonials" className="w-full py-24 bg-gradient-to-b from-[#003366] via-[#003366] to-[#004B8F] relative overflow-hidden">
+      <section id="testimonials" className="w-full py-12 sm:py-16 bg-[#003366] relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
         <Container className="relative z-10">
           <div className="flex items-center justify-center min-h-[400px]">
@@ -228,7 +228,7 @@ const Testimonials = () => {
   }
 
   return (
-    <section id="testimonials" className="w-full py-24 bg-gradient-to-b from-[#003366] via-[#003366] to-[#004B8F] relative overflow-hidden">
+    <section id="testimonials" className="w-full py-12 sm:py-12 bg-gradient-to-b from-[#004b8f] via-[#003D7A] to-[#003366] relative overflow-hidden z-[5] -mt-1">
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
 
