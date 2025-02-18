@@ -280,52 +280,53 @@ export default function TestimonialForm({ onClose }: { onClose: () => void }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 99999999,
+        zIndex: 999999,
         isolation: 'isolate'
       }}
     >
       <div 
-        className="w-full max-w-xl mx-auto bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 overflow-y-auto relative m-4"
+        className="w-full max-w-lg mx-auto bg-white rounded-xl shadow-2xl p-3 overflow-y-auto relative m-3"
         style={{
-          maxHeight: 'calc(100vh - 40px)',
+          maxHeight: 'min(calc(100vh - 24px), 520px)',
           position: 'relative',
           transform: 'translateZ(0)',
-          zIndex: 99999999
+          zIndex: 999999,
+          isolation: 'isolate'
         }}
         onClick={e => e.stopPropagation()}
       >
-        <div className="sticky top-0 z-10 bg-white pt-2 pb-4 mb-2">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xl sm:text-2xl font-bold text-gray-900">Share Your Experience</h3>
+        <div className="sticky top-0 z-10 bg-white pb-2">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-base font-semibold text-gray-900">Share Your Experience</h3>
             <Button
               onClick={onClose}
               variant="ghost"
               size="icon"
-              className="hover:bg-gray-100 rounded-full -mr-2 -mt-2"
+              className="hover:bg-gray-100 rounded-full -mr-1 h-8 w-8"
             >
-              <X className="w-5 h-5 text-gray-500" />
+              <X className="w-4 h-4 text-gray-500" />
             </Button>
           </div>
         </div>
 
         <Toaster richColors />
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 text-sm sm:text-base">Name</FormLabel>
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-gray-700 text-xs font-medium">Name</FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="Your name" 
-                        className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
+                        className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500 h-8 text-sm" 
                         {...field} 
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -334,45 +335,56 @@ export default function TestimonialForm({ onClose }: { onClose: () => void }) {
                 control={form.control}
                 name="location"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 text-sm sm:text-base">Location</FormLabel>
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-gray-700 text-xs font-medium">Location</FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="Your location" 
-                        className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
+                        className="bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500 h-8 text-sm" 
                         {...field} 
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               <FormField
                 control={form.control}
                 name="service_type"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 text-sm sm:text-base">Service Type</FormLabel>
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-gray-700 text-xs font-medium">Service Type</FormLabel>
                     <Select 
                       onValueChange={field.onChange}
                       value={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger className="bg-gray-50/50 border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                        <SelectTrigger className="bg-gray-50/50 border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-8 text-sm">
                           <SelectValue placeholder="Select service type" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent position="popper" className="max-h-[200px]">
-                        <SelectItem value="appliance_sales" className="cursor-pointer">Appliance Sales</SelectItem>
-                        <SelectItem value="appliance_service" className="cursor-pointer">Appliance Service</SelectItem>
-                        <SelectItem value="appliance_rentals" className="cursor-pointer">Appliance Rentals</SelectItem>
-                        <SelectItem value="others" className="cursor-pointer">Others</SelectItem>
+                      <SelectContent 
+                        className="bg-white border border-gray-200 shadow-lg rounded-lg overflow-hidden z-[9999999] w-[var(--radix-select-trigger-width)] max-h-[200px]"
+                        position="popper"
+                        side="top"
+                        sideOffset={4}
+                        align="center"
+                      >
+                        {serviceTypes.map((type) => (
+                          <SelectItem 
+                            key={type.value} 
+                            value={type.value}
+                            className="cursor-pointer hover:bg-gray-50 focus:bg-gray-50 py-1.5 px-3 text-sm"
+                          >
+                            {type.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -381,27 +393,33 @@ export default function TestimonialForm({ onClose }: { onClose: () => void }) {
                 control={form.control}
                 name="rating"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 text-sm sm:text-base">Rating</FormLabel>
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-gray-700 text-xs font-medium">Rating</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger className="bg-gray-50/50 border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                        <SelectTrigger className="bg-gray-50/50 border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-8 text-sm">
                           <SelectValue placeholder="Select rating" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="bg-white shadow-md border-gray-200 max-h-[200px]">
+                      <SelectContent 
+                        className="bg-white border border-gray-200 shadow-lg rounded-lg overflow-hidden z-[9999999] w-[var(--radix-select-trigger-width)] max-h-[200px]"
+                        position="popper"
+                        side="top"
+                        sideOffset={4}
+                        align="center"
+                      >
                         {ratings.map((rating) => (
                           <SelectItem 
                             key={rating.value} 
                             value={rating.value}
-                            className="hover:bg-gray-50 cursor-pointer"
+                            className="cursor-pointer hover:bg-gray-50 focus:bg-gray-50 py-1.5 px-3 text-sm"
                           >
                             {rating.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -411,16 +429,16 @@ export default function TestimonialForm({ onClose }: { onClose: () => void }) {
               control={form.control}
               name="message"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700 text-sm sm:text-base">Your Message</FormLabel>
+                <FormItem className="space-y-1">
+                  <FormLabel className="text-gray-700 text-xs font-medium">Your Message</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Share your experience with our service..."
-                      className="min-h-[80px] sm:min-h-[120px] resize-none bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      className="min-h-[50px] sm:min-h-[60px] resize-none bg-gray-50/50 border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-sm"
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -428,7 +446,7 @@ export default function TestimonialForm({ onClose }: { onClose: () => void }) {
             <Button
               type="submit"
               className={cn(
-                "w-full md:w-auto px-6 sm:px-8 py-2 sm:py-2.5 font-medium rounded-lg transition-all duration-200",
+                "w-full h-8 text-sm font-medium rounded-lg transition-all duration-200",
                 isSubmitting 
                   ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                   : "bg-blue-600 hover:bg-blue-700 text-white hover:shadow-md"
@@ -437,12 +455,12 @@ export default function TestimonialForm({ onClose }: { onClose: () => void }) {
             >
               {isSubmitting ? (
                 <div className="flex items-center justify-center">
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
                   <span>Submitting...</span>
                 </div>
               ) : (
                 <div className="flex items-center justify-center">
-                  <Send className="mr-2 h-4 w-4" />
+                  <Send className="mr-1.5 h-3.5 w-3.5" />
                   <span>Submit Review</span>
                 </div>
               )}

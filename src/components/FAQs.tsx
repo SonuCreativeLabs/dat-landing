@@ -106,11 +106,11 @@ const FAQs = () => {
   };
 
   return (
-    <section id="faqs" className="w-full py-12 sm:py-12 bg-gradient-to-b from-[#004b8f] via-[#003D7A] to-[#003366] relative overflow-hidden z-[7] -mt-1">
+    <section id="faqs" className="w-full py-12 sm:py-12 bg-gradient-to-b from-[#004b8f] via-[#003D7A] to-[#003366] relative overflow-hidden z-[1] -mt-1">
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
       
-      <div className="container mx-auto px-4 relative z-[5]">
+      <div className="container mx-auto px-4 relative">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -138,7 +138,7 @@ const FAQs = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 relative z-[5]"
+          className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 relative z-[1]"
         >
           {faqs.map((faq, index) => (
             <FAQItem
@@ -155,7 +155,7 @@ const FAQs = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mt-16 relative z-[5]"
+          className="text-center mt-16 relative z-[1]"
         >
           <h3 className="text-2xl font-bold text-white mb-4">
             Still have questions?

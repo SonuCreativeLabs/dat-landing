@@ -26,11 +26,21 @@ const Hero = () => {
             style={{
               willChange: 'transform',
               transform: 'translateZ(0)',
-              backfaceVisibility: 'hidden'
+              backfaceVisibility: 'hidden',
+              filter: 'brightness(1.1) contrast(1.05)'
             }}
             loading="eager"
           />
         </picture>
+
+        {/* Gradient Overlay */}
+        <div 
+          className="absolute inset-0 rounded-[2.5rem]"
+          style={{
+            background: 'linear-gradient(to bottom, rgba(0,27,59,0.25) 0%, rgba(0,27,59,0.45) 100%)',
+            backdropFilter: 'blur(0.5px)'
+          }}
+        />
         
         {/* Content Container */}
         <div className="relative min-h-[650px] sm:aspect-[16/10] flex flex-col items-center justify-center text-center p-4 sm:p-8">

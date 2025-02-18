@@ -81,11 +81,11 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="w-full py-12 sm:py-12 bg-gradient-to-b from-[#003366] via-[#003D7A] to-[#004b8f] relative overflow-hidden z-[8] -mt-1">
+    <section id="contact" className="w-full py-12 sm:py-12 bg-gradient-to-b from-[#003366] via-[#003D7A] to-[#004b8f] relative overflow-hidden z-[1] -mt-1">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
 
-      <div className="relative container mx-auto px-4">
+      <div className="relative container mx-auto px-4 z-[1]">
         <div className="flex flex-col lg:flex-row gap-12 max-w-7xl mx-auto">
           {/* Contact Information */}
           <motion.div
