@@ -33,13 +33,9 @@ const Hero = () => {
           />
         </picture>
 
-        {/* Gradient Overlay */}
+        {/* Simple Overlay Layer */}
         <div 
-          className="absolute inset-0 rounded-[2.5rem]"
-          style={{
-            background: 'linear-gradient(to bottom, rgba(0,27,59,0.1) 0%, rgba(0,27,59,0.2) 100%)',
-            backdropFilter: 'blur(0px)'
-          }}
+          className="absolute inset-0 rounded-[2.5rem] bg-[#003366]/25"
         />
         
         {/* Content Container */}
@@ -48,7 +44,7 @@ const Hero = () => {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
             className="mb-4 sm:mb-6 max-w-[90%] sm:max-w-4xl mx-auto"
           >
             <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-black text-white 
@@ -61,9 +57,9 @@ const Hero = () => {
           </motion.div>
             
           <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-8 sm:mb-12 
                      text-white tracking-wide font-poppins
                      bg-white/10 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl
@@ -82,14 +78,12 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ 
-              type: "spring",
-              stiffness: 100,
-              damping: 20,
-              mass: 1,
-              delay: 0.4
+              duration: 1,
+              ease: [0.22, 1, 0.36, 1],
+              delay: 0.6
             }}
-            className="flex flex-row items-center justify-center flex-wrap
-                     gap-3 sm:gap-6 w-full max-w-[320px] sm:max-w-xl mx-auto mt-6 sm:mt-8"
+            className="flex flex-col sm:flex-row items-center justify-center
+                     gap-6 sm:gap-10 w-full max-w-[320px] sm:max-w-xl mx-auto mt-8 sm:mt-8"
           >
             {/* Book Service Button */}
             <motion.button
@@ -101,15 +95,15 @@ const Hero = () => {
               whileTap={{ scale: 0.98 }}
               transition={{
                 type: "spring",
-                stiffness: 400,
-                damping: 17
+                stiffness: 300,
+                damping: 20
               }}
               className="group relative px-4 sm:px-8 py-2.5 sm:py-4 text-sm sm:text-base font-medium font-poppins
                        min-w-[145px] sm:min-w-[180px]
-                       bg-gradient-to-r from-[#0EA5E9] to-[#38BDF8] rounded-lg
-                       hover:from-[#38BDF8] hover:to-[#0EA5E9] 
+                       bg-gradient-to-r from-[#38BDF8] to-[#0EA5E9] rounded-lg
+                       hover:from-[#0EA5E9] hover:to-[#38BDF8] 
                        shadow-[0_0_20px_rgba(14,165,233,0.3)] hover:shadow-[0_0_25px_rgba(14,165,233,0.5)]
-                       transition-[background,shadow] duration-300"
+                       transition-all duration-300"
             >
               <div className="relative flex items-center justify-center gap-2 text-white whitespace-nowrap">
                 <span>Book Service Now</span>
@@ -118,8 +112,8 @@ const Hero = () => {
                   whileHover={{ x: 4 }}
                   transition={{
                     type: "spring",
-                    stiffness: 400,
-                    damping: 10
+                    stiffness: 300,
+                    damping: 20
                   }}
                 >→</motion.span>
               </div>
@@ -135,17 +129,17 @@ const Hero = () => {
               whileTap={{ scale: 0.98 }}
               transition={{
                 type: "spring",
-                stiffness: 400,
-                damping: 17
+                stiffness: 300,
+                damping: 20
               }}
               className="group relative px-4 sm:px-8 py-2.5 sm:py-4 text-sm sm:text-base font-medium font-poppins
                        min-w-[145px] sm:min-w-[180px]
-                       border-2 border-white/30 hover:border-white/40 rounded-lg
-                       bg-white/10 backdrop-blur-[2px]
-                       hover:bg-white/15
-                       shadow-lg hover:shadow-xl
+                       rounded-lg
+                       bg-gradient-to-r from-[#9CA3AF] to-[#6B7280]
+                       hover:from-[#6B7280] hover:to-[#9CA3AF]
+                       shadow-[0_0_20px_rgba(156,163,175,0.3)] hover:shadow-[0_0_25px_rgba(156,163,175,0.5)]
                        overflow-hidden
-                       transition-[border,background,shadow] duration-300"
+                       transition-all duration-300"
             >
               <div className="flex items-center justify-center gap-2 text-white whitespace-nowrap">
                 <span>Explore Products</span>
@@ -154,8 +148,8 @@ const Hero = () => {
                   whileHover={{ x: 4 }}
                   transition={{
                     type: "spring",
-                    stiffness: 400,
-                    damping: 10
+                    stiffness: 300,
+                    damping: 20
                   }}
                 >→</motion.span>
               </div>

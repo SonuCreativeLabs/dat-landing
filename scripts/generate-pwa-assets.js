@@ -36,13 +36,28 @@ async function generateIcons() {
       await sharp(logoBuffer)
         .resize(size, size, {
           fit: 'contain',
-          background: { r: 255, g: 255, b: 255, alpha: 0 }
+          background: { r: 0, g: 0, b: 0, alpha: 0 }  // Transparent background
         })
+        .png()  // Ensure PNG format for transparency
         .toFile(join(ICONS_DIR, `icon-${size}x${size}.png`));
       console.log(`Generated ${size}x${size} icon`);
     }
 
-    // Generate favicon.ico with white background
+    // Generate Microsoft tile icons with transparency
+    console.log('Generating Microsoft tile icons...');
+    const tileSizes = [70, 150, 310];
+    for (const size of tileSizes) {
+      await sharp(logoBuffer)
+        .resize(size, size, {
+          fit: 'contain',
+          background: { r: 0, g: 0, b: 0, alpha: 0 }  // Transparent background
+        })
+        .png()  // Ensure PNG format for transparency
+        .toFile(join(ICONS_DIR, `ms-icon-${size}x${size}.png`));
+      console.log(`Generated ${size}x${size} Microsoft tile icon`);
+    }
+
+    // Generate favicon.ico (keeping white background for better visibility)
     console.log('Generating favicon.ico...');
     const faviconSizes = [16, 24, 32, 64];
     const faviconBuffers = await Promise.all(
@@ -50,22 +65,24 @@ async function generateIcons() {
         sharp(logoBuffer)
           .resize(size, size, {
             fit: 'contain',
-            background: { r: 255, g: 255, b: 255, alpha: 1 } // Solid white background
+            background: { r: 0, g: 0, b: 0, alpha: 0 }  // Transparent background
           })
+          .png()  // Ensure PNG format for transparency
           .toBuffer()
       )
     );
 
-    await sharp(faviconBuffers[0])  // Use the 16x16 as base
+    await sharp(faviconBuffers[0])
       .toFile(join(ICONS_DIR, 'favicon.ico'));
 
-    // Generate apple touch icon with white background
+    // Generate apple touch icon (keeping white background for iOS)
     console.log('Generating apple touch icon...');
     await sharp(logoBuffer)
       .resize(180, 180, {
         fit: 'contain',
-        background: { r: 255, g: 255, b: 255, alpha: 1 } // Solid white background
+        background: { r: 255, g: 255, b: 255, alpha: 1 }  // White background for iOS
       })
+      .png()
       .toFile(join(ICONS_DIR, 'apple-touch-icon.png'));
 
     console.log('All icons generated successfully!');
